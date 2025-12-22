@@ -38,8 +38,6 @@ msgstr "电视流媒体服务端口"
 msgid "Config Port"
 msgstr "配置端口"
 
-msgid "Port for web configuration interface"
-msgstr "Web 配置界面端口"
 
 msgid "Status"
 msgstr "状态"

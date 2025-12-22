@@ -38,9 +38,6 @@ msgstr "Port for TV streaming service"
 msgid "Config Port"
 msgstr "Config Port"
 
-msgid "Port for web configuration interface"
-msgstr "Port for web configuration interface"
-
 msgid "Status"
 msgstr "Status"
 

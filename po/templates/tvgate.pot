@@ -38,8 +38,6 @@ msgstr ""
 msgid "Config Port"
 msgstr ""
 
-msgid "Port for web configuration interface"
-msgstr ""
 
 msgid "Status"
 msgstr ""

@@ -1,5 +1,11 @@
 #!/bin/sh
 
+# Source OpenWrt functions library
+. /lib/functions.sh
+
+# Initialize config loading
+include /lib/network
+
 # Load configuration
 config_load tvgate
 local proxy download_url

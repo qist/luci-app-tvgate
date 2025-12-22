@@ -23,11 +23,6 @@ listen_port = s:option(Value, "listen_port", translate("Listen Port"),
 listen_port.datatype = "port"
 listen_port.default = 8888
 
-config_port = s:option(Value, "config_port", translate("Config Port"),
-	translate("Port for web configuration interface"))
-config_port.datatype = "port"
-config_port.default = 8889
-
 s = m:section(TypedSection, "tvgate", translate("Status"))
 s.anonymous = true
 

@@ -10,8 +10,9 @@ BIN_PATH=/usr/bin/tvgate/TVGate
 CONFIG_PATH=/etc/tvgate/config.yaml
 
 start_service() {
+	# Load configuration
 	config_load tvgate
-	local enabled proxy listen_port config_port
+	local enabled proxy listen_port
 	
 	config_get_bool enabled enabled 0
 	[ "$enabled" -eq 0 ] && return 1
