@@ -86,8 +86,8 @@ msgstr "Configure the download proxy (e.g., https://hk.gh-proxy.com/) to speed u
 msgid "Click \"Download/Update Binary\" to download the TVGate executable"
 msgstr "Click \"Download/Update Binary\" to download the TVGate executable"
 
-msgid "Access the web interface at http://[router-ip]:[config-port] to manage settings"
-msgstr "Access the web interface at http://[router-ip]:[config-port] to manage settings"
+msgid "Access the web interface at http://[router-ip]:[config-port]/web/ to manage settings"
+msgstr "Access the web interface at  http://[router-ip]:[config-port]/web/ to manage settings"
 
-msgid "Access IPTV streams at http://[router-ip]:[streaming-port]/channel-url"
-msgstr "Access IPTV streams at http://[router-ip]:[streaming-port]/channel-url"
+msgid "Access IPTV streams at http://[router-ip]:[config-port]/proxy-url"
+msgstr "Access IPTV streams at http://[router-ip]:[config-port]/proxy-url"

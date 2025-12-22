@@ -86,8 +86,8 @@ msgstr ""
 msgid "Click \"Download/Update Binary\" to download the TVGate executable"
 msgstr ""
 
-msgid "Access the web interface at http://[router-ip]:[config-port] to manage settings"
+msgid "Access the web interface at http://[router-ip]:[config-port]/web/ to manage settings"
 msgstr ""
 
-msgid "Access IPTV streams at http://[router-ip]:[streaming-port]/channel-url"
+msgid "Access IPTV streams at http://[router-ip]:[config-port]/proxy-url"
 msgstr ""

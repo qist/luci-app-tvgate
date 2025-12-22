@@ -38,8 +38,8 @@ After installation, you can configure TVGate in the LuCI interface:
 ## Usage
 
 Once the service is running:
-- Access the web interface at `http://[router-ip]:[config-port]` to manage settings
-- Access IPTV streams at `http://[router-ip]:[streaming-port]/channel-url`
+- Access the web interface at `http://[router-ip]:[config-port]/[config-web-path]` to manage settings
+- Access IPTV streams at `http://[router-ip]:[config-port]/[proxy-url-path]`
 
 ## Technical Details
 
@@ -53,5 +53,3 @@ Once the service is running:
 - x86_64
 - aarch64 (ARM64)
 - armv7l (ARMv7)
-- mips
-- mipsle

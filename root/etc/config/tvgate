@@ -2,5 +2,4 @@ config tvgate
 	option enabled 0
 	option proxy 'https://hk.gh-proxy.com/'
 	option listen_port '8888'
-	option config_port '8889'
 	option download_url ''

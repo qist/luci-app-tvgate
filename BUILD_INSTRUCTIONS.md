@@ -82,3 +82,27 @@ This means the package is not properly integrated into the build system. Ensure 
 3. The package has been installed with `./scripts/feeds install luci-app-tvgate`
 
 The error occurs because the build system is looking for the package in the main `package/` directory rather than in the `feeds/luci/applications/` directory where LuCI applications belong.
+
+If you encounter kernel module related errors like:
+```
+make[2]: *** No rule to make target '/root/lede/build_dir/.../linux-6.12.61/.config'
+```
+
+These are usually unrelated to LuCI applications and indicate issues with the build environment or kernel configuration. Try these solutions:
+
+1. Clean your build directory:
+   ```bash
+   make clean
+   ./scripts/feeds update -a
+   ./scripts/feeds install -a
+   ```
+
+2. Ensure kernel configuration is properly set:
+   ```bash
+   make defconfig
+   ```
+
+3. If using a custom LEDE/OpenWrt tree, make sure all submodules are properly initialized:
+   ```bash
+   git submodule update --init --recursive
+   ```

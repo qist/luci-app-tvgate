@@ -18,7 +18,6 @@ start_service() {
 	
 	config_get proxy proxy 'https://hk.gh-proxy.com/'
 	config_get listen_port listen_port '8888'
-	config_get config_port config_port '8889'
 	
 	# Create config directory
 	mkdir -p /etc/tvgate

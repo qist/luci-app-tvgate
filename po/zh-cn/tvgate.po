@@ -86,8 +86,8 @@ msgstr "配置下载代理（例如：https://hk.gh-proxy.com/）来加速下载
 msgid "Click \"Download/Update Binary\" to download the TVGate executable"
 msgstr "点击 \"下载/更新二进制文件\" 来下载 TVGate 可执行文件"
 
-msgid "Access the web interface at http://[router-ip]:[config-port] to manage settings"
-msgstr "访问 http://[路由器IP]:[配置端口] 来管理设置"
+msgid "Access the web interface at http://[router-ip]:[config-port]/web to manage settings"
+msgstr "访问 http://[路由器IP]:[配置端口]/web/ 来管理设置"
 
-msgid "Access IPTV streams at http://[router-ip]:[streaming-port]/channel-url"
-msgstr "通过 http://[路由器IP]:[流媒体端口]/频道URL 访问 IPTV 流"
+msgid "Access IPTV streams at http://[router-ip]:[config-port]/proxy-url"
+msgstr "通过 http://[路由器IP]:[流媒体端口]/proxy-url 访问 IPTV 流"
