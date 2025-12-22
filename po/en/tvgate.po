@@ -1,0 +1,93 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "TVGate"
+msgstr "TVGate"
+
+msgid "TVGate is a high-performance local network resource forwarding and proxy tool."
+msgstr "TVGate is a high-performance local network resource forwarding and proxy tool."
+
+msgid "Settings"
+msgstr "Settings"
+
+msgid "Enable"
+msgstr "Enable"
+
+msgid "Enable TVGate service"
+msgstr "Enable TVGate service"
+
+msgid "Download Proxy"
+msgstr "Download Proxy"
+
+msgid "Proxy for downloading TVGate binary (e.g., https://hk.gh-proxy.com/)"
+msgstr "Proxy for downloading TVGate binary (e.g., https://hk.gh-proxy.com/)"
+
+msgid "Download URL"
+msgstr "Download URL"
+
+msgid "URL for downloading TVGate binary (leave empty to auto-detect based on CPU architecture)"
+msgstr "URL for downloading TVGate binary (leave empty to auto-detect based on CPU architecture)"
+
+msgid "Listen Port"
+msgstr "Listen Port"
+
+msgid "Port for TV streaming service"
+msgstr "Port for TV streaming service"
+
+msgid "Config Port"
+msgstr "Config Port"
+
+msgid "Port for web configuration interface"
+msgstr "Port for web configuration interface"
+
+msgid "Status"
+msgstr "Status"
+
+msgid "Download/Update Binary"
+msgstr "Download/Update Binary"
+
+msgid "Download or update the TVGate binary file"
+msgstr "Download or update the TVGate binary file"
+
+msgid "Service Status"
+msgstr "Service Status"
+
+msgid "Running"
+msgstr "Running"
+
+msgid "Stopped"
+msgstr "Stopped"
+
+msgid "Streaming Port"
+msgstr "Streaming Port"
+
+msgid "Overview"
+msgstr "Overview"
+
+msgid "How to use"
+msgstr "How to use"
+
+msgid "Forward internal network resources (such as http, https, rtsp, rtp) to the external network through HTTP"
+msgstr "Forward internal network resources (such as http, https, rtsp, rtp) to the external network through HTTP"
+
+msgid "Support multicast, unicast audio and video streams converted to HTTP accessible links"
+msgstr "Support multicast, unicast audio and video streams converted to HTTP accessible links"
+
+msgid "Built-in Web management interface for visual configuration"
+msgstr "Built-in Web management interface for visual configuration"
+
+msgid "Support Docker deployment, systemd service management and OpenWrt system integration"
+msgstr "Support Docker deployment, systemd service management and OpenWrt system integration"
+
+msgid "Configure the download proxy (e.g., https://hk.gh-proxy.com/) to speed up downloads"
+msgstr "Configure the download proxy (e.g., https://hk.gh-proxy.com/) to speed up downloads"
+
+msgid "Click \"Download/Update Binary\" to download the TVGate executable"
+msgstr "Click \"Download/Update Binary\" to download the TVGate executable"
+
+msgid "Access the web interface at http://[router-ip]:[config-port] to manage settings"
+msgstr "Access the web interface at http://[router-ip]:[config-port] to manage settings"
+
+msgid "Access IPTV streams at http://[router-ip]:[streaming-port]/channel-url"
+msgstr "Access IPTV streams at http://[router-ip]:[streaming-port]/channel-url"
