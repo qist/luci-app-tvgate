@@ -1,25 +1,85 @@
 <%+cbi/valueheader%>
-
 <script type="text/javascript">//<![CDATA[
-XHR.poll(5, '<%=url('admin/services/tvgate/status')%>', null,
-	function(x, info) {
-		var tb = document.getElementById('<%=self.option%>-status');
-		if (tb) {
-			if (info.running) {
-				tb.innerHTML = '<em style=\"color:green\"><b><%:Running%></b></em>';
-			} else {
-				tb.innerHTML = '<em style=\"color:red\"><b><%:Stopped%></b></em>';
-			}
-			
-			if (info.port) {
-				document.getElementById('tvgate-port-info').innerHTML = '<%:Streaming Port%>: ' + info.port;
+	XHR.poll(3, '<%=url('admin/services/tvgate/status')%>', null,
+		function(x, info) {
+			var tb = document.getElementById('<%=self.option%>-status');
+			if (tb) {
+				if (info.running) {
+					tb.innerHTML = '<em><b style=color:green>' + _('Running') + '</b></em>';
+				} else {
+					tb.innerHTML = '<em><b style=color:red>' + _('Stopped') + '</b></em>';
+				}
+				
+				// Update binary status
+				var bs = document.getElementById('binary-status');
+				if (bs) {
+					if (info.binary_exists) {
+						bs.innerHTML = '<em><b style=color:green>' + _('Installed') + '</b></em>';
+					} else {
+						bs.innerHTML = '<em><b style=color:red>' + _('Not installed') + '</b></em>';
+					}
+				}
 			}
 		}
+	);
+	
+	function detectArch() {
+		XHR.get('<%=url('admin/services/tvgate/detect_arch')%>', null, 
+			function(x, data) {
+				if (data && data.default_url) {
+					document.getElementById('detected-arch-info').innerHTML = 
+						'<strong>CPU:</strong> ' + data.arch + ' (<strong>Detected:</strong> ' + data.detected_arch + ')<br>' +
+						'<strong>Suggested URL:</strong> ' + data.default_url;
+				}
+			}
+		);
 	}
-);
+	
+	function downloadBinary() {
+		if (confirm('<%=translate("Are you sure you want to download/update the TVGate binary?")%>')) {
+			var btn = document.getElementById('download-btn');
+			btn.disabled = true;
+			btn.innerHTML = '<%=translate("Downloading...")%>';
+			
+			XHR.get('<%=url('admin/services/tvgate/download')%>', null,
+				function(x, data) {
+					btn.disabled = false;
+					btn.innerHTML = '<%=translate("Download/Update Binary")%>';
+					
+					if (data && data.result) {
+						alert('<%=translate("TVGate binary downloaded successfully!")%>');
+						location.reload();
+					} else {
+						var log = data ? data.log : 'Unknown error';
+						alert('<%=translate("Failed to download TVGate binary:")%>\\n' + log);
+					}
+				}
+			);
+		}
+	}
+	
+	// Auto-detect architecture on page load
+	window.addEventListener('load', function() {
+		detectArch();
+	});
 //]]></script>
 
-<span id="<%=self.option%>-status"><em style=\"color:red\"><b><%:Stopped%></b></em></span>
-<div id="tvgate-port-info"></div>
+<label class="cbi-value-title"><%=translate("Service Status")%></label>
+<div class="cbi-value-field">
+	<span id="<%=self.option%>-status"><em><%=translate("Collecting data...")%></em></span>
+</div>
 
+<label class="cbi-value-title"><%=translate("Binary Status")%></label>
+<div class="cbi-value-field">
+	<span id="binary-status"><em><%=translate("Collecting data...")%></em></span>
+</div>
+
+<label class="cbi-value-title"><%=translate("Architecture Info")%></label>
+<div class="cbi-value-field">
+	<span id="detected-arch-info"><em><%=translate("Detecting...")%></em></span>
+</div>
+
+<div class="cbi-value-field">
+	<input type="button" class="btn cbi-button cbi-button-apply" value="<%=translate("Download/Update Binary")%>" onclick="downloadBinary()" id="download-btn" />
+</div>
 <%+cbi/valuefooter%>

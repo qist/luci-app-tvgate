@@ -38,6 +38,9 @@ msgstr "Port for TV streaming service"
 msgid "Config Port"
 msgstr "Config Port"
 
+msgid "Port for web configuration interface"
+msgstr "Port for web configuration interface"
+
 msgid "Status"
 msgstr "Status"
 
@@ -83,8 +86,62 @@ msgstr "Configure the download proxy (e.g., https://hk.gh-proxy.com/) to speed u
 msgid "Click \"Download/Update Binary\" to download the TVGate executable"
 msgstr "Click \"Download/Update Binary\" to download the TVGate executable"
 
-msgid "Access the web interface at http://[router-ip]:[config-port]/web/ to manage settings"
-msgstr "Access the web interface at  http://[router-ip]:[config-port]/web/ to manage settings"
+msgid "Access the web interface at http://[router-ip]:[streaming-port]/web/ to manage settings"
+msgstr "Access the web interface at http://[router-ip]:[streaming-port]/web/ to manage settings"
 
-msgid "Access IPTV streams at http://[router-ip]:[config-port]/proxy-url"
-msgstr "Access IPTV streams at http://[router-ip]:[config-port]/proxy-url"
+msgid "Access IPTV streams at http://[router-ip]:[streaming-port]/channel-url"
+msgstr "Access IPTV streams at http://[router-ip]:[streaming-port]/channel-url"
+
+msgid "Monitor service status at http://[router-ip]:[streaming-port]/status"
+msgstr "Monitor service status at http://[router-ip]:[streaming-port]/status"
+
+msgid "Binary Status"
+msgstr "Binary Status"
+
+msgid "Installed"
+msgstr "Installed"
+
+msgid "Not installed"
+msgstr "Not installed"
+
+msgid "Usage instructions"
+msgstr "Usage instructions"
+
+msgid "Enable the service and apply the settings"
+msgstr "Enable the service and apply the settings"
+
+msgid "TVGate Addresses"
+msgstr "TVGate Addresses"
+
+msgid "Web Management"
+msgstr "Web Management"
+
+msgid "Monitoring"
+msgstr "Monitoring"
+
+msgid "Open TVGate Web Interface"
+msgstr "Open TVGate Web Interface"
+
+msgid "Download Binary First"
+msgstr "Download Binary First"
+
+msgid "Are you sure you want to download/update the TVGate binary?"
+msgstr "Are you sure you want to download/update the TVGate binary?"
+
+msgid "TVGate binary downloaded successfully!"
+msgstr "TVGate binary downloaded successfully!"
+
+msgid "Failed to download TVGate binary:"
+msgstr "Failed to download TVGate binary:"
+
+msgid "Downloading..."
+msgstr "Downloading..."
+
+msgid "Detecting..."
+msgstr "Detecting..."
+
+msgid "Architecture Info"
+msgstr "Architecture Info"
+
+msgid "Binary Status"
+msgstr "Binary Status"

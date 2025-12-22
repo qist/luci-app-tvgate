@@ -23,20 +23,14 @@ start_service() {
 	# Create config directory
 	mkdir -p /etc/tvgate
 	
-	# Check if binary exists, if not try to download
-	if [ ! -f "$BIN_PATH" ]; then
-		echo "TVGate binary not found, trying to download..."
-		/usr/bin/tvgate-download.sh
-	fi
-	
-	# Start service if binary exists
+	# Start service only if binary exists
 	if [ -f "$BIN_PATH" ]; then
 		procd_open_instance
 		procd_set_param command "$BIN_PATH" "-config=$CONFIG_PATH"
 		procd_set_param respawn
 		procd_close_instance
 	else
-		echo "TVGate binary not found, service not started"
+		echo "TVGate binary not found, please download it via WebUI first"
 		return 1
 	fi
 }

@@ -6,7 +6,7 @@ msgid "TVGate"
 msgstr "TVGate"
 
 msgid "TVGate is a high-performance local network resource forwarding and proxy tool."
-msgstr "TVGate 是一个高性能的本地网络资源转发和代理工具。"
+msgstr "TVGate是一个高性能的局域网资源转发和代理工具"
 
 msgid "Settings"
 msgstr "设置"
@@ -15,29 +15,25 @@ msgid "Enable"
 msgstr "启用"
 
 msgid "Enable TVGate service"
-msgstr "启用 TVGate 服务"
+msgstr "启用TVGate服务"
 
 msgid "Download Proxy"
 msgstr "下载代理"
 
 msgid "Proxy for downloading TVGate binary (e.g., https://hk.gh-proxy.com/)"
-msgstr "用于下载 TVGate 二进制文件的代理 (例如：https://hk.gh-proxy.com/)"
+msgstr "用于下载TVGate二进制文件的代理服务器 (例如：https://hk.gh-proxy.com/)"
 
 msgid "Download URL"
 msgstr "下载地址"
 
 msgid "URL for downloading TVGate binary (leave empty to auto-detect based on CPU architecture)"
-msgstr "TVGate 二进制文件的下载地址（留空则根据 CPU 架构自动检测）"
+msgstr "TVGate二进制文件下载地址 (留空则根据CPU架构自动选择)"
 
 msgid "Listen Port"
 msgstr "监听端口"
 
 msgid "Port for TV streaming service"
-msgstr "电视流媒体服务端口"
-
-msgid "Config Port"
-msgstr "配置端口"
-
+msgstr "TV流媒体服务端口"
 
 msgid "Status"
 msgstr "状态"
@@ -46,7 +42,7 @@ msgid "Download/Update Binary"
 msgstr "下载/更新二进制文件"
 
 msgid "Download or update the TVGate binary file"
-msgstr "下载或更新 TVGate 二进制文件"
+msgstr "下载或更新TVGate二进制文件"
 
 msgid "Service Status"
 msgstr "服务状态"
@@ -64,28 +60,82 @@ msgid "Overview"
 msgstr "概览"
 
 msgid "How to use"
-msgstr "使用方法"
+msgstr "使用说明"
 
 msgid "Forward internal network resources (such as http, https, rtsp, rtp) to the external network through HTTP"
-msgstr "通过 HTTP 将内网资源（如 http、https、rtsp、rtp）转发到外网"
+msgstr "通过HTTP将内网资源（如http、https、rtsp、rtp）转发到外网"
 
 msgid "Support multicast, unicast audio and video streams converted to HTTP accessible links"
-msgstr "支持组播、单播音视频流转为可通过 HTTP 访问的链接"
+msgstr "支持组播、单播音视频流转为HTTP可访问链接"
 
 msgid "Built-in Web management interface for visual configuration"
-msgstr "内置 Web 管理界面，可进行可视化配置"
+msgstr "内置Web管理界面，可视化配置"
 
 msgid "Support Docker deployment, systemd service management and OpenWrt system integration"
-msgstr "支持 Docker 部署、systemd 服务管理和 OpenWrt 系统集成"
+msgstr "支持Docker部署、systemd服务管理和OpenWrt系统集成"
 
 msgid "Configure the download proxy (e.g., https://hk.gh-proxy.com/) to speed up downloads"
-msgstr "配置下载代理（例如：https://hk.gh-proxy.com/）来加速下载"
+msgstr "配置下载代理 (例如：https://hk.gh-proxy.com/) 以加快下载速度"
 
 msgid "Click \"Download/Update Binary\" to download the TVGate executable"
-msgstr "点击 \"下载/更新二进制文件\" 来下载 TVGate 可执行文件"
+msgstr "点击 \"下载/更新二进制文件\" 下载TVGate可执行文件"
 
-msgid "Access the web interface at http://[router-ip]:[config-port]/web to manage settings"
-msgstr "访问 http://[路由器IP]:[配置端口]/web/ 来管理设置"
+msgid "Access the web interface at http://[router-ip]:[streaming-port]/web/ to manage settings"
+msgstr "访问Web界面 http://[路由器IP]:[流媒体端口]/web/ 进行设置管理"
 
-msgid "Access IPTV streams at http://[router-ip]:[config-port]/proxy-url"
-msgstr "通过 http://[路由器IP]:[流媒体端口]/proxy-url 访问 IPTV 流"
+msgid "Access IPTV streams at http://[router-ip]:[streaming-port]/channel-url"
+msgstr "通过 http://[路由器IP]:[流媒体端口]/channel-url 访问IPTV流"
+
+msgid "Monitor service status at http://[router-ip]:[streaming-port]/status"
+msgstr "在 http://[路由器IP]:[流媒体端口]/status 监控服务状态"
+
+msgid "Binary Status"
+msgstr "二进制文件状态"
+
+msgid "Installed"
+msgstr "已安装"
+
+msgid "Not installed"
+msgstr "未安装"
+
+msgid "Usage instructions"
+msgstr "使用说明"
+
+msgid "Enable the service and apply the settings"
+msgstr "启用服务并应用设置"
+
+msgid "TVGate Addresses"
+msgstr "TVGate 地址"
+
+msgid "Web Management"
+msgstr "Web 管理"
+
+msgid "Monitoring"
+msgstr "监控"
+
+msgid "Open TVGate Web Interface"
+msgstr "打开 TVGate Web 界面"
+
+msgid "Download Binary First"
+msgstr "请先下载二进制文件"
+
+msgid "Are you sure you want to download/update the TVGate binary?"
+msgstr "确定要下载/更新TVGate二进制文件吗？"
+
+msgid "TVGate binary downloaded successfully!"
+msgstr "TVGate二进制文件下载成功！"
+
+msgid "Failed to download TVGate binary:"
+msgstr "TVGate二进制文件下载失败："
+
+msgid "Downloading..."
+msgstr "正在下载..."
+
+msgid "Detecting..."
+msgstr "正在检测..."
+
+msgid "Architecture Info"
+msgstr "架构信息"
+
+msgid "Binary Status"
+msgstr "二进制状态"

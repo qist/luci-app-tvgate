@@ -38,6 +38,8 @@ msgstr ""
 msgid "Config Port"
 msgstr ""
 
+msgid "Port for web configuration interface"
+msgstr ""
 
 msgid "Status"
 msgstr ""
@@ -84,8 +86,62 @@ msgstr ""
 msgid "Click \"Download/Update Binary\" to download the TVGate executable"
 msgstr ""
 
-msgid "Access the web interface at http://[router-ip]:[config-port]/web/ to manage settings"
+msgid "Access the web interface at http://[router-ip]:[streaming-port]/web/ to manage settings"
 msgstr ""
 
-msgid "Access IPTV streams at http://[router-ip]:[config-port]/proxy-url"
+msgid "Access IPTV streams at http://[router-ip]:[streaming-port]/channel-url"
+msgstr ""
+
+msgid "Monitor service status at http://[router-ip]:[streaming-port]/status"
+msgstr ""
+
+msgid "Binary Status"
+msgstr ""
+
+msgid "Installed"
+msgstr ""
+
+msgid "Not installed"
+msgstr ""
+
+msgid "Usage instructions"
+msgstr ""
+
+msgid "Enable the service and apply the settings"
+msgstr ""
+
+msgid "TVGate Addresses"
+msgstr ""
+
+msgid "Web Management"
+msgstr ""
+
+msgid "Monitoring"
+msgstr ""
+
+msgid "Open TVGate Web Interface"
+msgstr ""
+
+msgid "Download Binary First"
+msgstr ""
+
+msgid "Are you sure you want to download/update the TVGate binary?"
+msgstr ""
+
+msgid "TVGate binary downloaded successfully!"
+msgstr ""
+
+msgid "Failed to download TVGate binary:"
+msgstr ""
+
+msgid "Downloading..."
+msgstr ""
+
+msgid "Detecting..."
+msgstr ""
+
+msgid "Architecture Info"
+msgstr ""
+
+msgid "Binary Status"
 msgstr ""

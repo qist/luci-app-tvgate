@@ -7,25 +7,142 @@
 
 <h2 name="content"><%:TVGate%></h2>
 
+<%
+local fs = require "nixio.fs"
+local sys = require "luci.sys"
+local utl = require "luci.util"
+local disp = require "luci.dispatcher"
+local uci = require "luci.model.uci".cursor()
+
+local tvgate_enabled = uci:get("tvgate", "tvgate", "enabled") or "0"
+local listen_port = uci:get("tvgate", "tvgate", "listen_port") or "8888"
+local binary_installed = fs.access("/usr/bin/tvgate/TVGate")
+
+local running = (sys.call("pidof /usr/bin/tvgate/TVGate >/dev/null") == 0)
+%>
+
 <fieldset class="cbi-section">
-	<legend><%:Overview%></legend>
-	<p><%:TVGate is a high-performance local network resource forwarding and proxy tool.%></p>
+	<legend><%=translate("Overview")%></legend>
 	
-	<ul>
-		<li><%:Forward internal network resources (such as http, https, rtsp, rtp) to the external network through HTTP%></li>
-		<li><%:Support multicast, unicast audio and video streams converted to HTTP accessible links%></li>
-		<li><%:Built-in Web management interface for visual configuration%></li>
-		<li><%:Support Docker deployment, systemd service management and OpenWrt system integration%></li>
-	</ul>
+	<div class="cbi-value">
+		<label class="cbi-value-title"><%=translate("How to use")%></label>
+		<div class="cbi-value-field">
+			<span>
+				<%=translate("Forward internal network resources (such as http, https, rtsp, rtp) to the external network through HTTP")%><br>
+				<%=translate("Support multicast, unicast audio and video streams converted to HTTP accessible links")%><br>
+				<%=translate("Built-in Web management interface for visual configuration")%><br>
+				<%=translate("Support Docker deployment, systemd service management and OpenWrt system integration")%>
+			</span>
+		</div>
+	</div>
 	
-	<h3><%:How to use%></h3>
-	<ol>
-		<li><%:Configure the download proxy (e.g., https://hk.gh-proxy.com/) to speed up downloads%></li>
-		<li><%:Click "Download/Update Binary" to download the TVGate executable%></li>
-		<li><%:Enable the service and configure the listening ports%></li>
-		<li><%:Access the web interface at http://[router-ip]:[config-port]/web to manage settings%></li>
-		<li><%:Access IPTV streams at http://[router-ip]:[config-port]/proxy-url%></li>
-	</ol>
+	<div class="cbi-value">
+		<label class="cbi-value-title"><%=translate("Usage instructions")%></label>
+		<div class="cbi-value-field">
+			<span>
+				<ol>
+					<li><%=translate("Configure the download proxy (e.g., https://hk.gh-proxy.com/) to speed up downloads")%></li>
+					<li><%=translate("Click \"Download/Update Binary\" to download the TVGate executable")%></li>
+					<li><%=translate("Enable the service and apply the settings")%></li>
+					<li><%=translate("Access the web interface at http://[router-ip]:[streaming-port]/web/ to manage settings")%></li>
+					<li><%=translate("Access IPTV streams at http://[router-ip]:[streaming-port]/channel-url")%></li>
+					<li><%=translate("Monitor service status at http://[router-ip]:[streaming-port]/status")%></li>
+				</ol>
+			</span>
+		</div>
+	</div>
+	
+	<div class="cbi-value">
+		<label class="cbi-value-title"><%=translate("Service Status")%></label>
+		<div class="cbi-value-field">
+			<span>
+				<% if running then %>
+					<em><b style="color:green"><%=translate("Running")%></b></em>
+				<% else %>
+					<em><b style="color:red"><%=translate("Stopped")%></b></em>
+				<% end %>
+			</span>
+		</div>
+	</div>
+	
+	<div class="cbi-value">
+		<label class="cbi-value-title"><%=translate("Binary Status")%></label>
+		<div class="cbi-value-field">
+			<span>
+				<% if binary_installed then %>
+					<em><b style="color:green"><%=translate("Installed")%></b></em>
+				<% else %>
+					<em><b style="color:red"><%=translate("Not installed")%></b></em>
+				<% end %>
+			</span>
+		</div>
+	</div>
+	
+	<div class="cbi-value" id="tvgate-addresses" style="display:none;">
+		<label class="cbi-value-title"><%=translate("TVGate Addresses")%></label>
+		<div class="cbi-value-field">
+			<div id="addresses-content"></div>
+		</div>
+	</div>
+	
+	<div class="cbi-value">
+		<label class="cbi-value-title"><%=translate("Streaming Port")%></label>
+		<div class="cbi-value-field">
+			<span><%=listen_port%></span>
+		</div>
+	</div>
+	
+	<div class="cbi-value">
+		<label class="cbi-value-title"></label>
+		<div class="cbi-value-field">
+			<% if binary_installed then %>
+				<input type="button" class="btn cbi-button cbi-button-apply" value="<%=translate("Open TVGate Web Interface")%>" onclick="openTvgateInterface()" id="open-webui-btn" disabled />
+			<% else %>
+				<input type="button" class="btn cbi-button cbi-button-apply" value="<%=translate("Download Binary First")%>" onclick="location.href='<%=disp.build_url("admin", "services", "tvgate", "config")%>'" />
+			<% end %>
+		</div>
+	</div>
 </fieldset>
+
+<script type="text/javascript">
+//<![CDATA[
+	function openTvgateInterface() {
+		var btn = document.getElementById('open-webui-btn');
+		var port = '<%=listen_port%>';
+		
+		XHR.get('<%=disp.build_url("admin", "services", "tvgate", "tvgate_config")%>', null, function(x, config) {
+			if (config) {
+				var webPath = config.web_path || '/web/';
+				var url = 'http://' + window.location.hostname + ':' + port + webPath;
+				window.open(url, '_blank');
+			} else {
+				// Fallback to default
+				window.open('http://' + window.location.hostname + ':' + port + '/web/', '_blank');
+			}
+		});
+	}
+	
+	// Load TVGate configuration when page loads
+	window.addEventListener('load', function() {
+		XHR.get('<%=disp.build_url("admin", "services", "tvgate", "tvgate_config")%>', null, function(x, config) {
+			if (config) {
+				var port = '<%=listen_port%>';
+				var webPath = config.web_path || '/web/';
+				var monitorPath = config.monitor_path || '/status';
+				
+				var webUrl = 'http://' + window.location.hostname + ':' + port + webPath;
+				var monitorUrl = 'http://' + window.location.hostname + ':' + port + monitorPath;
+				
+				var content = '<div><strong><%=translate("Web Management")%>:</strong> <a href="' + webUrl + '" target="_blank">' + webUrl + '</a></div>' +
+					'<div><strong><%=translate("Monitoring")%>:</strong> <a href="' + monitorUrl + '" target="_blank">' + monitorUrl + '</a></div>';
+				
+				document.getElementById('addresses-content').innerHTML = content;
+				document.getElementById('tvgate-addresses').style.display = 'block';
+				document.getElementById('open-webui-btn').disabled = false;
+			}
+		});
+	});
+//]]>
+</script>
 
 <%+footer%>

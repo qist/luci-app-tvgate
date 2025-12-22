@@ -6,12 +6,14 @@
 # Initialize config loading
 include /lib/network
 
+# Create directories
+mkdir -p /usr/bin/tvgate
+mkdir -p /etc/tvgate
+
 # Load configuration
 config_load tvgate
-local proxy download_url
-
-config_get proxy proxy 'https://hk.gh-proxy.com/'
-config_get download_url download_url ''
+proxy=$(uci_get_by_type tvgate proxy 'https://hk.gh-proxy.com/')
+download_url=$(uci_get_by_type tvgate download_url '')
 
 # Detect system architecture
 ARCH=$(uname -m)
@@ -45,14 +47,16 @@ esac
 # Use configured URL or default based on architecture
 if [ -z "$download_url" ] || [ "$download_url" = "none" ]; then
 	download_url="$DEFAULT_URL"
+	BIN_NAME_FROM_URL=""
 else
 	# Extract binary name from URL
-	BIN_NAME=$(basename "$download_url" .zip)
+	BIN_NAME_FROM_URL=$(basename "$download_url" .zip)
 fi
 
-# Create directories
-mkdir -p /usr/bin/tvgate
-mkdir -p /etc/tvgate
+# Determine final binary name
+if [ -n "$BIN_NAME_FROM_URL" ]; then
+	BIN_NAME="$BIN_NAME_FROM_URL"
+fi
 
 # Download TVGate binary with proxy support
 echo "System architecture: $ARCH"
