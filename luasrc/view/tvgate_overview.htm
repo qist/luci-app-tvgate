@@ -111,7 +111,7 @@ local running = (sys.call("pidof /usr/bin/tvgate/TVGate >/dev/null") == 0)
 		var port = '<%=listen_port%>';
 		
 		XHR.get('<%=disp.build_url("admin", "services", "tvgate", "tvgate_config")%>', null, function(x, config) {
-			if (config) {
+			if (config && !x.status) {
 				var webPath = config.web_path || '/web/';
 				var url = 'http://' + window.location.hostname + ':' + port + webPath;
 				window.open(url, '_blank');
@@ -119,13 +119,16 @@ local running = (sys.call("pidof /usr/bin/tvgate/TVGate >/dev/null") == 0)
 				// Fallback to default
 				window.open('http://' + window.location.hostname + ':' + port + '/web/', '_blank');
 			}
+		}).catch(function(e) {
+			// Fallback to default on error
+			window.open('http://' + window.location.hostname + ':' + port + '/web/', '_blank');
 		});
 	}
 	
 	// Load TVGate configuration when page loads
 	window.addEventListener('load', function() {
 		XHR.get('<%=disp.build_url("admin", "services", "tvgate", "tvgate_config")%>', null, function(x, config) {
-			if (config) {
+			if (config && !x.status) {
 				var port = '<%=listen_port%>';
 				var webPath = config.web_path || '/web/';
 				var monitorPath = config.monitor_path || '/status';
@@ -140,6 +143,8 @@ local running = (sys.call("pidof /usr/bin/tvgate/TVGate >/dev/null") == 0)
 				document.getElementById('tvgate-addresses').style.display = 'block';
 				document.getElementById('open-webui-btn').disabled = false;
 			}
+		}).catch(function(e) {
+			console.log('Error loading TVGate config:', e);
 		});
 	});
 //]]>

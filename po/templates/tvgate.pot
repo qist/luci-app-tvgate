@@ -20,7 +20,7 @@ msgstr ""
 msgid "Download Proxy"
 msgstr ""
 
-msgid "Proxy for downloading TVGate binary (e.g., https://hk.gh-proxy.com/)"
+msgid "Proxy for downloading TVGate binary (e.g., https://hk.gh-proxy.com)"
 msgstr ""
 
 msgid "Download URL"
@@ -33,12 +33,6 @@ msgid "Listen Port"
 msgstr ""
 
 msgid "Port for TV streaming service"
-msgstr ""
-
-msgid "Config Port"
-msgstr ""
-
-msgid "Port for web configuration interface"
 msgstr ""
 
 msgid "Status"
@@ -80,7 +74,7 @@ msgstr ""
 msgid "Support Docker deployment, systemd service management and OpenWrt system integration"
 msgstr ""
 
-msgid "Configure the download proxy (e.g., https://hk.gh-proxy.com/) to speed up downloads"
+msgid "Configure the download proxy (e.g., https://hk.gh-proxy.com) to speed up downloads"
 msgstr ""
 
 msgid "Click \"Download/Update Binary\" to download the TVGate executable"

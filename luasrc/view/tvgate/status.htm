@@ -4,20 +4,24 @@
 		function(x, info) {
 			var tb = document.getElementById('<%=self.option%>-status');
 			if (tb) {
-				if (info.running) {
-					tb.innerHTML = '<em><b style=color:green>' + _('Running') + '</b></em>';
-				} else {
-					tb.innerHTML = '<em><b style=color:red>' + _('Stopped') + '</b></em>';
-				}
-				
-				// Update binary status
-				var bs = document.getElementById('binary-status');
-				if (bs) {
-					if (info.binary_exists) {
-						bs.innerHTML = '<em><b style=color:green>' + _('Installed') + '</b></em>';
+				if (!x.status && info) {
+					if (info.running) {
+						tb.innerHTML = '<em><b style=color:green>' + _('Running') + '</b></em>';
 					} else {
-						bs.innerHTML = '<em><b style=color:red>' + _('Not installed') + '</b></em>';
+						tb.innerHTML = '<em><b style=color:red>' + _('Stopped') + '</b></em>';
 					}
+					
+					// Update binary status
+					var bs = document.getElementById('binary-status');
+					if (bs) {
+						if (info.binary_exists) {
+							bs.innerHTML = '<em><b style=color:green>' + _('Installed') + '</b></em>';
+						} else {
+							bs.innerHTML = '<em><b style=color:red>' + _('Not installed') + '</b></em>';
+						}
+					}
+				} else {
+					tb.innerHTML = '<em><b style=color:red>' + _('Unknown') + '</b></em>';
 				}
 			}
 		}
@@ -26,13 +30,19 @@
 	function detectArch() {
 		XHR.get('<%=url('admin/services/tvgate/detect_arch')%>', null, 
 			function(x, data) {
-				if (data && data.default_url) {
-					document.getElementById('detected-arch-info').innerHTML = 
-						'<strong>CPU:</strong> ' + data.arch + ' (<strong>Detected:</strong> ' + data.detected_arch + ')<br>' +
-						'<strong>Suggested URL:</strong> ' + data.default_url;
+				if (!x.status && data) {
+					if (data && data.default_url) {
+						document.getElementById('detected-arch-info').innerHTML = 
+							'<strong>CPU:</strong> ' + data.arch + ' (<strong>Detected:</strong> ' + data.detected_arch + ')<br>' +
+							'<strong>Suggested URL:</strong> ' + data.default_url;
+					}
+				} else {
+					document.getElementById('detected-arch-info').innerHTML = '<em>Error detecting architecture</em>';
 				}
 			}
-		);
+		).catch(function(e) {
+			document.getElementById('detected-arch-info').innerHTML = '<em>Error detecting architecture</em>';
+		});
 	}
 	
 	function downloadBinary() {
@@ -46,15 +56,23 @@
 					btn.disabled = false;
 					btn.innerHTML = '<%=translate("Download/Update Binary")%>';
 					
-					if (data && data.result) {
-						alert('<%=translate("TVGate binary downloaded successfully!")%>');
-						location.reload();
+					if (!x.status && data) {
+						if (data.result) {
+							alert('<%=translate("TVGate binary downloaded successfully!")%>');
+							location.reload();
+						} else {
+							var log = data.log || 'Unknown error';
+							alert('<%=translate("Failed to download TVGate binary:")%>\\n' + log);
+						}
 					} else {
-						var log = data ? data.log : 'Unknown error';
-						alert('<%=translate("Failed to download TVGate binary:")%>\\n' + log);
+						alert('<%=translate("Failed to download TVGate binary due to communication error.")%>');
 					}
 				}
-			);
+			).catch(function(e) {
+				btn.disabled = false;
+				btn.innerHTML = '<%=translate("Download/Update Binary")%>';
+				alert('<%=translate("Failed to download TVGate binary due to communication error.")%>');
+			});
 		}
 	}
 	

@@ -10,34 +10,34 @@ download_url=$(uci get tvgate.@tvgate[0].download_url 2>/dev/null)
 
 # Set defaults if not found
 if [ -z "$proxy" ] || [ "$proxy" = "none" ]; then
-	proxy="https://hk.gh-proxy.com/"
+	proxy="https://hk.gh-proxy.com"
 fi
 
 # Detect system architecture
 ARCH=$(uname -m)
 case $ARCH in
 	x86_64)
-		DEFAULT_URL='https://github.com/qist/tvgate/releases/download/latest/TVGate-linux-amd64.zip'
+		DEFAULT_URL='https://github.com/qist/tvgate/releases/latest/download/TVGate-linux-amd64.zip'
 		BIN_NAME='TVGate-linux-amd64'
 		;;
 	aarch64)
-		DEFAULT_URL='https://github.com/qist/tvgate/releases/download/latest/TVGate-linux-arm64.zip'
+		DEFAULT_URL='https://github.com/qist/tvgate/releases/latest/download/TVGate-linux-arm64.zip'
 		BIN_NAME='TVGate-linux-arm64'
 		;;
 	armv7l)
-		DEFAULT_URL='https://github.com/qist/tvgate/releases/download/latest/TVGate-linux-armv7.zip'
+		DEFAULT_URL='https://github.com/qist/tvgate/releases/latest/download/TVGate-linux-armv7.zip'
 		BIN_NAME='TVGate-linux-armv7'
 		;;
 	mips)
-		DEFAULT_URL='https://github.com/qist/tvgate/releases/download/latest/TVGate-linux-mips.zip'
+		DEFAULT_URL='https://github.com/qist/tvgate/releases/latest/download/TVGate-linux-mips.zip'
 		BIN_NAME='TVGate-linux-mips'
 		;;
 	mipsle)
-		DEFAULT_URL='https://github.com/qist/tvgate/releases/download/latest/TVGate-linux-mipsle.zip'
+		DEFAULT_URL='https://github.com/qist/tvgate/releases/latest/download/TVGate-linux-mipsle.zip'
 		BIN_NAME='TVGate-linux-mipsle'
 		;;
 	*)
-		DEFAULT_URL='https://github.com/qist/tvgate/releases/download/latest/TVGate-linux-amd64.zip'
+		DEFAULT_URL='https://github.com/qist/tvgate/releases/latest/download/TVGate-linux-amd64.zip'
 		BIN_NAME='TVGate-linux-amd64'
 		;;
 esac
@@ -61,12 +61,20 @@ echo "System architecture: $ARCH"
 echo "Binary name: $BIN_NAME"
 echo "Downloading TVGate from: $download_url"
 
+# Handle proxy correctly
 if [ -n "$proxy" ] && [ "$proxy" != "none" ]; then
-	full_url="${proxy}/${download_url}"
+	# Remove trailing slash from proxy
+	proxy=$(echo "$proxy" | sed 's:/*$::')
+	
+	# Construct full URL with proxy - correct format
+	full_url="$proxy/$download_url"
+	
 	echo "Using proxy: $proxy"
 else
 	full_url="$download_url"
 fi
+
+echo "Final download URL: $full_url"
 
 # Try to download
 wget -O /tmp/tvgate.zip "$full_url"

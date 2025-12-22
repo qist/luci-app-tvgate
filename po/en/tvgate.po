@@ -20,8 +20,8 @@ msgstr "Enable TVGate service"
 msgid "Download Proxy"
 msgstr "Download Proxy"
 
-msgid "Proxy for downloading TVGate binary (e.g., https://hk.gh-proxy.com/)"
-msgstr "Proxy for downloading TVGate binary (e.g., https://hk.gh-proxy.com/)"
+msgid "Proxy for downloading TVGate binary (e.g., https://hk.gh-proxy.com)"
+msgstr "Proxy for downloading TVGate binary (e.g., https://hk.gh-proxy.com)"
 
 msgid "Download URL"
 msgstr "Download URL"
@@ -80,8 +80,8 @@ msgstr "Built-in Web management interface for visual configuration"
 msgid "Support Docker deployment, systemd service management and OpenWrt system integration"
 msgstr "Support Docker deployment, systemd service management and OpenWrt system integration"
 
-msgid "Configure the download proxy (e.g., https://hk.gh-proxy.com/) to speed up downloads"
-msgstr "Configure the download proxy (e.g., https://hk.gh-proxy.com/) to speed up downloads"
+msgid "Configure the download proxy (e.g., https://hk.gh-proxy.com) to speed up downloads"
+msgstr "Configure the download proxy (e.g., https://hk.gh-proxy.com) to speed up downloads"
 
 msgid "Click \"Download/Update Binary\" to download the TVGate executable"
 msgstr "Click \"Download/Update Binary\" to download the TVGate executable"

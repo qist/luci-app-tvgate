@@ -14,13 +14,13 @@ s.anonymous = true
 enabled = s:option(Flag, "enabled", translate("Enable"), translate("Enable TVGate service"))
 
 proxy = s:option(Value, "proxy", translate("Download Proxy"),
-	translate("Proxy for downloading TVGate binary (e.g., https://hk.gh-proxy.com/)"))
-proxy.placeholder = "https://hk.gh-proxy.com/"
+	translate("Proxy for downloading TVGate binary (e.g., https://hk.gh-proxy.com)"))
+proxy.placeholder = "https://hk.gh-proxy.com"
 proxy.rmempty = true
 
 download_url = s:option(Value, "download_url", translate("Download URL"),
 	translate("URL for downloading TVGate binary (leave empty to auto-detect based on CPU architecture)"))
-download_url.placeholder = "https://github.com/qist/tvgate/releases (Auto-select by CPU architecture)"
+download_url.placeholder = "https://github.com/qist/tvgate/releases/latest/download (Auto-select by CPU architecture)"
 download_url.rmempty = true
 
 listen_port = s:option(Value, "listen_port", translate("Listen Port"), translate("Port for TV streaming service"))

@@ -20,8 +20,8 @@ msgstr "启用TVGate服务"
 msgid "Download Proxy"
 msgstr "下载代理"
 
-msgid "Proxy for downloading TVGate binary (e.g., https://hk.gh-proxy.com/)"
-msgstr "用于下载TVGate二进制文件的代理服务器 (例如：https://hk.gh-proxy.com/)"
+msgid "Proxy for downloading TVGate binary (e.g., https://hk.gh-proxy.com)"
+msgstr "用于下载TVGate二进制文件的代理服务器 (例如：https://hk.gh-proxy.com)"
 
 msgid "Download URL"
 msgstr "下载地址"
@@ -74,8 +74,8 @@ msgstr "内置Web管理界面，可视化配置"
 msgid "Support Docker deployment, systemd service management and OpenWrt system integration"
 msgstr "支持Docker部署、systemd服务管理和OpenWrt系统集成"
 
-msgid "Configure the download proxy (e.g., https://hk.gh-proxy.com/) to speed up downloads"
-msgstr "配置下载代理 (例如：https://hk.gh-proxy.com/) 以加快下载速度"
+msgid "Configure the download proxy (e.g., https://hk.gh-proxy.com) to speed up downloads"
+msgstr "配置下载代理 (例如：https://hk.gh-proxy.com) 以加快下载速度"
 
 msgid "Click \"Download/Update Binary\" to download the TVGate executable"
 msgstr "点击 \"下载/更新二进制文件\" 下载TVGate可执行文件"

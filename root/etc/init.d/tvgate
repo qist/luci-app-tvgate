@@ -14,7 +14,10 @@ start_service() {
 	local enabled proxy listen_port
 	
 	enabled=$(uci get tvgate.@tvgate[0].enabled 2>/dev/null)
-	[ "$enabled" != "1" ] && return 1
+	[ "$enabled" != "1" ] && {
+		echo "TVGate service is not enabled"
+		return 1
+	}
 	
 	proxy=$(uci get tvgate.@tvgate[0].proxy 2>/dev/null)
 	listen_port=$(uci get tvgate.@tvgate[0].listen_port 2>/dev/null)
@@ -28,12 +31,14 @@ start_service() {
 	
 	# Start service only if binary exists
 	if [ -f "$BIN_PATH" ]; then
+		echo "Starting TVGate service..."
 		procd_open_instance
 		procd_set_param command "$BIN_PATH" "-config=$CONFIG_PATH"
 		procd_set_param respawn
 		procd_close_instance
+		echo "TVGate service started"
 	else
-		echo "TVGate binary not found, please download it via WebUI first"
+		echo "TVGate binary not found at $BIN_PATH, please download it via WebUI first"
 		return 1
 	fi
 }
