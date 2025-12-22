@@ -180,6 +180,8 @@ function parse_tvgate_config(content)
 			config.monitor_path = sec_path:gsub("\"", ""):gsub("'", ""):gsub("#.+$", ""):gsub("%s+$", "")
 		end
 	end
+	::continue::
+	end
 	
 	return config
 end
