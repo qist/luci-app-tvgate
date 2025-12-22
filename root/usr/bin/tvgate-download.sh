@@ -1,19 +1,17 @@
 #!/bin/sh
 
-# Source OpenWrt functions library
-. /lib/functions.sh
-
-# Initialize config loading
-include /lib/network
-
 # Create directories
 mkdir -p /usr/bin/tvgate
 mkdir -p /etc/tvgate
 
-# Load configuration
-config_load tvgate
-proxy=$(uci_get_by_type tvgate proxy 'https://hk.gh-proxy.com/')
-download_url=$(uci_get_by_type tvgate download_url '')
+# Load configuration using UCI directly
+proxy=$(uci get tvgate.@tvgate[0].proxy 2>/dev/null)
+download_url=$(uci get tvgate.@tvgate[0].download_url 2>/dev/null)
+
+# Set defaults if not found
+if [ -z "$proxy" ] || [ "$proxy" = "none" ]; then
+	proxy="https://hk.gh-proxy.com/"
+fi
 
 # Detect system architecture
 ARCH=$(uname -m)

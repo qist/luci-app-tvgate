@@ -10,15 +10,18 @@ BIN_PATH=/usr/bin/tvgate/TVGate
 CONFIG_PATH=/etc/tvgate/config.yaml
 
 start_service() {
-	# Load configuration
-	config_load tvgate
+	# Load configuration using UCI directly
 	local enabled proxy listen_port
 	
-	config_get_bool enabled enabled 0
-	[ "$enabled" -eq 0 ] && return 1
+	enabled=$(uci get tvgate.@tvgate[0].enabled 2>/dev/null)
+	[ "$enabled" != "1" ] && return 1
 	
-	config_get proxy proxy 'https://hk.gh-proxy.com/'
-	config_get listen_port listen_port '8888'
+	proxy=$(uci get tvgate.@tvgate[0].proxy 2>/dev/null)
+	listen_port=$(uci get tvgate.@tvgate[0].listen_port 2>/dev/null)
+	
+	# Set defaults
+	[ -z "$proxy" ] && proxy="https://hk.gh-proxy.com/"
+	[ -z "$listen_port" ] && listen_port="8888"
 	
 	# Create config directory
 	mkdir -p /etc/tvgate
