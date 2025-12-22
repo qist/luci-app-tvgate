@@ -1,0 +1,25 @@
+<%+cbi/valueheader%>
+
+<script type="text/javascript">//<![CDATA[
+XHR.poll(5, '<%=url('admin/services/tvgate/status')%>', null,
+	function(x, info) {
+		var tb = document.getElementById('<%=self.option%>-status');
+		if (tb) {
+			if (info.running) {
+				tb.innerHTML = '<em style=\"color:green\"><b><%:Running%></b></em>';
+			} else {
+				tb.innerHTML = '<em style=\"color:red\"><b><%:Stopped%></b></em>';
+			}
+			
+			if (info.port) {
+				document.getElementById('tvgate-port-info').innerHTML = '<%:Streaming Port%>: ' + info.port;
+			}
+		}
+	}
+);
+//]]></script>
+
+<span id="<%=self.option%>-status"><em style=\"color:red\"><b><%:Stopped%></b></em></span>
+<div id="tvgate-port-info"></div>
+
+<%+cbi/valuefooter%>

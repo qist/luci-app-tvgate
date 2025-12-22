@@ -1,0 +1,93 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "TVGate"
+msgstr ""
+
+msgid "TVGate is a high-performance local network resource forwarding and proxy tool."
+msgstr ""
+
+msgid "Settings"
+msgstr ""
+
+msgid "Enable"
+msgstr ""
+
+msgid "Enable TVGate service"
+msgstr ""
+
+msgid "Download Proxy"
+msgstr ""
+
+msgid "Proxy for downloading TVGate binary (e.g., https://hk.gh-proxy.com/)"
+msgstr ""
+
+msgid "Download URL"
+msgstr ""
+
+msgid "URL for downloading TVGate binary (leave empty to auto-detect based on CPU architecture)"
+msgstr ""
+
+msgid "Listen Port"
+msgstr ""
+
+msgid "Port for TV streaming service"
+msgstr ""
+
+msgid "Config Port"
+msgstr ""
+
+msgid "Port for web configuration interface"
+msgstr ""
+
+msgid "Status"
+msgstr ""
+
+msgid "Download/Update Binary"
+msgstr ""
+
+msgid "Download or update the TVGate binary file"
+msgstr ""
+
+msgid "Service Status"
+msgstr ""
+
+msgid "Running"
+msgstr ""
+
+msgid "Stopped"
+msgstr ""
+
+msgid "Streaming Port"
+msgstr ""
+
+msgid "Overview"
+msgstr ""
+
+msgid "How to use"
+msgstr ""
+
+msgid "Forward internal network resources (such as http, https, rtsp, rtp) to the external network through HTTP"
+msgstr ""
+
+msgid "Support multicast, unicast audio and video streams converted to HTTP accessible links"
+msgstr ""
+
+msgid "Built-in Web management interface for visual configuration"
+msgstr ""
+
+msgid "Support Docker deployment, systemd service management and OpenWrt system integration"
+msgstr ""
+
+msgid "Configure the download proxy (e.g., https://hk.gh-proxy.com/) to speed up downloads"
+msgstr ""
+
+msgid "Click \"Download/Update Binary\" to download the TVGate executable"
+msgstr ""
+
+msgid "Access the web interface at http://[router-ip]:[config-port] to manage settings"
+msgstr ""
+
+msgid "Access IPTV streams at http://[router-ip]:[streaming-port]/channel-url"
+msgstr ""

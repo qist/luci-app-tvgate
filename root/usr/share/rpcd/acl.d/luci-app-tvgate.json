@@ -1,0 +1,11 @@
+{
+"luci-app-tvgate": {
+"description": "Grant UCI access for luci-app-tvgate",
+"read": {
+"uci": [ "tvgate" ]
+},
+"write": {
+"uci": [ "tvgate" ]
+}
+}
+}
