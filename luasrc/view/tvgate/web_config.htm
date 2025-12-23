@@ -1,0 +1,130 @@
+<%+header%>
+
+<h2><%:Web 管理配置%></h2>
+
+<form id="web-config-form" class="cbi-section">
+  <div class="cbi-value">
+    <label class="cbi-value-title"><%:Web 启用%></label>
+    <div class="cbi-value-field">
+      <input type="checkbox" id="web-enabled" value="1" />
+    </div>
+  </div>
+  <div class="cbi-value">
+    <label class="cbi-value-title"><%:Web 用户名%></label>
+    <div class="cbi-value-field">
+      <input type="text" id="web-username" />
+    </div>
+  </div>
+  <div class="cbi-value">
+    <label class="cbi-value-title"><%:Web 密码%></label>
+    <div class="cbi-value-field">
+      <input type="password" id="web-password" />
+    </div>
+  </div>
+  <div class="cbi-value">
+    <label class="cbi-value-title"><%:Web 路径%></label>
+    <div class="cbi-value-field">
+      <input type="text" id="web-path" />
+    </div>
+  </div>
+  <div class="cbi-value">
+    <label class="cbi-value-title"><%:Streaming Port%></label>
+    <div class="cbi-value-field">
+      <input type="text" id="web-port" />
+    </div>
+  </div>
+  <div class="cbi-value">
+    <label class="cbi-value-title"><%:监控路径%></label>
+    <div class="cbi-value-field">
+      <input type="text" id="monitor-path" />
+    </div>
+  </div>
+  <div class="cbi-value">
+    <label class="cbi-value-title"><%:日志启用%></label>
+    <div class="cbi-value-field">
+      <input type="checkbox" id="log-enabled" value="1" />
+    </div>
+  </div>
+  <div class="cbi-value">
+    <label class="cbi-value-title"><%:日志文件%></label>
+    <div class="cbi-value-field">
+      <input type="text" id="log-file" />
+    </div>
+  </div>
+  <div class="cbi-value">
+    <label class="cbi-value-title"><%:日志最大大小(MB)%></label>
+    <div class="cbi-value-field">
+      <input type="text" id="log-maxsize" />
+    </div>
+  </div>
+  <div class="cbi-value">
+    <label class="cbi-value-title"><%:日志备份个数%></label>
+    <div class="cbi-value-field">
+      <input type="text" id="log-maxbackups" />
+    </div>
+  </div>
+  <div class="cbi-value">
+    <label class="cbi-value-title"><%:日志保留天数%></label>
+    <div class="cbi-value-field">
+      <input type="text" id="log-maxage" />
+    </div>
+  </div>
+  <div class="cbi-value">
+    <label class="cbi-value-title"><%:日志压缩%></label>
+    <div class="cbi-value-field">
+      <input type="checkbox" id="log-compress" value="1" />
+    </div>
+  </div>
+  <div class="cbi-value">
+    <label class="cbi-value-title"></label>
+    <div class="cbi-value-field">
+      <input type="button" class="btn cbi-button cbi-button-apply" value="<%:保存%>" onclick="saveWebConfig()" />
+    </div>
+  </div>
+</form>
+
+<script type="text/javascript">
+//<![CDATA[
+function loadWebConfig() {
+  XHR.get('<%=url("admin/services/tvgate/web")%>', null, function(x, data) {
+    if (data) {
+      document.getElementById('web-enabled').checked = data.enabled === true;
+      document.getElementById('web-username').value = data.username || 'admin';
+      document.getElementById('web-password').value = data.password || 'admin';
+      document.getElementById('web-path').value = data.path || '/web/';
+      document.getElementById('monitor-path').value = data.monitor_path || '/status';
+      document.getElementById('web-port').value = data.port || '8888';
+      document.getElementById('log-enabled').checked = data.log_enabled === true;
+      document.getElementById('log-file').value = data.log_file || '';
+      document.getElementById('log-maxsize').value = data.log_maxsize || '10';
+      document.getElementById('log-maxbackups').value = data.log_maxbackups || '10';
+      document.getElementById('log-maxage').value = data.log_maxage || '28';
+      document.getElementById('log-compress').checked = data.log_compress === true;
+    }
+  });
+}
+
+function saveWebConfig() {
+  XHR.post('<%=url("admin/services/tvgate/web")%>', {
+    enabled: document.getElementById('web-enabled').checked ? 'true' : 'false',
+    username: document.getElementById('web-username').value,
+    password: document.getElementById('web-password').value,
+    path: document.getElementById('web-path').value,
+    monitor_path: document.getElementById('monitor-path').value,
+    port: document.getElementById('web-port').value,
+    log_enabled: document.getElementById('log-enabled').checked ? 'true' : 'false',
+    log_file: document.getElementById('log-file').value,
+    log_maxsize: document.getElementById('log-maxsize').value,
+    log_maxbackups: document.getElementById('log-maxbackups').value,
+    log_maxage: document.getElementById('log-maxage').value,
+    log_compress: document.getElementById('log-compress').checked ? 'true' : 'false'
+  }, function(x, data) {
+    alert(data && data.result ? '<%:保存成功！%>' : '<%:保存失败！%>');
+  });
+}
+
+window.onload = loadWebConfig;
+//]]>
+</script>
+
+<%+footer%>

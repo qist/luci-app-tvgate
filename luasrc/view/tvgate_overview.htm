@@ -15,10 +15,31 @@ local disp = require "luci.dispatcher"
 local uci = require "luci.model.uci".cursor()
 
 local tvgate_enabled = uci:get("tvgate", "tvgate", "enabled") or "0"
-local listen_port = uci:get("tvgate", "tvgate", "listen_port") or "8888"
 local binary_installed = fs.access("/usr/bin/tvgate/TVGate")
-
 local running = (sys.call("pidof /usr/bin/tvgate/TVGate >/dev/null") == 0)
+
+-- 从 YAML 配置文件中读取端口信息
+local port = "8888" -- 默认端口
+local yaml_config_path = "/etc/tvgate/config.yaml"
+
+if fs.access(yaml_config_path) then
+    local f = io.open(yaml_config_path, "r")
+    if f then
+        local content = f:read("*all")
+        f:close()
+        
+        -- 查找端口配置
+        for line in content:gmatch("[^\r\n]+") do
+            local p = line:match("^%s*port:%s*(%d+)")
+            if p then
+                port = p
+                break
+            end
+        end
+    end
+end
+
+local listen_port = port
 %>
 
 <fieldset class="cbi-section">
