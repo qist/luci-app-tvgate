@@ -78,10 +78,16 @@ local running = (sys.call("pidof /usr/bin/tvgate/TVGate >/dev/null") == 0)
 		</div>
 	</div>
 	
-	<div class="cbi-value" id="tvgate-addresses" style="display:none;">
-		<label class="cbi-value-title"><%=translate("TVGate Addresses")%></label>
+	<div class="cbi-value">
+		<label class="cbi-value-title"><%=translate("Web Management")%></label>
 		<div class="cbi-value-field">
-			<div id="addresses-content"></div>
+			<span id="web-url"></span>
+		</div>
+	</div>
+	<div class="cbi-value">
+		<label class="cbi-value-title"><%=translate("Monitoring")%></label>
+		<div class="cbi-value-field">
+			<span id="monitor-url"></span>
 		</div>
 	</div>
 	
@@ -95,10 +101,7 @@ local running = (sys.call("pidof /usr/bin/tvgate/TVGate >/dev/null") == 0)
 	<div class="cbi-value">
 		<label class="cbi-value-title"></label>
 		<div class="cbi-value-field">
-			<% if binary_installed then %>
-				<input type="button" class="btn cbi-button cbi-button-apply" value="<%=translate("Open TVGate Web Interface")%>" onclick="openTvgateInterface()" id="open-webui-btn" disabled />
-			<% else %>
-				   <input type="button" class="btn cbi-button cbi-button-apply" value="<%=translate("Download Binary First")%>" onclick="downloadBinary()" id="download-btn" />
+			<input type="button" class="btn cbi-button cbi-button-apply" value="<%=translate("Download/Update Binary")%>" onclick="downloadBinary()" id="download-btn" />
 			</fieldset>
 
 			<script type="text/javascript">
@@ -111,7 +114,7 @@ local running = (sys.call("pidof /usr/bin/tvgate/TVGate >/dev/null") == 0)
 					XHR.get('<%=disp.build_url("admin", "services", "tvgate", "download")%>', null,
 						function(x, data) {
 							btn.disabled = false;
-							btn.value = '<%=translate("Download Binary First")%>';
+							btn.value = '<%=translate("Download/Update Binary")%>';
 							if (!x.status && data) {
 								if (data.result) {
 									alert('<%=translate("TVGate binary downloaded successfully!")%>');
@@ -126,14 +129,13 @@ local running = (sys.call("pidof /usr/bin/tvgate/TVGate >/dev/null") == 0)
 						}
 					).catch(function(e) {
 						btn.disabled = false;
-						btn.value = '<%=translate("Download Binary First")%>';
+						btn.value = '<%=translate("Download/Update Binary")%>';
 						alert('<%=translate("Failed to download TVGate binary due to communication error.")%>');
 					});
 				}
 			}
 			//]]>
 			</script>
-			<% end %>
 		</div>
 	</div>
 </fieldset>
@@ -159,26 +161,21 @@ local running = (sys.call("pidof /usr/bin/tvgate/TVGate >/dev/null") == 0)
 		});
 	}
 	
-	// Load TVGate configuration when page loads
+	// 直接显示管理和监控地址
 	window.addEventListener('load', function() {
 		XHR.get('<%=disp.build_url("admin", "services", "tvgate", "tvgate_config")%>', null, function(x, config) {
 			if (config && !x.status) {
 				var port = '<%=listen_port%>';
 				var webPath = config.web_path || '/web/';
 				var monitorPath = config.monitor_path || '/status';
-				
 				var webUrl = 'http://' + window.location.hostname + ':' + port + webPath;
 				var monitorUrl = 'http://' + window.location.hostname + ':' + port + monitorPath;
-				
-				var content = '<div><strong><%=translate("Web Management")%>:</strong> <a href="' + webUrl + '" target="_blank">' + webUrl + '</a></div>' +
-					'<div><strong><%=translate("Monitoring")%>:</strong> <a href="' + monitorUrl + '" target="_blank">' + monitorUrl + '</a></div>';
-				
-				document.getElementById('addresses-content').innerHTML = content;
-				document.getElementById('tvgate-addresses').style.display = 'block';
-				document.getElementById('open-webui-btn').disabled = false;
+				document.getElementById('web-url').innerHTML = '<a href="' + webUrl + '" target="_blank">' + webUrl + '</a>';
+				document.getElementById('monitor-url').innerHTML = '<a href="' + monitorUrl + '" target="_blank">' + monitorUrl + '</a>';
 			}
 		}).catch(function(e) {
-			console.log('Error loading TVGate config:', e);
+			document.getElementById('web-url').innerHTML = '-';
+			document.getElementById('monitor-url').innerHTML = '-';
 		});
 	});
 //]]>

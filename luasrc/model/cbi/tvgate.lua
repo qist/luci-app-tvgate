@@ -32,15 +32,8 @@ listen_port.default = 8888
 s = m:section(TypedSection, "tvgate", translate("Status"))
 s.anonymous = true
 
-local btn = s:option(Button, "_download", translate("Download/Update Binary"))
-btn.inputstyle = "apply"
-btn.description = translate("Download or update the TVGate binary file")
-btn.write = function()
-	luci.http.redirect(luci.dispatcher.build_url("admin/services/tvgate/download"))
-end
 
-local status = s:option(DummyValue, "_status", translate("Service Status"))
-status.template = "tvgate/status"
-status.value = translate("Collecting data...")
+local btn = s:option(DummyValue, "_download", translate("Download/Update Binary"))
+btn.template = "tvgate/status"
 
 return m

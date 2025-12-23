@@ -48,7 +48,9 @@ function act_status()
 	local uci  = require "luci.model.uci".cursor()
 
 	local status = {
-		running = sys.call("pidof TVGate >/dev/null") == 0,
+		-- 优先用 procd pid 文件检测，再用 pidof 兜底
+		running = (nixio.fs.access("/var/run/tvgate.pid") and sys.call("kill -0 $(cat /var/run/tvgate.pid) 2>/dev/null") == 0)
+			   or sys.call("pidof /usr/bin/tvgate/TVGate >/dev/null") == 0,
 		enabled = (
 			sys.call("iptables -L | grep -q tvgate") == 0 or
 			uci:get("tvgate", "tvgate", "enabled") == "1"
