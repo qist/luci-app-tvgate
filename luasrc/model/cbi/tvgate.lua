@@ -5,9 +5,18 @@ local i18n = require "luci.i18n"
 
 m = Map("tvgate",
     i18n.translate("TVGate"),
-    i18n.translate("TVGate is a high-performance local network resource forwarding and proxy tool."),
-    i18n.translate("首次安装请点击<Download / Update Binary> 按钮下载并启动 TVGate 二进制."),
-    i18n.translate("然后可以修改配置. 保存配置后请手动刷新页面，确认修改已生效.")
+    i18n.translate([[TVGate is a high-performance local network resource forwarding and proxy tool.
+
+<div class="cbi-section" style="margin-bottom: 10px;">
+  <div style="padding:12px;border:1px solid #cce5ff;background:#e9f7ff;color:#084b8a;border-radius:6px;">
+    <div style="font-weight:600;margin-bottom:6px;">使用提示</div>
+    <ul style="margin:0;padding-left:18px;line-height:1.6;">
+      <li>首次安装请点击"Download / Update Binary" 按钮下载并启动 TVGate 二进制。</li>
+      <li>然后可以修改配置。</li>
+      <li>保存配置后请手动刷新页面，确认web显示正常。</li>
+    </ul>
+  </div>
+</div>]])
 )
 
 -- =========================
