@@ -1,8 +1,8 @@
 #!/bin/sh
 
 # Load configuration using UCI directly
-listen_port=$(uci get tvgate.@tvgate[0].listen_port 2>/dev/null)
-
+# listen_port=$(uci get tvgate.@tvgate[0].listen_port 2>/dev/null)
+listen_port="$1"
 # Set default if not found
 [ -z "$listen_port" ] && listen_port="8888"
 
