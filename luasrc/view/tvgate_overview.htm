@@ -98,7 +98,41 @@ local running = (sys.call("pidof /usr/bin/tvgate/TVGate >/dev/null") == 0)
 			<% if binary_installed then %>
 				<input type="button" class="btn cbi-button cbi-button-apply" value="<%=translate("Open TVGate Web Interface")%>" onclick="openTvgateInterface()" id="open-webui-btn" disabled />
 			<% else %>
-				<input type="button" class="btn cbi-button cbi-button-apply" value="<%=translate("Download Binary First")%>" onclick="location.href='<%=disp.build_url("admin", "services", "tvgate", "config")%>'" />
+				   <input type="button" class="btn cbi-button cbi-button-apply" value="<%=translate("Download Binary First")%>" onclick="downloadBinary()" id="download-btn" />
+			</fieldset>
+
+			<script type="text/javascript">
+			//<![CDATA[
+			function downloadBinary() {
+				if (confirm('<%=translate("Are you sure you want to download/update the TVGate binary?")%>')) {
+					var btn = document.getElementById('download-btn');
+					btn.disabled = true;
+					btn.value = '<%=translate("Downloading...")%>';
+					XHR.get('<%=disp.build_url("admin", "services", "tvgate", "download")%>', null,
+						function(x, data) {
+							btn.disabled = false;
+							btn.value = '<%=translate("Download Binary First")%>';
+							if (!x.status && data) {
+								if (data.result) {
+									alert('<%=translate("TVGate binary downloaded successfully!")%>');
+									location.reload();
+								} else {
+									var log = data.log || 'Unknown error';
+									alert('<%=translate("Failed to download TVGate binary:")%>\n' + log);
+								}
+							} else {
+								alert('<%=translate("Failed to download TVGate binary due to communication error.")%>');
+							}
+						}
+					).catch(function(e) {
+						btn.disabled = false;
+						btn.value = '<%=translate("Download Binary First")%>';
+						alert('<%=translate("Failed to download TVGate binary due to communication error.")%>');
+					});
+				}
+			}
+			//]]>
+			</script>
 			<% end %>
 		</div>
 	</div>

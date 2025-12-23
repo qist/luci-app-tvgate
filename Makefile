@@ -8,7 +8,7 @@ PKG_MAINTAINER:=<yourname> <your@email.com>
 
 LUCI_TITLE:=LuCI Support for TVGate
 LUCI_PKGARCH:=all
-LUCI_DEPENDS:=+wget +ca-certificates +unzip
+LUCI_DEPENDS:=+curl +ca-certificates +unzip
 
 define Package/$(PKG_NAME)/conffiles
 /etc/config/tvgate

@@ -76,23 +76,29 @@ fi
 
 echo "Final download URL: $full_url"
 
-# Try to download
-wget -O /tmp/tvgate.zip "$full_url"
+# Try to download with curl
+if command -v curl >/dev/null 2>&1; then
+	curl -L --fail -o /tmp/tvgate.zip "$full_url"
+	CURL_STATUS=$?
+else
+	echo "curl not found, cannot download."
+	exit 1
+fi
 
-if [ $? -eq 0 ]; then
+if [ $CURL_STATUS -eq 0 ]; then
 	# Extract
 	unzip -o /tmp/tvgate.zip -d /tmp
-	
+
 	# Move binary to final location
 	mv "/tmp/$BIN_NAME" /usr/bin/tvgate/TVGate
-	
+
 	# Make executable
 	chmod +x /usr/bin/tvgate/TVGate
-	
+
 	# Cleanup
 	rm -f /tmp/tvgate.zip
 	rm -rf /tmp/tvgate*
-	
+
 	echo "TVGate downloaded and installed successfully"
 	exit 0
 else
