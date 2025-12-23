@@ -183,43 +183,28 @@ function parse_tvgate_config(content)
 		return cfg
 	end
 
-	-- 使用更精确的正则表达式匹配
-	local server_section = false
-	local web_section = false
-	local monitor_section = false
+	local current_section = nil
 
 	for line in content:gmatch("[^\r\n]+") do
-		-- 去除注释和空白
-		local clean_line = line:gsub("#.*$", "")
-		clean_line = clean_line:gsub("^%s+", ""):gsub("%s+$", "")
+		local clean_line = line:gsub("#.*$", ""):gsub("^%s+", ""):gsub("%s+$", "")
 		
-		if clean_line == "server:" then
-			server_section = true
-		elseif clean_line == "monitor:" then
-			monitor_section = true
-			web_section = false
-			server_section = false
-		elseif clean_line == "web:" then
-			web_section = true
-			monitor_section = false
-			server_section = false
-		elseif clean_line:match("^%w") and not clean_line:match(":.*%d") then
-			-- 如果遇到新的顶级配置项，重置子节标志
-			web_section = false
-			monitor_section = false
-			server_section = false
-		elseif clean_line ~= "" then
-			-- 在web节中查找path
-			if web_section then
-				local web_path = clean_line:match("^%s*path:%s*[\"']?([^\"'^%s]+)[\"']?")
-				if web_path then
-					cfg.web_path = web_path
-				end
-			-- 在monitor节中查找path
-			elseif monitor_section then
-				local monitor_path = clean_line:match("^%s*path:%s*[\"']?([^\"'^%s]+)[\"']?")
-				if monitor_path then
-					cfg.monitor_path = monitor_path
+		if clean_line ~= "" then
+			-- 判断 section
+			if clean_line == "server:" then
+				current_section = "server"
+			elseif clean_line == "monitor:" then
+				current_section = "monitor"
+			elseif clean_line == "web:" then
+				current_section = "web"
+			else
+				-- 只处理 path 字段
+				local path_val = clean_line:match("^path:%s*[\"']?(.-)[\"']?$")
+				if path_val then
+					if current_section == "web" then
+						cfg.web_path = path_val
+					elseif current_section == "monitor" then
+						cfg.monitor_path = path_val
+					end
 				end
 			end
 		end
@@ -227,3 +212,4 @@ function parse_tvgate_config(content)
 
 	return cfg
 end
+

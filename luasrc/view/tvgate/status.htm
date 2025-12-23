@@ -93,7 +93,6 @@
 					if (!x.status && data) {
 						if (data.result) {
 							alert('<%=translate("TVGate binary downloaded successfully!")%>');
-							// Refresh the page to update all status
 							location.reload();
 						} else {
 							var log = data.log || 'Unknown error';
@@ -113,7 +112,6 @@
 		}
 	}
 	
-	// Auto-detect architecture on page load
 	window.addEventListener('load', function() {
 		detectArch();
 	});
@@ -121,7 +119,7 @@
 
 <div class="cbi-section-node">
 	<div class="table">
-		<!-- Binary Download button moved to top left -->
+		<!-- Download button only, no label -->
 		<div class="tr">
 			<div class="td left" style="width:30%">
 				<input type="button" class="btn cbi-button cbi-button-apply" value="<%=translate("Download/Update Binary")%>" onclick="downloadBinary()" id="download-btn" />
@@ -141,14 +139,16 @@
 			<div class="td left"><span id="binary-status"><em><%=translate("Collecting data...")%></em></span></div>
 		</div>
 		
+		<!-- Monitor Interface on its own line -->
 		<div class="tr">
 			<div class="td left"><%=translate("Monitor Interface")%>:</div>
-			<div class="td left"><span id="monitor-link"><em><%=translate("Collecting data...")%></em></span>
+			<div class="td left"><span id="monitor-link"><em><%=translate("Collecting data...")%></em></span></div>
 		</div>
 		
+		<!-- Management Interface on its own line -->
 		<div class="tr">
 			<div class="td left"><%=translate("Management Interface")%>:</div>
-			<div class="td left"><span id="config-link"><em><%=translate("Collecting data...")%></em></span>
+			<div class="td left"><span id="config-link"><em><%=translate("Collecting data...")%></em></span></div>
 		</div>
 	</div>
 </div>

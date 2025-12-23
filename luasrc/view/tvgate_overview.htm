@@ -42,7 +42,6 @@ local running = (sys.call("pidof /usr/bin/tvgate/TVGate >/dev/null") == 0)
 			<span>
 				<ol>
 					<li><%=translate("Configure the download proxy (e.g., https://hk.gh-proxy.com/) to speed up downloads")%></li>
-					<li><%=translate("Click \"Download/Update Binary\" to download the TVGate executable")%></li>
 					<li><%=translate("Enable the service and apply the settings")%></li>
 					<li><%=translate("Access the web interface at http://[router-ip]:[streaming-port]/web/ to manage settings")%></li>
 					<li><%=translate("Access IPTV streams at http://[router-ip]:[streaming-port]/channel-url")%></li>
@@ -101,7 +100,7 @@ local running = (sys.call("pidof /usr/bin/tvgate/TVGate >/dev/null") == 0)
 	<div class="cbi-value">
 		<label class="cbi-value-title"></label>
 		<div class="cbi-value-field">
-			<input type="button" class="btn cbi-button cbi-button-apply" value="<%=translate("Download/Update Binary")%>" onclick="downloadBinary()" id="download-btn" />
+			<!-- <input type="button" class="btn cbi-button cbi-button-apply" value="<%=translate("Download/Update Binary")%>" onclick="downloadBinary()" id="download-btn" /> -->
 			</fieldset>
 
 			<script type="text/javascript">
