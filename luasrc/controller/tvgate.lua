@@ -47,6 +47,27 @@ function act_status()
 	local sys  = require "luci.sys"
 	local uci  = require "luci.model.uci".cursor()
 
+	-- 从 YAML 配置文件中读取端口信息
+	local port = "8888" -- 默认端口
+	local yaml_config_path = "/etc/tvgate/config.yaml"
+	
+	if nixio.fs.access(yaml_config_path) then
+		local f = io.open(yaml_config_path, "r")
+		if f then
+			local content = f:read("*all")
+			f:close()
+			
+			-- 查找端口配置
+			for line in content:gmatch("[^\r\n]+") do
+				local p = line:match("^%s*port:%s*(%d+)")
+				if p then
+					port = p
+					break
+				end
+			end
+		end
+	end
+
 	local status = {
 		-- 优先用 procd pid 文件检测，再用 pidof 兜底
 		running = (nixio.fs.access("/var/run/tvgate.pid") and sys.call("kill -0 $(cat /var/run/tvgate.pid) 2>/dev/null") == 0)
@@ -56,7 +77,7 @@ function act_status()
 			uci:get("tvgate", "tvgate", "enabled") == "1"
 		),
 		binary_exists = nixio.fs.access("/usr/bin/tvgate/TVGate"),
-		port = uci:get("tvgate", "tvgate", "listen_port") or "8888"
+		port = port
 	}
 
 	luci.http.prepare_content("application/json")

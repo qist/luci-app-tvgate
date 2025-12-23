@@ -4,7 +4,7 @@
 		function(x, info) {
 			var tb = document.getElementById('<%=self.option%>-status');
 			if (tb) {
-				if (!x.status && info) {
+				if (info && info.running !== undefined) {
 					if (info.running) {
 						tb.innerHTML = '<em><b style=color:green>' + _('Running') + '</b></em>';
 					} else {
@@ -20,8 +20,37 @@
 							bs.innerHTML = '<em><b style=color:red>' + _('Not installed') + '</b></em>';
 						}
 					}
+					
+					// Update monitor link
+					var ml = document.getElementById('monitor-link');
+					if (ml && info.port) {
+						ml.innerHTML = '<a href="http://' + window.location.hostname + ':' + info.port + '" target="_blank">http://' + window.location.hostname + ':' + info.port + '</a>';
+					}
+					
+					// Update config link
+					var cl = document.getElementById('config-link');
+					if (cl && info.port) {
+						// Try to get web path from config if available, otherwise default to /web/
+						XHR.get('<%=url('admin/services/tvgate/tvgate_config')%>', null,
+							function(x, cfg) {
+								if (cfg && cfg.web_path) {
+									var webPath = cfg.web_path;
+									if (webPath.charAt(0) != '/') webPath = '/' + webPath;
+									if (webPath.charAt(webPath.length-1) != '/') webPath += '/';
+								} else {
+									var webPath = '/web/';
+								}
+								var configUrl = 'http://' + window.location.hostname + ':' + info.port + webPath;
+								if (cl) {
+									cl.innerHTML = '<a href="' + configUrl + '" target="_blank">' + configUrl + '</a>';
+								}
+							}
+						);
+					}
 				} else {
 					tb.innerHTML = '<em><b style=color:red>' + _('Unknown') + '</b></em>';
+					var bs = document.getElementById('binary-status');
+					if (bs) bs.innerHTML = '<em><b style=color:red>' + _('Unknown') + '</b></em>';
 				}
 			}
 		}
@@ -30,12 +59,10 @@
 	function detectArch() {
 		XHR.get('<%=url('admin/services/tvgate/detect_arch')%>', null, 
 			function(x, data) {
-				if (!x.status && data) {
-					if (data && data.default_url) {
-						document.getElementById('detected-arch-info').innerHTML = 
-							'<strong>CPU:</strong> ' + data.arch + ' (<strong>Detected:</strong> ' + data.detected_arch + ')<br>' +
-							'<strong>Suggested URL:</strong> ' + data.default_url;
-					}
+				if (data && data.default_url) {
+					document.getElementById('detected-arch-info').innerHTML = 
+						'<strong>CPU:</strong> ' + data.arch + ' (<strong>Detected:</strong> ' + data.detected_arch + ')<br>' +
+						'<strong>Suggested URL:</strong> ' + data.default_url;
 				} else {
 					document.getElementById('detected-arch-info').innerHTML = '<em>Error detecting architecture</em>';
 				}
@@ -48,17 +75,22 @@
 	function downloadBinary() {
 		if (confirm('<%=translate("Are you sure you want to download/update the TVGate binary?")%>')) {
 			var btn = document.getElementById('download-btn');
-			btn.disabled = true;
-			btn.innerHTML = '<%=translate("Downloading...")%>';
+			if (btn) {
+				btn.disabled = true;
+				btn.innerHTML = '<%=translate("Downloading...")%>';
+			}
 			
 			XHR.get('<%=url('admin/services/tvgate/download')%>', null,
 				function(x, data) {
-					btn.disabled = false;
-					btn.innerHTML = '<%=translate("Download/Update Binary")%>';
+					if (btn) {
+						btn.disabled = false;
+						btn.innerHTML = '<%=translate("Download/Update Binary")%>';
+					}
 					
 					if (!x.status && data) {
 						if (data.result) {
 							alert('<%=translate("TVGate binary downloaded successfully!")%>');
+							// Refresh the page to update all status
 							location.reload();
 						} else {
 							var log = data.log || 'Unknown error';
@@ -69,8 +101,10 @@
 					}
 				}
 			).catch(function(e) {
-				btn.disabled = false;
-				btn.innerHTML = '<%=translate("Download/Update Binary")%>';
+				if (btn) {
+					btn.disabled = false;
+					btn.innerHTML = '<%=translate("Download/Update Binary")%>';
+				}
 				alert('<%=translate("Failed to download TVGate binary due to communication error.")%>');
 			});
 		}
@@ -82,22 +116,37 @@
 	});
 //]]></script>
 
-<label class="cbi-value-title"><%=translate("Service Status")%></label>
-<div class="cbi-value-field">
-	<span id="<%=self.option%>-status"><em><%=translate("Collecting data...")%></em></span>
-</div>
-
-<label class="cbi-value-title"><%=translate("Binary Status")%></label>
-<div class="cbi-value-field">
-	<span id="binary-status"><em><%=translate("Collecting data...")%></em></span>
-</div>
-
-<label class="cbi-value-title"><%=translate("Architecture Info")%></label>
-<div class="cbi-value-field">
-	<span id="detected-arch-info"><em><%=translate("Detecting...")%></em></span>
-</div>
-
-<div class="cbi-value-field">
-	<input type="button" class="btn cbi-button cbi-button-apply" value="<%=translate("Download/Update Binary")%>" onclick="downloadBinary()" id="download-btn" />
+<div class="cbi-section-node">
+	<div class="table">
+		<!-- Binary Download button moved to top left -->
+		<div class="tr">
+			<div class="td left" style="width:30%">
+				<input type="button" class="btn cbi-button cbi-button-apply" value="<%=translate("Download/Update Binary")%>" onclick="downloadBinary()" id="download-btn" />
+			</div>
+			<div class="td left" style="width:70%">
+				<span id="detected-arch-info"><em><%=translate("Detecting...")%></em></span>
+			</div>
+		</div>
+		
+		<div class="tr">
+			<div class="td left"><%=translate("Service Status")%>:</div>
+			<div class="td left"><span id="<%=self.option%>-status"><em><%=translate("Collecting data...")%></em></span></div>
+		</div>
+		
+		<div class="tr">
+			<div class="td left"><%=translate("Binary Status")%>:</div>
+			<div class="td left"><span id="binary-status"><em><%=translate("Collecting data...")%></em></span></div>
+		</div>
+		
+		<div class="tr">
+			<div class="td left"><%=translate("Monitor Interface")%>:</div>
+			<div class="td left"><span id="monitor-link"><em><%=translate("Collecting data...")%></em></span></div>
+		</div>
+		
+		<div class="tr">
+			<div class="td left"><%=translate("Management Interface")%>:</div>
+			<div class="td left"><span id="config-link"><em><%=translate("Collecting data...")%></em></span></div>
+		</div>
+	</div>
 </div>
 <%+cbi/valuefooter%>
