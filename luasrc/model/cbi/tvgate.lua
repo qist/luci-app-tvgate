@@ -5,7 +5,9 @@ local i18n = require "luci.i18n"
 
 m = Map("tvgate",
     i18n.translate("TVGate"),
-    i18n.translate("TVGate is a high-performance local network resource forwarding and proxy tool.")
+    i18n.translate("TVGate is a high-performance local network resource forwarding and proxy tool."),
+    i18n.translate("首次安装请点击<Download / Update Binary> 按钮下载并启动 TVGate 二进制."),
+    i18n.translate("然后可以修改配置. 保存配置后请手动刷新页面，确认修改已生效.")
 )
 
 -- =========================
@@ -234,17 +236,6 @@ m.on_after_commit = function(self)
         return s
     end
 
-    -- local debug_info = "web_path: " .. (web_path or "nil") .. ", monitor_path: " .. (monitor_path or "nil") ..
-    --                    ", port: " .. (port or "nil") .. ", username: " .. (username or "nil") ..
-    --                    ", password: " .. (password or "nil") ..
-    --                    ", log_enabled: " .. (log_enabled_val or "nil") ..
-    --                    ", log_file: " .. (log_file_val or "nil") ..
-    --                    ", log_maxsize: " .. (log_maxsize_val or "nil") ..
-    --                    ", log_maxbackups: " .. (log_maxbackups_val or "nil") ..
-    --                    ", log_maxage: " .. (log_maxage_val or "nil") ..
-    --                    ", log_compress: " .. (log_compress_val or "nil")
-    -- sys.call("echo '" .. debug_info .. "' >> /tmp/tvgate_debug.log")
-
     local cmd = "/usr/bin/tvgate-update-yaml.sh"
     if web_path then cmd = cmd .. " --web-path '" .. web_path:gsub("'", "'\"'\"'") .. "'" end
     if monitor_path then cmd = cmd .. " --monitor-path '" .. monitor_path:gsub("'", "'\"'\"'") .. "'" end
@@ -260,8 +251,7 @@ m.on_after_commit = function(self)
     if log_maxage_val then cmd = cmd .. " --log-maxage '" .. log_maxage_val:gsub("'", "'\"'\"'") .. "'" end
     if bc then cmd = cmd .. " --log-compress '" .. bc:gsub("'", "'\"'\"'") .. "'" end
 
-    sys.call("echo 'Command: " .. cmd .. "' >> /tmp/tvgate_debug.log")
-    sys.call(cmd .. " >> /tmp/tvgate_debug.log 2>&1")
+    sys.call(cmd .. " >/dev/null 2>&1")
     sys.call("/etc/init.d/tvgate restart >/dev/null 2>&1 &")
 end
 
