@@ -23,6 +23,7 @@ TVGate is a high-performance local network resource forwarding and proxy tool. I
 
 2. Install the generated ipk package:
    ```bash
+   opkg update
    opkg install luci-app-tvgate*.ipk
    ```
 
