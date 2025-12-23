@@ -1,24 +1,25 @@
 #!/bin/sh
 
-# Load configuration using UCI directly
-# listen_port=$(uci get tvgate.@tvgate[0].listen_port 2>/dev/null)
+# 接收端口参数
 listen_port="$1"
-# Set default if not found
 [ -z "$listen_port" ] && listen_port="8888"
 
-# Path to the config file
 CONFIG_PATH=/etc/tvgate/config.yaml
 
-# Check if config file exists
+# 检查文件是否存在
 if [ ! -f "$CONFIG_PATH" ]; then
     echo "Config file does not exist at $CONFIG_PATH, TVGate should generate it automatically"
     exit 1
 fi
 
-# Update the port value in the config file
-# 只更新 server: 下的 port 字段（2空格缩进）
-sed -i '/^server:/,/^[^ ]/s/^  port:.*/  port: '"$listen_port"'/' "$CONFIG_PATH"
+# 删除 server 块里已有的 port 行（忽略缩进和空格/tab）
+sed -i '/^server:/,/^[^[:space:]]/ {
+    /^[[:space:]]*port:/d
+}' "$CONFIG_PATH"
+
+# 在 server: 后面插入新的 port 行，保持 4 空格缩进
+sed -i '/^server:/a\
+    port: '"$listen_port"'
+' "$CONFIG_PATH"
 
 echo "TVGate config updated with server port: $listen_port"
-
-echo "TVGate config updated with port: $listen_port"
