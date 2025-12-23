@@ -2,17 +2,6 @@
 
 <h2><%:Web 管理配置%></h2>
 
-<div class="cbi-section" style="margin-bottom: 10px;">
-  <div style="padding:12px;border:1px solid #cce5ff;background:#e9f7ff;color:#084b8a;border-radius:6px;">
-    <div style="font-weight:600;margin-bottom:6px;">使用提示</div>
-    <ul style="margin:0;padding-left:18px;line-height:1.6;">
-      <li>首次安装请点击"Download / Update Binary" 按钮下载并启动 TVGate 二进制。</li>
-      <li>然后可以修改配置。</li>
-      <li>保存配置后请手动刷新页面，确认web显示正常。</li>
-    </ul>
-  </div>
-</div>
-
 <form id="web-config-form" class="cbi-section">
   <div class="cbi-value">
     <label class="cbi-value-title"><%:Web 启用%></label>
@@ -89,7 +78,7 @@
   <div class="cbi-value">
     <label class="cbi-value-title"></label>
     <div class="cbi-value-field">
-      <input type="button" id="web-save-btn" class="btn cbi-button" value="<%:保存%>" onclick="saveWebConfig()" />
+      <input type="button" class="btn cbi-button cbi-button-apply" value="<%:保存%>" onclick="saveWebConfig()" />
     </div>
   </div>
 </form>
@@ -116,8 +105,6 @@ function loadWebConfig() {
 }
 
 function saveWebConfig() {
-  var btn = document.getElementById('web-save-btn');
-  if (btn) btn.disabled = true;
   XHR.post('<%=url("admin/services/tvgate/web")%>', {
     enabled: document.getElementById('web-enabled').checked ? 'true' : 'false',
     username: document.getElementById('web-username').value,
@@ -132,13 +119,7 @@ function saveWebConfig() {
     log_maxage: document.getElementById('log-maxage').value,
     log_compress: document.getElementById('log-compress').checked ? 'true' : 'false'
   }, function(x, data) {
-    if (btn) btn.disabled = false;
-    if (data && data.result) {
-      alert('<%:保存成功！%>');
-      location.reload();
-    } else {
-      alert('<%:保存失败！%>');
-    }
+    alert(data && data.result ? '<%:保存成功！%>' : '<%:保存失败！%>');
   });
 }
 
