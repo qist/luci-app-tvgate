@@ -21,32 +21,35 @@
 						}
 					}
 					
-					// Update monitor link
-					var ml = document.getElementById('monitor-link');
-					if (ml && info.port) {
-						ml.innerHTML = '<a href="http://' + window.location.hostname + ':' + info.port + '" target="_blank">http://' + window.location.hostname + ':' + info.port + '</a>';
-					}
-					
-					// Update config link
-					var cl = document.getElementById('config-link');
-					if (cl && info.port) {
-						// Try to get web path from config if available, otherwise default to /web/
-						XHR.get('<%=url('admin/services/tvgate/tvgate_config')%>', null,
-							function(x, cfg) {
+					// Get config from YAML file to get monitor and web paths
+					XHR.get('<%=url('admin/services/tvgate/tvgate_config')%>', null,
+						function(x, cfg) {
+							// Update monitor link with path from config if available
+							var ml = document.getElementById('monitor-link');
+							if (ml && info.port) {
+								var monitorPath = '/status'; // default path
+								if (cfg && cfg.monitor_path) {
+									monitorPath = cfg.monitor_path;
+									if (monitorPath.charAt(0) != '/') monitorPath = '/' + monitorPath;
+								}
+								var monitorUrl = 'http://' + window.location.hostname + ':' + info.port + monitorPath;
+								ml.innerHTML = '<a href="' + monitorUrl + '" target="_blank">' + monitorUrl + '</a>';
+							}
+							
+							// Update config link with path from config if available
+							var cl = document.getElementById('config-link');
+							if (cl && info.port) {
+								var webPath = '/web/'; // default path
 								if (cfg && cfg.web_path) {
-									var webPath = cfg.web_path;
+									webPath = cfg.web_path;
 									if (webPath.charAt(0) != '/') webPath = '/' + webPath;
 									if (webPath.charAt(webPath.length-1) != '/') webPath += '/';
-								} else {
-									var webPath = '/web/';
 								}
 								var configUrl = 'http://' + window.location.hostname + ':' + info.port + webPath;
-								if (cl) {
-									cl.innerHTML = '<a href="' + configUrl + '" target="_blank">' + configUrl + '</a>';
-								}
+								cl.innerHTML = '<a href="' + configUrl + '" target="_blank">' + configUrl + '</a>';
 							}
-						);
-					}
+						}
+					);
 				} else {
 					tb.innerHTML = '<em><b style=color:red>' + _('Unknown') + '</b></em>';
 					var bs = document.getElementById('binary-status');
@@ -140,12 +143,12 @@
 		
 		<div class="tr">
 			<div class="td left"><%=translate("Monitor Interface")%>:</div>
-			<div class="td left"><span id="monitor-link"><em><%=translate("Collecting data...")%></em></span></div>
+			<div class="td left"><span id="monitor-link"><em><%=translate("Collecting data...")%></em></span>
 		</div>
 		
 		<div class="tr">
 			<div class="td left"><%=translate("Management Interface")%>:</div>
-			<div class="td left"><span id="config-link"><em><%=translate("Collecting data...")%></em></span></div>
+			<div class="td left"><span id="config-link"><em><%=translate("Collecting data...")%></em></span>
 		</div>
 	</div>
 </div>

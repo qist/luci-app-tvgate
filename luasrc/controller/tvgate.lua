@@ -169,7 +169,7 @@ function act_tvgate_config()
 end
 
 -- =====================
--- simple yaml parser
+-- improved yaml parser
 -- =====================
 function parse_tvgate_config(content)
 	local cfg = {
@@ -183,38 +183,43 @@ function parse_tvgate_config(content)
 		return cfg
 	end
 
-	local in_web = false
-	local in_monitor = false
+	-- 使用更精确的正则表达式匹配
+	local server_section = false
+	local web_section = false
+	local monitor_section = false
 
 	for line in content:gmatch("[^\r\n]+") do
-		line = line:gsub("#.*$", "")
-		line = line:gsub("^%s+", ""):gsub("%s+$", "")
-
-		if line ~= "" then
-			if line == "web:" then
-				in_web = true
-				in_monitor = false
-
-			elseif line == "monitor:" then
-				in_monitor = true
-				in_web = false
-
-			elseif line:match("^[%w_-]+:%s*$") then
-				in_web = false
-				in_monitor = false
-			end
-
-			if in_web then
-				local p = line:match("^path:%s*(.+)$")
-				if p then
-					cfg.web_path = p:gsub("[\"']", "")
+		-- 去除注释和空白
+		local clean_line = line:gsub("#.*$", "")
+		clean_line = clean_line:gsub("^%s+", ""):gsub("%s+$", "")
+		
+		if clean_line == "server:" then
+			server_section = true
+		elseif clean_line == "monitor:" then
+			monitor_section = true
+			web_section = false
+			server_section = false
+		elseif clean_line == "web:" then
+			web_section = true
+			monitor_section = false
+			server_section = false
+		elseif clean_line:match("^%w") and not clean_line:match(":.*%d") then
+			-- 如果遇到新的顶级配置项，重置子节标志
+			web_section = false
+			monitor_section = false
+			server_section = false
+		elseif clean_line ~= "" then
+			-- 在web节中查找path
+			if web_section then
+				local web_path = clean_line:match("^%s*path:%s*[\"']?([^\"'^%s]+)[\"']?")
+				if web_path then
+					cfg.web_path = web_path
 				end
-			end
-
-			if in_monitor then
-				local p = line:match("^path:%s*(.+)$")
-				if p then
-					cfg.monitor_path = p:gsub("[\"']", "")
+			-- 在monitor节中查找path
+			elseif monitor_section then
+				local monitor_path = clean_line:match("^%s*path:%s*[\"']?([^\"'^%s]+)[\"']?")
+				if monitor_path then
+					cfg.monitor_path = monitor_path
 				end
 			end
 		end
