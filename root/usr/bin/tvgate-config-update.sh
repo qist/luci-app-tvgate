@@ -16,12 +16,9 @@ if [ ! -f "$CONFIG_PATH" ]; then
 fi
 
 # Update the port value in the config file
-if grep -q "^port:" "$CONFIG_PATH"; then
-    # Update existing port value
-    sed -i "s/^port:.*/port: $listen_port/" "$CONFIG_PATH"
-else
-    # Add port value to the beginning of the file
-    sed -i "1i\port: $listen_port\n" "$CONFIG_PATH"
-fi
+# 只更新 server: 下的 port 字段（2空格缩进）
+sed -i '/^server:/,/^[^ ]/s/^  port:.*/  port: '"$listen_port"'/' "$CONFIG_PATH"
+
+echo "TVGate config updated with server port: $listen_port"
 
 echo "TVGate config updated with port: $listen_port"

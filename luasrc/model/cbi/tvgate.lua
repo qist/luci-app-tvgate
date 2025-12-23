@@ -4,8 +4,8 @@ local sys = require "luci.sys"
 m = Map("tvgate", translate("TVGate"), translate("TVGate is a high-performance local network resource forwarding and proxy tool."))
 
 m.on_after_commit = function(self)
-    luci.sys.call("/etc/init.d/tvgate restart >/dev/null 2>&1 &")
-    luci.sys.call("/usr/bin/tvgate-config-update.sh >/dev/null 2>&1 &")
+	luci.sys.call("/usr/bin/tvgate-config-update.sh >/dev/null 2>&1 &")
+	luci.sys.call("/etc/init.d/tvgate restart >/dev/null 2>&1 &")
 end
 
 s = m:section(TypedSection, "tvgate", translate("Settings"))
