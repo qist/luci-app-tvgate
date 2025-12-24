@@ -8,9 +8,7 @@ if not ok_fs then ok_fs, fs_mod = pcall(require, "luci.fs") end
 local fs = fs_mod
 
 function index()
-	if not fs or not fs.access("/etc/config/tvgate") then
-		return
-	end
+	-- 始终注册菜单，避免因缺少 /etc/config/tvgate 而不显示入口
  
 
 	entry(
