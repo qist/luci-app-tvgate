@@ -46,14 +46,6 @@ endef
 
 include $(TOPDIR)/feeds/luci/luci.mk
 
-# 检查 po 目录是否存在
-ifneq ($(wildcard ./po/zh-cn/*),)
-  define Build/Prepare
-	$(foreach po,$(wildcard $(PKG_BUILD_DIR)/po/zh-cn/*.po), \
-		po2lmo $(po) $(PKG_BUILD_DIR)/$(patsubst $(PKG_BUILD_DIR)/po/zh-cn/%.po,%.lmo,$(po));)
-  endef
-endif
-
 # 国际化包定义
 define Package/luci-i18n-tvgate-zh-cn
   $(call Package/luci-i18n-template)
@@ -61,10 +53,18 @@ define Package/luci-i18n-tvgate-zh-cn
   DEPENDS:=+luci-app-tvgate
 endef
 
+# 准备阶段处理po文件到lmo文件的转换
+define Build/Prepare
+	mkdir -p $(PKG_BUILD_DIR)/po/zh-cn
+	$(CP) ./po/zh-cn/* $(PKG_BUILD_DIR)/po/zh-cn/
+	$(foreach po,$(wildcard ./po/zh-cn/*.po), \
+		po2lmo $(po) $(PKG_BUILD_DIR)/$(patsubst ./po/zh-cn/%.po,%.zh-cn.lmo,$(po));)
+endef
+
 define Package/luci-i18n-tvgate-zh-cn/install
 	$(INSTALL_DIR) $(1)/usr/lib/lua/luci/i18n
-	$(foreach po,$(wildcard $(PKG_BUILD_DIR)/po/zh-cn/*.po), \
-		po2lmo $(po) $(1)/usr/lib/lua/luci/i18n/$(patsubst $(PKG_BUILD_DIR)/po/zh-cn/%.po,%.zh-cn.lmo,$(po));)
+	$(foreach po,$(wildcard ./po/zh-cn/*.po), \
+		po2lmo $(po) $(1)/usr/lib/lua/luci/i18n/$(patsubst ./po/zh-cn/%.po,%.zh-cn.lmo,$(po));)
 endef
 
 $(eval $(call BuildPackage,luci-i18n-tvgate-zh-cn))
