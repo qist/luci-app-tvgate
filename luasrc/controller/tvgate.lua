@@ -59,6 +59,7 @@ function index()
 	
 	entry({"admin", "services", "tvgate", "web_config"}, Template and Template("tvgate/web_config") or template("tvgate/web_config"), i18n.translate("TVGate 配置"), 20).leaf = true
 	
+	-- 单独定义 API 接口路由
 	entry({"admin", "services", "tvgate", "web"}, call("act_web_config"), nil).leaf = true
 
 end
@@ -70,9 +71,9 @@ function act_web_config()
 	local i18n = require "luci.i18n"
 	local http = require "luci.http"
 	local sys  = require "luci.sys"
-	local uci  = require "luci.model.uci".cursor()
 	
-	local method = http.getenv("REQUEST_METHOD")
+	-- 获取请求方法
+	local method = http.getenv("REQUEST_METHOD") or "GET"
 	local yaml_path = "/etc/tvgate/config.yaml"
 
 	-- ================= GET =================
