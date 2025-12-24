@@ -1,4 +1,4 @@
- local fs   = require "nixio.fs"
+local fs   = require "nixio.fs"
 local sys  = require "luci.sys"
 local utl  = require "luci.util"
 local i18n = require "luci.i18n"

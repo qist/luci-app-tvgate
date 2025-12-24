@@ -1,13 +1,17 @@
 
 module("luci.controller.tvgate", package.seeall)
+local i18n = require "luci.i18n"
+local ok_t, tmpl = pcall(require, "luci.template")
+local Template = ok_t and tmpl.Template or (function() local ok_v, view = pcall(require, "luci.view"); if ok_v then return view.Template end end)()
+local ok_fs, fs_mod = pcall(require, "nixio.fs")
+if not ok_fs then ok_fs, fs_mod = pcall(require, "luci.fs") end
+local fs = fs_mod
 
 function index()
-	if not nixio.fs.access("/etc/config/tvgate") then
+	if not fs or not fs.access("/etc/config/tvgate") then
 		return
 	end
-
-	local i18n = require "luci.i18n"
-	local Template = require("luci.template").Template
+ 
 
 	entry(
 		{"admin", "services", "tvgate"},
@@ -43,7 +47,7 @@ function index()
 		call("act_tvgate_config")
 	).leaf = true
 	
-	entry({"admin", "services", "tvgate", "web_config"}, Template("tvgate/web_config"), i18n.translate("Web 配置"), 20).leaf = true
+	entry({"admin", "services", "tvgate", "web_config"}, Template and Template("tvgate/web_config") or template("tvgate/web_config"), i18n.translate("Web 配置"), 20).leaf = true
 	
 	entry({"admin", "services", "tvgate", "web"}, call("act_web_config"), nil).leaf = true
 end
@@ -53,7 +57,6 @@ end
 -- =====================
 function act_web_config()
 	local http = require "luci.http"
-	local fs = require "nixio.fs"
 	local yaml_path = "/etc/tvgate/config.yaml"
 	local method = http.getenv("REQUEST_METHOD")
 
@@ -73,7 +76,7 @@ function act_web_config()
 			log_compress = "false"
 		}
 
-		if fs.access(yaml_path) then
+		if fs and fs.access(yaml_path) then
 			local content = fs.readfile(yaml_path)
 			if content then
 				local section
@@ -163,12 +166,12 @@ function act_web_config()
 		d.log_enabled = normalize_bool(d.log_enabled)
 		d.log_compress = normalize_bool(d.log_compress)
 
-		if not fs.access(yaml_path) then
+		if not (fs and fs.access(yaml_path)) then
 			http.status(500, "config.yaml not found")
 			return
 		end
 		
-		local content = fs.readfile(yaml_path) or ""
+		local content = (fs and fs.readfile(yaml_path)) or ""
 		local out = {}
 		local current_section = nil
 		local web_found_enabled = false
@@ -315,7 +318,7 @@ function act_status()
 	local port = "8888" -- 默认端口
 	local yaml_config_path = "/etc/tvgate/config.yaml"
 	
-	if nixio.fs.access(yaml_config_path) then
+	if fs and fs.access(yaml_config_path) then
 		local f = io.open(yaml_config_path, "r")
 		if f then
 			local content = f:read("*all")
@@ -340,13 +343,13 @@ function act_status()
 
 	local status = {
 		-- 优先用 procd pid 文件检测，再用 pidof 兜底
-		running = (nixio.fs.access("/var/run/tvgate.pid") and sys.call("kill -0 $(cat /var/run/tvgate.pid) 2>/dev/null") == 0)
+		running = (fs and fs.access("/var/run/tvgate.pid") and sys.call("kill -0 $(cat /var/run/tvgate.pid) 2>/dev/null") == 0)
 			   or sys.call("pidof /usr/bin/tvgate/TVGate >/dev/null") == 0,
 		enabled = (
 			sys.call("iptables -L | grep -q tvgate") == 0 or
 			uci:get("tvgate", "tvgate", "enabled") == "1"
 		),
-		binary_exists = nixio.fs.access("/usr/bin/tvgate/TVGate"),
+		binary_exists = (fs and fs.access("/usr/bin/tvgate/TVGate")) or false,
 		port = port
 	}
 
@@ -364,7 +367,7 @@ function act_download()
 	local ok = (rc == 0)
 
 	local log = "Log file not found"
-	if nixio.fs.access("/tmp/tvgate-download.log") then
+	if fs and fs.access("/tmp/tvgate-download.log") then
 		log = sys.exec("cat /tmp/tvgate-download.log") or log
 	end
 
@@ -412,7 +415,7 @@ end
 function act_tvgate_config()
 	local path = "/etc/tvgate/config.yaml"
 
-	if not nixio.fs.access(path) then
+	if not (fs and fs.access(path)) then
 		luci.http.prepare_content("application/json")
 		luci.http.write_json({
 			web_path = "/web/",
