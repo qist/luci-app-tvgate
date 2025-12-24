@@ -4,8 +4,6 @@ PKG_NAME:=luci-app-tvgate
 PKG_VERSION:=1.0.0
 PKG_RELEASE:=1
 PKG_BUILD_DEPENDS:=po2lmo/host
-PO:=po
-LUCI_LANG:=zh-cn
 
 PKG_MAINTAINER:=<yourname> <your@email.com>
 
@@ -48,16 +46,27 @@ endef
 
 include $(TOPDIR)/feeds/luci/luci.mk
 
+# 检查 po 目录是否存在
+ifneq ($(wildcard ./po/zh-cn/*),)
+  define Build/Prepare
+	$(foreach po,$(wildcard $(PKG_BUILD_DIR)/po/zh-cn/*.po), \
+		po2lmo $(po) $(PKG_BUILD_DIR)/$(patsubst $(PKG_BUILD_DIR)/po/zh-cn/%.po,%.lmo,$(po));)
+  endef
+endif
+
+# 国际化包定义
 define Package/luci-i18n-tvgate-zh-cn
-  $(call Package/luci-i18n-template,zh-cn)
+  $(call Package/luci-i18n-template)
+  TITLE:=LuCI Support for TVGate zh-cn Translation
+  DEPENDS:=+luci-app-tvgate
 endef
 
 define Package/luci-i18n-tvgate-zh-cn/install
 	$(INSTALL_DIR) $(1)/usr/lib/lua/luci/i18n
-	$(STAGING_DIR_HOST)/bin/po2lmo $(PKG_BUILD_DIR)/po/zh-cn/tvgate.po $(1)/usr/lib/lua/luci/i18n/tvgate.zh-cn.lmo
+	$(foreach po,$(wildcard $(PKG_BUILD_DIR)/po/zh-cn/*.po), \
+		po2lmo $(po) $(1)/usr/lib/lua/luci/i18n/$(patsubst $(PKG_BUILD_DIR)/po/zh-cn/%.po,%.zh-cn.lmo,$(po));)
 endef
 
 $(eval $(call BuildPackage,luci-i18n-tvgate-zh-cn))
-
 
 # call BuildPackage - OpenWrt buildroot signature
