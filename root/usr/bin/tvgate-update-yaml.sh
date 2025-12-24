@@ -54,6 +54,46 @@ while [ $# -gt 0 ]; do
     esac
 done
 
+# 清理路径值，移除首尾空格
+clean_path() {
+    echo "$1" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//'
+}
+
+# 清理所有路径值
+if [ -n "$WEB_PATH" ]; then
+    WEB_PATH=$(clean_path "$WEB_PATH")
+fi
+if [ -n "$MONITOR_PATH" ]; then
+    MONITOR_PATH=$(clean_path "$MONITOR_PATH")
+fi
+if [ -n "$LOG_FILE" ]; then
+    LOG_FILE=$(clean_path "$LOG_FILE")
+fi
+if [ -n "$PORT" ]; then
+    PORT=$(clean_path "$PORT")
+fi
+if [ -n "$USERNAME" ]; then
+    USERNAME=$(clean_path "$USERNAME")
+fi
+if [ -n "$PASSWORD" ]; then
+    PASSWORD=$(clean_path "$PASSWORD")
+fi
+if [ -n "$LOG_ENABLED" ]; then
+    LOG_ENABLED=$(clean_path "$LOG_ENABLED")
+fi
+if [ -n "$LOG_MAXSIZE" ]; then
+    LOG_MAXSIZE=$(clean_path "$LOG_MAXSIZE")
+fi
+if [ -n "$LOG_MAXBACKUPS" ]; then
+    LOG_MAXBACKUPS=$(clean_path "$LOG_MAXBACKUPS")
+fi
+if [ -n "$LOG_MAXAGE" ]; then
+    LOG_MAXAGE=$(clean_path "$LOG_MAXAGE")
+fi
+if [ -n "$LOG_COMPRESS" ]; then
+    LOG_COMPRESS=$(clean_path "$LOG_COMPRESS")
+fi
+
 CONFIG_FILE="/etc/tvgate/config.yaml"
 
 # 创建临时文件

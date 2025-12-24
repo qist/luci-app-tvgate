@@ -125,7 +125,8 @@ function act_web_config()
 				if current_section == "web" then
 					local key, value = clean:match("^([%w_]+)%s*:%s*[\"']?([^\"']*)[\"']?")
 					if key == "path" then
-						path = value
+						-- 清理路径值，移除可能的额外空格和转义字符
+						path = value and value:gsub("^%s+", ""):gsub("%s+$", ""):gsub("\\", "") or "/web/"
 					elseif key == "username" then
 						username = value
 					elseif key == "password" then
@@ -136,19 +137,22 @@ function act_web_config()
 				elseif current_section == "server" then
 					local key, value = clean:match("^([%w_]+)%s*:%s*[\"']?([^\"']*)[\"']?")
 					if key == "port" then
-						port = value
+						-- 清理端口值，移除可能的额外空格
+						port = value and value:gsub("^%s+", ""):gsub("%s+$", "") or "8888"
 					end
 				elseif current_section == "monitor" then
 					local key, value = clean:match("^([%w_]+)%s*:%s*[\"']?([^\"']*)[\"']?")
 					if key == "path" then
-						monitor_path = value
+						-- 清理监控路径值，移除可能的额外空格和转义字符
+						monitor_path = value and value:gsub("^%s+", ""):gsub("%s+$", ""):gsub("\\", "") or "/status"
 					end
 				elseif current_section == "log" then
 					local key, value = clean:match("^([%w_]+)%s*:%s*[\"']?([^\"']*)[\"']?")
 					if key == "enabled" then
 						log_enabled = value
 					elseif key == "file" then
-						log_file = value
+						-- 清理日志文件路径值，移除可能的额外空格
+						log_file = value and value:gsub("^%s+", ""):gsub("%s+$", "") or ""
 					elseif key == "maxsize" then
 						log_maxsize = value
 					elseif key == "maxbackups" then
