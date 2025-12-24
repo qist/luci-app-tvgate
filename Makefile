@@ -51,6 +51,7 @@ define Package/luci-i18n-tvgate-zh-cn
   $(call Package/luci-i18n-template)
   TITLE:=LuCI Support for TVGate zh-cn Translation
   DEPENDS:=+luci-app-tvgate
+  PKGARCH:=all
 endef
 
 # 准备阶段处理po文件到lmo文件的转换
