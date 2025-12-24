@@ -212,8 +212,8 @@ msgid "Compress rotated log files"
 msgstr "Compress rotated log files"
 
 # View labels
-msgid "Web 管理配置"
-msgstr "Web Management"
+msgid "TVGate 管理配置"
+msgstr "TVGate Management"
 
 msgid "使用提示"
 msgstr "Tips"
@@ -224,8 +224,8 @@ msgstr "On first install, download and start the TVGate binary."
 msgid "随后在此页面完善并保存配置。"
 msgstr "Then configure and save settings on this page."
 
-msgid "保存配置后请手动刷新页面，确认修改已生效。"
-msgstr "After saving, manually refresh the page to confirm changes."
+msgid "保存配置后,确认修改已生效。"
+msgstr "After saving the configuration, verify that the changes have taken effect."
 
 msgid "Web 启用"
 msgstr "Enable Web"

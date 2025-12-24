@@ -212,8 +212,8 @@ msgid "Compress rotated log files"
 msgstr "是否压缩轮转产生的日志文件"
 
 # View labels
-msgid "Web 管理配置"
-msgstr "Web 管理配置"
+msgid "TVGate 管理配置"
+msgstr "TVGate 管理配置"
 
 msgid "使用提示"
 msgstr "使用提示"
@@ -224,8 +224,8 @@ msgstr "首次安装请先下载并启动 TVGate 二进制。"
 msgid "随后在此页面完善并保存配置。"
 msgstr "随后在此页面完善并保存配置。"
 
-msgid "保存配置后请手动刷新页面，确认修改已生效。"
-msgstr "保存配置后请手动刷新页面，确认修改已生效。"
+msgid "保存配置后,确认修改已生效。"
+msgstr "保存配置后,确认修改已生效。"
 
 msgid "Web 启用"
 msgstr "Web 启用"
