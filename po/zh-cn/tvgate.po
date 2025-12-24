@@ -10,7 +10,7 @@ msgid "TVGate"
 msgstr "TVGate"
 
 msgid "TVGate is a high-performance local network resource forwarding and proxy tool."
-msgstr "TTVGate 是一款高性能的本地网络资源转发与代理工具。"
+msgstr "TVGate 是一款高性能的本地网络资源转发与代理工具。"
 
 msgid "Configuration"
 msgstr "配置"
