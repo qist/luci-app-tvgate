@@ -2,78 +2,101 @@
 
 <h2><%:Web 管理配置%></h2>
 
+<div class="cbi-section" style="margin-bottom: 10px;">
+  <div style="padding:12px;border:1px solid #cce5ff;background:#e9f7ff;color:#084b8a;border-radius:6px;">
+    <div style="font-weight:600;margin-bottom:6px;"><%:使用提示%></div>
+    <ul style="margin:0;padding-left:18px;line-height:1.6;">
+      <li><%:首次安装请先下载并启动 TVGate 二进制。%></li>
+      <li><%:随后在此页面完善并保存配置。%></li>
+      <li><%:保存配置后请手动刷新页面，确认修改已生效。%></li>
+    </ul>
+  </div>
+  <br />
+</div>
 <form id="web-config-form" class="cbi-section">
   <div class="cbi-value">
     <label class="cbi-value-title"><%:Web 启用%></label>
     <div class="cbi-value-field">
       <input type="checkbox" id="web-enabled" value="1" />
     </div>
+    <div class="cbi-value-description"><%:启用 Web 管理接口%></div>
   </div>
   <div class="cbi-value">
     <label class="cbi-value-title"><%:Web 用户名%></label>
     <div class="cbi-value-field">
       <input type="text" id="web-username" />
     </div>
+    <div class="cbi-value-description"><%:用于登录管理页面的用户名%></div>
   </div>
   <div class="cbi-value">
     <label class="cbi-value-title"><%:Web 密码%></label>
     <div class="cbi-value-field">
       <input type="password" id="web-password" />
     </div>
+    <div class="cbi-value-description"><%:用于登录管理页面的密码%></div>
   </div>
   <div class="cbi-value">
     <label class="cbi-value-title"><%:Web 路径%></label>
     <div class="cbi-value-field">
       <input type="text" id="web-path" />
     </div>
+    <div class="cbi-value-description"><%:Web 管理前缀路径，例如 /web/%></div>
   </div>
   <div class="cbi-value">
     <label class="cbi-value-title"><%:Streaming Port%></label>
     <div class="cbi-value-field">
       <input type="text" id="web-port" />
     </div>
+    <div class="cbi-value-description"><%:服务监听端口（位于 server 分节）%></div>
   </div>
   <div class="cbi-value">
     <label class="cbi-value-title"><%:监控路径%></label>
     <div class="cbi-value-field">
       <input type="text" id="monitor-path" />
     </div>
+    <div class="cbi-value-description"><%:状态接口路径，例如 /status%></div>
   </div>
   <div class="cbi-value">
     <label class="cbi-value-title"><%:日志启用%></label>
     <div class="cbi-value-field">
       <input type="checkbox" id="log-enabled" value="1" />
     </div>
+    <div class="cbi-value-description"><%:是否启用日志输出%></div>
   </div>
   <div class="cbi-value">
     <label class="cbi-value-title"><%:日志文件%></label>
     <div class="cbi-value-field">
       <input type="text" id="log-file" />
     </div>
+    <div class="cbi-value-description"><%:留空表示标准输出，否则写入指定文件路径%></div>
   </div>
   <div class="cbi-value">
     <label class="cbi-value-title"><%:日志最大大小(MB)%></label>
     <div class="cbi-value-field">
       <input type="text" id="log-maxsize" />
     </div>
+    <div class="cbi-value-description"><%:达到大小后进行轮转%></div>
   </div>
   <div class="cbi-value">
     <label class="cbi-value-title"><%:日志备份个数%></label>
     <div class="cbi-value-field">
       <input type="text" id="log-maxbackups" />
     </div>
+    <div class="cbi-value-description"><%:保留的压缩备份文件数量%></div>
   </div>
   <div class="cbi-value">
     <label class="cbi-value-title"><%:日志保留天数%></label>
     <div class="cbi-value-field">
       <input type="text" id="log-maxage" />
     </div>
+    <div class="cbi-value-description"><%:日志文件保留的天数%></div>
   </div>
   <div class="cbi-value">
     <label class="cbi-value-title"><%:日志压缩%></label>
     <div class="cbi-value-field">
       <input type="checkbox" id="log-compress" value="1" />
     </div>
+    <div class="cbi-value-description"><%:是否压缩轮转产生的日志文件%></div>
   </div>
   <div class="cbi-value">
     <label class="cbi-value-title"></label>

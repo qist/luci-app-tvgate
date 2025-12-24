@@ -1,12 +1,19 @@
 msgid ""
 msgstr ""
+"Project-Id-Version: luci-app-tvgate\n"
 "Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: en\n"
 
+# Controller and sections
 msgid "TVGate"
 msgstr "TVGate"
 
-msgid "TVGate is a high-performance local network resource forwarding and proxy tool."
-msgstr "TVGate is a high-performance local network resource forwarding and proxy tool."
+msgid "Configuration"
+msgstr "Configuration"
+
+msgid "Web 配置"
+msgstr "Web Config"
 
 msgid "Settings"
 msgstr "Settings"
@@ -14,54 +21,34 @@ msgstr "Settings"
 msgid "Enable"
 msgstr "Enable"
 
-msgid "Enable TVGate service"
-msgstr "Enable TVGate service"
-
 msgid "Download Proxy"
 msgstr "Download Proxy"
-
-msgid "Proxy for downloading TVGate binary (e.g., https://hk.gh-proxy.com)"
-msgstr "Proxy for downloading TVGate binary (e.g., https://hk.gh-proxy.com)"
 
 msgid "Download URL"
 msgstr "Download URL"
 
-msgid "URL for downloading TVGate binary (leave empty to auto-detect based on CPU architecture)"
-msgstr "URL for downloading TVGate binary (leave empty to auto-detect based on CPU architecture)"
-
-msgid "Listen Port"
-msgstr "Listen Port"
-
-msgid "Port for TV streaming service"
-msgstr "Port for TV streaming service"
-
-msgid "Config Port"
-msgstr "Config Port"
-
-msgid "Port for web configuration interface"
-msgstr "Port for web configuration interface"
+msgid "Web Settings"
+msgstr "Web Settings"
 
 msgid "Status"
 msgstr "Status"
 
-msgid "Download/Update Binary"
-msgstr "Download/Update Binary"
+msgid "Download / Update Binary"
+msgstr "Download / Update Binary"
 
-msgid "Download or update the TVGate binary file"
-msgstr "Download or update the TVGate binary file"
+msgid "CPU:"
+msgstr "CPU:"
 
-msgid "Service Status"
-msgstr "Service Status"
+msgid "Detected:"
+msgstr "Detected:"
 
-msgid "Running"
-msgstr "Running"
+msgid "Suggested URL:"
+msgstr "Suggested URL:"
 
-msgid "Stopped"
-msgstr "Stopped"
+msgid "Error detecting architecture"
+msgstr "Error detecting architecture"
 
-msgid "Streaming Port"
-msgstr "Streaming Port"
-
+# Overview page
 msgid "Overview"
 msgstr "Overview"
 
@@ -80,11 +67,17 @@ msgstr "Built-in Web management interface for visual configuration"
 msgid "Support Docker deployment, systemd service management and OpenWrt system integration"
 msgstr "Support Docker deployment, systemd service management and OpenWrt system integration"
 
-msgid "Configure the download proxy (e.g., https://hk.gh-proxy.com) to speed up downloads"
-msgstr "Configure the download proxy (e.g., https://hk.gh-proxy.com) to speed up downloads"
+msgid "Usage instructions"
+msgstr "Usage instructions"
 
-msgid "Click \"Download/Update Binary\" to download the TVGate executable"
+msgid "Configure the download proxy (e.g., https://hk.gh-proxy.com/) to speed up downloads"
+msgstr "Configure the download proxy (e.g., https://hk.gh-proxy.com/) to speed up downloads"
+
+msgid "Click \\\"Download/Update Binary\\\" to download the TVGate executable"
 msgstr "Click \"Download/Update Binary\" to download the TVGate executable"
+
+msgid "Enable the service and apply the settings"
+msgstr "Enable the service and apply the settings"
 
 msgid "Access the web interface at http://[router-ip]:[streaming-port]/web/ to manage settings"
 msgstr "Access the web interface at http://[router-ip]:[streaming-port]/web/ to manage settings"
@@ -95,8 +88,17 @@ msgstr "Access IPTV streams at http://[router-ip]:[streaming-port]/channel-url"
 msgid "Monitor service status at http://[router-ip]:[streaming-port]/status"
 msgstr "Monitor service status at http://[router-ip]:[streaming-port]/status"
 
-msgid "Binary Status"
-msgstr "Binary Status"
+msgid "Web Management"
+msgstr "Web Management"
+
+msgid "Monitoring"
+msgstr "Monitoring"
+# Status page strings
+msgid "Running"
+msgstr "Running"
+
+msgid "Stopped"
+msgstr "Stopped"
 
 msgid "Installed"
 msgstr "Installed"
@@ -104,29 +106,35 @@ msgstr "Installed"
 msgid "Not installed"
 msgstr "Not installed"
 
-msgid "Usage instructions"
-msgstr "Usage instructions"
+msgid "Unknown"
+msgstr "Unknown"
 
-msgid "Enable the service and apply the settings"
-msgstr "Enable the service and apply the settings"
+msgid "Collecting data..."
+msgstr "Collecting data..."
 
-msgid "TVGate Addresses"
-msgstr "TVGate Addresses"
+msgid "Detecting..."
+msgstr "Detecting..."
 
-msgid "Web Management"
-msgstr "Web Management"
+msgid "Service Status"
+msgstr "Service Status"
 
-msgid "Monitoring"
-msgstr "Monitoring"
+msgid "Binary Status"
+msgstr "Binary Status"
 
-msgid "Open TVGate Web Interface"
-msgstr "Open TVGate Web Interface"
+msgid "Monitor Interface"
+msgstr "Monitor Interface"
 
-msgid "Download Binary First"
-msgstr "Download Binary First"
+msgid "Management Interface"
+msgstr "Management Interface"
+
+msgid "Download/Update Binary"
+msgstr "Download/Update Binary"
 
 msgid "Are you sure you want to download/update the TVGate binary?"
 msgstr "Are you sure you want to download/update the TVGate binary?"
+
+msgid "Downloading..."
+msgstr "Downloading..."
 
 msgid "TVGate binary downloaded successfully!"
 msgstr "TVGate binary downloaded successfully!"
@@ -134,14 +142,160 @@ msgstr "TVGate binary downloaded successfully!"
 msgid "Failed to download TVGate binary:"
 msgstr "Failed to download TVGate binary:"
 
-msgid "Downloading..."
-msgstr "Downloading..."
+msgid "Failed to download TVGate binary due to communication error."
+msgstr "Failed to download TVGate binary due to communication error."
+# CBI field descriptions
+msgid "Web Path"
+msgstr "Web Path"
 
-msgid "Detecting..."
-msgstr "Detecting..."
+msgid "Monitor Path"
+msgstr "Monitor Path"
 
-msgid "Architecture Info"
-msgstr "Architecture Info"
+msgid "Port"
+msgstr "Port"
 
-msgid "Binary Status"
-msgstr "Binary Status"
+msgid "Username"
+msgstr "Username"
+
+msgid "Password"
+msgstr "Password"
+
+msgid "Log Enabled"
+msgstr "Log Enabled"
+
+msgid "Log File"
+msgstr "Log File"
+
+msgid "Log Max Size (MB)"
+msgstr "Log Max Size (MB)"
+
+msgid "Log Max Backups"
+msgstr "Log Max Backups"
+
+msgid "Log Max Age (days)"
+msgstr "Log Max Age (days)"
+
+msgid "Log Compress"
+msgstr "Log Compress"
+
+msgid "Web path prefix, e.g., /web/"
+msgstr "Web path prefix, e.g., /web/"
+
+msgid "Monitor endpoint path, e.g., /status"
+msgstr "Monitor endpoint path, e.g., /status"
+
+msgid "Streaming port in server section"
+msgstr "Streaming port in server section"
+
+msgid "Admin username for Web UI"
+msgstr "Admin username for Web UI"
+
+msgid "Admin password for Web UI"
+msgstr "Admin password for Web UI"
+
+msgid "Enable log output"
+msgstr "Enable log output"
+
+msgid "Empty for stdout, otherwise file path"
+msgstr "Empty for stdout, otherwise file path"
+
+msgid "Rotate when max size reached (MB)"
+msgstr "Rotate when max size reached (MB)"
+
+msgid "Number of compressed backups to keep"
+msgstr "Number of compressed backups to keep"
+
+msgid "Retention days for log files"
+msgstr "Retention days for log files"
+
+msgid "Compress rotated log files"
+msgstr "Compress rotated log files"
+
+# View labels
+msgid "Web 管理配置"
+msgstr "Web Management"
+
+msgid "使用提示"
+msgstr "Tips"
+
+msgid "首次安装请先下载并启动 TVGate 二进制。"
+msgstr "On first install, download and start the TVGate binary."
+
+msgid "随后在此页面完善并保存配置。"
+msgstr "Then configure and save settings on this page."
+
+msgid "保存配置后请手动刷新页面，确认修改已生效。"
+msgstr "After saving, manually refresh the page to confirm changes."
+
+msgid "Web 启用"
+msgstr "Enable Web"
+
+msgid "Web 用户名"
+msgstr "Web Username"
+
+msgid "Web 密码"
+msgstr "Web Password"
+
+msgid "Streaming Port"
+msgstr "Streaming Port"
+
+msgid "监控路径"
+msgstr "Monitor Path"
+
+msgid "日志启用"
+msgstr "Log Enabled"
+
+msgid "日志文件"
+msgstr "Log File"
+
+msgid "日志最大大小(MB)"
+msgstr "Log Max Size (MB)"
+
+msgid "日志备份个数"
+msgstr "Log Max Backups"
+
+msgid "日志保留天数"
+msgstr "Log Retention (days)"
+
+msgid "日志压缩"
+msgstr "Log Compress"
+
+msgid "保存"
+msgstr "Save"
+
+# View field descriptions
+msgid "启用 Web 管理接口"
+msgstr "Enable the Web management interface"
+
+msgid "用于登录管理页面的用户名"
+msgstr "Username to log into the management page"
+
+msgid "用于登录管理页面的密码"
+msgstr "Password to log into the management page"
+
+msgid "Web 管理前缀路径，例如 /web/"
+msgstr "Web management prefix path, e.g., /web/"
+
+msgid "服务监听端口（位于 server 分节）"
+msgstr "Service listening port (in server section)"
+
+msgid "状态接口路径，例如 /status"
+msgstr "Status endpoint path, e.g., /status"
+
+msgid "是否启用日志输出"
+msgstr "Enable log output"
+
+msgid "留空表示标准输出，否则写入指定文件路径"
+msgstr "Empty for stdout, otherwise write to file"
+
+msgid "达到大小后进行轮转"
+msgstr "Rotate when size is reached"
+
+msgid "保留的压缩备份文件数量"
+msgstr "Number of compressed backups to keep"
+
+msgid "日志文件保留的天数"
+msgstr "Days to keep log files"
+
+msgid "是否压缩轮转产生的日志文件"
+msgstr "Compress rotated log files"

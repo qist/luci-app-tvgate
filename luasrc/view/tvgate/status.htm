@@ -64,14 +64,14 @@
 			function(x, data) {
 				if (data && data.default_url) {
 					document.getElementById('detected-arch-info').innerHTML = 
-						'<strong>CPU:</strong> ' + data.arch + ' (<strong>Detected:</strong> ' + data.detected_arch + ')<br>' +
-						'<strong>Suggested URL:</strong> ' + data.default_url;
+						'<strong><%=translate("CPU:")%></strong> ' + data.arch + ' (<strong><%=translate("Detected:")%></strong> ' + data.detected_arch + ')<br>' +
+						'<strong><%=translate("Suggested URL:")%></strong> ' + data.default_url;
 				} else {
-					document.getElementById('detected-arch-info').innerHTML = '<em>Error detecting architecture</em>';
+					document.getElementById('detected-arch-info').innerHTML = '<em><%=translate("Error detecting architecture")%></em>';
 				}
 			}
 		).catch(function(e) {
-			document.getElementById('detected-arch-info').innerHTML = '<em>Error detecting architecture</em>';
+			document.getElementById('detected-arch-info').innerHTML = '<em><%=translate("Error detecting architecture")%></em>';
 		});
 	}
 	

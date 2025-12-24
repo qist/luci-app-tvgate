@@ -123,6 +123,7 @@ ws.sectionname = "web_settings"
 web_path = ws:option(Value, "web_path", i18n.translate("Web Path"))
 web_path.default = cfg.web.path
 web_path.placeholder = "/web/"
+web_path.description = i18n.translate("Web path prefix, e.g., /web/")
 -- 不写入UCI配置
 web_path.write = function(self, section, value)
 end
@@ -132,6 +133,7 @@ end
 monitor_path = ws:option(Value, "monitor_path", i18n.translate("Monitor Path"))
 monitor_path.default = cfg.monitor.path
 monitor_path.placeholder = "/status"
+monitor_path.description = i18n.translate("Monitor endpoint path, e.g., /status")
 -- 不写入UCI配置
 monitor_path.write = function(self, section, value)
 end
@@ -141,6 +143,7 @@ end
 port = ws:option(Value, "port", i18n.translate("Port"))
 port.default = cfg.server.port
 port.placeholder = "8888"
+port.description = i18n.translate("Streaming port in server section")
 -- 不写入UCI配置
 port.write = function(self, section, value)
 end
@@ -150,6 +153,7 @@ end
 username = ws:option(Value, "username", i18n.translate("Username"))
 username.default = cfg.web.username
 username.placeholder = "admin"
+username.description = i18n.translate("Admin username for Web UI")
 -- 不写入UCI配置
 username.write = function(self, section, value)
 end
@@ -160,6 +164,7 @@ password = ws:option(Value, "password", i18n.translate("Password"))
 password.password = true
 password.default = cfg.web.password
 password.placeholder = "admin"
+password.description = i18n.translate("Admin password for Web UI")
 password.write = function(self, section, value)
 end
 password.remove = function(self, section)
@@ -167,6 +172,7 @@ end
 
 log_enabled = ws:option(Flag, "log_enabled", i18n.translate("Log Enabled"))
 log_enabled.default = (cfg.log.enabled == "true" or cfg.log.enabled == "1") and log_enabled.enabled or log_enabled.disabled
+log_enabled.description = i18n.translate("Enable log output")
 log_enabled.write = function(self, section, value)
 end
 log_enabled.remove = function(self, section)
@@ -175,6 +181,7 @@ end
 log_file = ws:option(Value, "log_file", i18n.translate("Log File"))
 log_file.default = cfg.log.file
 log_file.placeholder = ""
+log_file.description = i18n.translate("Empty for stdout, otherwise file path")
 log_file.write = function(self, section, value)
 end
 log_file.remove = function(self, section)
@@ -183,6 +190,7 @@ end
 log_maxsize = ws:option(Value, "log_maxsize", i18n.translate("Log Max Size (MB)"))
 log_maxsize.default = cfg.log.maxsize
 log_maxsize.placeholder = "10"
+log_maxsize.description = i18n.translate("Rotate when max size reached (MB)")
 log_maxsize.write = function(self, section, value)
 end
 log_maxsize.remove = function(self, section)
@@ -191,6 +199,7 @@ end
 log_maxbackups = ws:option(Value, "log_maxbackups", i18n.translate("Log Max Backups"))
 log_maxbackups.default = cfg.log.maxbackups
 log_maxbackups.placeholder = "10"
+log_maxbackups.description = i18n.translate("Number of compressed backups to keep")
 log_maxbackups.write = function(self, section, value)
 end
 log_maxbackups.remove = function(self, section)
@@ -199,6 +208,7 @@ end
 log_maxage = ws:option(Value, "log_maxage", i18n.translate("Log Max Age (days)"))
 log_maxage.default = cfg.log.maxage
 log_maxage.placeholder = "28"
+log_maxage.description = i18n.translate("Retention days for log files")
 log_maxage.write = function(self, section, value)
 end
 log_maxage.remove = function(self, section)
@@ -206,6 +216,7 @@ end
 
 log_compress = ws:option(Flag, "log_compress", i18n.translate("Log Compress"))
 log_compress.default = (cfg.log.compress == "true" or cfg.log.compress == "1") and log_compress.enabled or log_compress.disabled
+log_compress.description = i18n.translate("Compress rotated log files")
 log_compress.write = function(self, section, value)
 end
 log_compress.remove = function(self, section)
