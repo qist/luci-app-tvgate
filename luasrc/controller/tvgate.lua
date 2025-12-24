@@ -18,8 +18,8 @@ function index()
 		local sys = require "luci.sys"
 		sys.call("touch /etc/config/tvgate >/dev/null 2>&1")
 		-- 设置默认值
-		sys.uci.set("tvgate", "tvgate", "enabled", "0")
-		sys.uci.commit("tvgate")
+		uci:set("tvgate", "tvgate", "enabled", "0")
+		uci:commit("tvgate")
 	end
  
 

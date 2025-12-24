@@ -2,6 +2,7 @@ local ok_fs, fs_mod = pcall(require, "nixio.fs")
 if not ok_fs then ok_fs, fs_mod = pcall(require, "luci.fs") end
 local fs = fs_mod
 local sys  = require "luci.sys"
+local uci  = require "luci.model.uci".cursor()
 local utl  = require "luci.util"
 local i18n = require "luci.i18n"
 
@@ -107,8 +108,8 @@ local tvgate_config_dir = "/etc/config/tvgate"
 if not fs or not fs.access(tvgate_config_dir) then
     sys.call("touch /etc/config/tvgate >/dev/null 2>&1")
     -- 设置默认值
-    sys.uci.set("tvgate", "tvgate", "enabled", "0")
-    sys.uci.commit("tvgate")
+    uci:set("tvgate", "tvgate", "enabled", "0")
+    uci:commit("tvgate")
 end
 
 s:option(Flag, "enabled", i18n.translate("Enable"))
