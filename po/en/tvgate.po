@@ -9,6 +9,9 @@ msgstr ""
 msgid "TVGate"
 msgstr "TVGate"
 
+msgid "TVGate is a high-performance local network resource forwarding and proxy tool."
+msgstr "TVGate is a high-performance local network resource forwarding and proxy tool."
+
 msgid "Configuration"
 msgstr "Configuration"
 
