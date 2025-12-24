@@ -22,8 +22,7 @@ jobs:
         with:
           architecture: ${{ matrix.arch }}
           package_name: luci-app-tvgate
-          sdk_url: https://downloads.openwrt.org/releases/22.03.0/targets/x86/64/openwrt-sdk-22.03.0-x86-64_gcc-11.2.0_musl.Linux-x86_64.tar.xz
-
+          
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
