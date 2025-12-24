@@ -14,9 +14,7 @@
 					// Update binary status
 					var bs = document.getElementById('binary-status');
 					if (bs) {
-bao 						// 修正：使用 info.binary_exists，如果不存在则使用默认值 false
-						var binaryExists = info.binary_exists !== undefined ? info.binary_exists : false;
-						if (binaryExists) {
+						if (info.binary_exists) {
 							bs.innerHTML = '<em><b style=color:green>' + _('Installed') + '</b></em>';
 						} else {
 							bs.innerHTML = '<em><b style=color:red>' + _('Not installed') + '</b></em>';
@@ -72,7 +70,9 @@ bao 						// 修正：使用 info.binary_exists，如果不存在则使用默认
 					document.getElementById('detected-arch-info').innerHTML = '<em><%=translate("Error detecting architecture")%></em>';
 				}
 			}
-		);
+		).catch(function(e) {
+			document.getElementById('detected-arch-info').innerHTML = '<em><%=translate("Error detecting architecture")%></em>';
+		});
 	}
 	
 	function downloadBinary() {
@@ -102,7 +102,13 @@ bao 						// 修正：使用 info.binary_exists，如果不存在则使用默认
 						alert('<%=translate("Failed to download TVGate binary due to communication error.")%>');
 					}
 				}
-			);
+			).catch(function(e) {
+				if (btn) {
+					btn.disabled = false;
+					btn.innerHTML = '<%=translate("Download/Update Binary")%>';
+				}
+				alert('<%=translate("Failed to download TVGate binary due to communication error.")%>');
+			});
 		}
 	}
 	
