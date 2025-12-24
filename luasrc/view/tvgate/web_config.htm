@@ -142,7 +142,7 @@ function saveWebConfig() {
     log_maxage: document.getElementById('log-maxage').value,
     log_compress: document.getElementById('log-compress').checked ? 'true' : 'false'
   }, function(x, data) {
-    alert(data && data.result ? '<%:保存成功！%>' : '<%:保存失败！%>');
+    alert(data && data.success ? '<%:保存成功！%>' : '<%:保存失败！%>');
   });
 }
 

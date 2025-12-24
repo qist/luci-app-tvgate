@@ -248,7 +248,7 @@ web:
 		http.write({ 
 			success = true,
 			message = "Configuration updated successfully",
-			result = result
+			result = "ok"
 		})
 		return
 	end
