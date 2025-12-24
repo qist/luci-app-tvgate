@@ -75,32 +75,17 @@ function act_web_config()
 	local method = http.getenv("REQUEST_METHOD")
 	local yaml_path = "/etc/tvgate/config.yaml"
 
-	-- 如果配置文件不存在，创建默认配置
-	if not fs.access(yaml_path) then
-		sys.call("mkdir -p /etc/tvgate >/dev/null 2>&1")
-		local default_config = [[server:
-  #监听端口
-  port: 8888
-# 监控配置
-monitor:
-  path: "/status" # 状态信息
-
-# 配置文件编辑接口
-web:
-  enabled: true
-  username: admin
-  password: admin
-  path: /web/ # 自定义路径
-]]
-		fs.writefile(yaml_path, default_config)
-	end
-
 	-- ================= GET =================
 	if method == "GET" then
+		if not (fs and fs.access(yaml_path)) then
+			http.status(404, "config.yaml not found")
+			return
+		end
+		
 		-- 读取YAML配置文件
 		local yaml_content = fs.readfile(yaml_path)
 		if not yaml_content then
-			http.status(500, "Cannot read config.yaml")
+			http.status(404, "Cannot read config.yaml")
 			return
 		end
 
