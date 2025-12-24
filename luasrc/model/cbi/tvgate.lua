@@ -272,7 +272,17 @@ m.on_after_commit = function(self)
     if bc then cmd = cmd .. " --log-compress '" .. bc:gsub("'", "'\"'\"'") .. "'" end
 
     sys.call(cmd .. " >/dev/null 2>&1")
-    sys.call("/etc/init.d/tvgate restart >/dev/null 2>&1 &")
+    
+    -- 修复服务重启命令，兼容OpenWrt和ImmortalWrt
+    local restart_cmd = "/etc/init.d/tvgate restart >/dev/null 2>&1"
+    -- 检查是否有systemctl命令（通常在ImmortalWrt中可用）
+    local has_systemctl = sys.call("command -v systemctl >/dev/null 2>&1") == 0
+    if has_systemctl then
+        restart_cmd = restart_cmd .. " && /etc/init.d/tvgate stop >/dev/null 2>&1; /etc/init.d/tvgate start >/dev/null 2>&1"
+    else
+        restart_cmd = restart_cmd .. " &"
+    end
+    sys.call(restart_cmd)
 end
 
 return m

@@ -1,6 +1,6 @@
 
 module("luci.controller.tvgate", package.seeall)
-local i18n = require "luci.i18n"
+
 local ok_t, tmpl = pcall(require, "luci.template")
 local Template = ok_t and tmpl.Template or (function() local ok_v, view = pcall(require, "luci.view"); if ok_v then return view.Template end end)()
 local ok_fs, fs_mod = pcall(require, "nixio.fs")
@@ -8,6 +8,7 @@ if not ok_fs then ok_fs, fs_mod = pcall(require, "luci.fs") end
 local fs = fs_mod
 
 function index()
+	local i18n = require "luci.i18n"
 	if not fs or not fs.access("/etc/config/tvgate") then
 		return
 	end
@@ -50,12 +51,14 @@ function index()
 	entry({"admin", "services", "tvgate", "web_config"}, Template and Template("tvgate/web_config") or template("tvgate/web_config"), i18n.translate("Web 配置"), 20).leaf = true
 	
 	entry({"admin", "services", "tvgate", "web"}, call("act_web_config"), nil).leaf = true
+
 end
 
 -- =====================
 -- web config API
 -- =====================
 function act_web_config()
+	local i18n = require "luci.i18n"
 	local http = require "luci.http"
 	local yaml_path = "/etc/tvgate/config.yaml"
 	local method = http.getenv("REQUEST_METHOD")
@@ -341,10 +344,23 @@ function act_status()
 		end
 	end
 
+	-- 检测服务运行状态，兼容OpenWrt和ImmortalWrt
+	local running = false
+	if fs and fs.access("/var/run/tvgate.pid") then
+		-- 尝试使用pid文件检测
+		local pid = sys.exec("cat /var/run/tvgate.pid"):match("%d+")
+		if pid and pid ~= "" then
+			running = (sys.call("kill -0 " .. pid .. " 2>/dev/null") == 0)
+		end
+	end
+	
+	-- 如果pid文件方式失败，使用ps命令作为备选方案
+	if not running then
+		running = (sys.call("ps | grep -v grep | grep -q '[/]/TVGate'") == 0)
+	end
+
 	local status = {
-		-- 优先用 procd pid 文件检测，再用 pidof 兜底
-		running = (fs and fs.access("/var/run/tvgate.pid") and sys.call("kill -0 $(cat /var/run/tvgate.pid) 2>/dev/null") == 0)
-			   or sys.call("pidof /usr/bin/tvgate/TVGate >/dev/null") == 0,
+		running = running,
 		enabled = (
 			sys.call("iptables -L | grep -q tvgate") == 0 or
 			uci:get("tvgate", "tvgate", "enabled") == "1"
