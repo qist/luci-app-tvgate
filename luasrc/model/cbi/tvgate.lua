@@ -1,4 +1,6 @@
-local fs   = require "nixio.fs"
+local ok_fs, fs_mod = pcall(require, "nixio.fs")
+if not ok_fs then ok_fs, fs_mod = pcall(require, "luci.fs") end
+local fs = fs_mod
 local sys  = require "luci.sys"
 local utl  = require "luci.util"
 local i18n = require "luci.i18n"
@@ -99,6 +101,15 @@ end
 s = m:section(TypedSection, "tvgate", i18n.translate("Settings"))
 s.addremove = false
 s.anonymous = true
+
+-- 创建配置文件（如果不存在）
+local tvgate_config_dir = "/etc/config/tvgate"
+if not fs or not fs.access(tvgate_config_dir) then
+    sys.call("touch /etc/config/tvgate >/dev/null 2>&1")
+    -- 设置默认值
+    sys.uci.set("tvgate", "tvgate", "enabled", "0")
+    sys.uci.commit("tvgate")
+end
 
 s:option(Flag, "enabled", i18n.translate("Enable"))
 

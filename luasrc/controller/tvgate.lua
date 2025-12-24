@@ -9,8 +9,17 @@ local fs = fs_mod
 
 function index()
 	local i18n = require "luci.i18n"
-	if not fs or not fs.access("/etc/config/tvgate") then
-		return
+	local uci = require "luci.model.uci".cursor()
+	
+	-- 检查并创建UCI配置文件（如果不存在）
+	local tvgate_config_path = "/etc/config/tvgate"
+	if not fs or not fs.access(tvgate_config_path) then
+		-- 使用luci.sys来创建配置文件
+		local sys = require "luci.sys"
+		sys.call("touch /etc/config/tvgate >/dev/null 2>&1")
+		-- 设置默认值
+		sys.uci.set("tvgate", "tvgate", "enabled", "0")
+		sys.uci.commit("tvgate")
 	end
  
 
