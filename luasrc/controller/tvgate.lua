@@ -222,20 +222,26 @@ web:
 		end
 		
 		-- 使用shell脚本更新YAML配置
-		local cmd = string.format("/usr/bin/tvgate-update-yaml.sh --web-path '%s' --username '%s' --password '%s' --port '%s' --monitor-path '%s'",
-			d.path or "nil",
-			d.username or "nil",
-			d.password or "nil",
-			d.port or "nil",
-			d.monitor_path or "nil"
+		-- 对参数进行安全转义，防止命令注入
+		local function shell_escape(s)
+			if not s then return "nil" end
+			return "'" .. s:gsub("'", "'\"'\"'") .. "'"
+		end
+		
+		local cmd = string.format("/usr/bin/tvgate-update-yaml.sh --web-path %s --username %s --password %s --port %s --monitor-path %s",
+			shell_escape(d.path),
+			shell_escape(d.username),
+			shell_escape(d.password),
+			shell_escape(d.port),
+			shell_escape(d.monitor_path)
 		)
 		
-		if d.log_enabled then cmd = cmd .. string.format(" --log-enabled '%s'", d.log_enabled) end
-		if d.log_file then cmd = cmd .. string.format(" --log-file '%s'", d.log_file) end
-		if d.log_maxsize then cmd = cmd .. string.format(" --log-maxsize '%s'", d.log_maxsize) end
-		if d.log_maxbackups then cmd = cmd .. string.format(" --log-maxbackups '%s'", d.log_maxbackups) end
-		if d.log_maxage then cmd = cmd .. string.format(" --log-maxage '%s'", d.log_maxage) end
-		if d.log_compress then cmd = cmd .. string.format(" --log-compress '%s'", d.log_compress) end
+		if d.log_enabled then cmd = cmd .. string.format(" --log-enabled %s", shell_escape(d.log_enabled)) end
+		if d.log_file then cmd = cmd .. string.format(" --log-file %s", shell_escape(d.log_file)) end
+		if d.log_maxsize then cmd = cmd .. string.format(" --log-maxsize %s", shell_escape(d.log_maxsize)) end
+		if d.log_maxbackups then cmd = cmd .. string.format(" --log-maxbackups %s", shell_escape(d.log_maxbackups)) end
+		if d.log_maxage then cmd = cmd .. string.format(" --log-maxage %s", shell_escape(d.log_maxage)) end
+		if d.log_compress then cmd = cmd .. string.format(" --log-compress %s", shell_escape(d.log_compress)) end
 		
 		-- 执行shell脚本更新配置
 		local result = sys.exec(cmd)
@@ -245,10 +251,10 @@ web:
 		
 		-- 返回成功响应
 		http.prepare_content("application/json")
-		http.write({ 
+		http.write_json({ 
 			success = true,
 			message = "Configuration updated successfully",
-			result = "ok"
+			result = result or "ok"
 		})
 		return
 	end
