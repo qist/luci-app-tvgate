@@ -1,0 +1,280 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: luci-app-tvgate\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: zh_Hans\n"
+
+# Controller and sections
+msgid "TVGate"
+msgstr "TVGate"
+
+msgid "Configuration"
+msgstr "配置"
+
+msgid "Web 配置"
+msgstr "Web 配置"
+
+msgid "Settings"
+msgstr "设置"
+
+msgid "Enable"
+msgstr "启用"
+
+msgid "Download Proxy"
+msgstr "下载代理"
+
+msgid "Download URL"
+msgstr "下载地址"
+
+msgid "Web Settings"
+msgstr "Web 设置"
+
+msgid "Status"
+msgstr "状态"
+
+msgid "Download / Update Binary"
+msgstr "下载 / 更新二进制"
+
+msgid "CPU:"
+msgstr "CPU:"
+
+msgid "Detected:"
+msgstr "识别架构:"
+
+msgid "Suggested URL:"
+msgstr "建议下载地址:"
+
+msgid "Error detecting architecture"
+msgstr "检测架构失败"
+
+# Overview page
+msgid "Overview"
+msgstr "概览"
+
+msgid "How to use"
+msgstr "使用方法"
+
+msgid "Forward internal network resources (such as http, https, rtsp, rtp) to the external network through HTTP"
+msgstr "通过 HTTP 将内网资源（如 http、https、rtsp、rtp）转发到外网"
+
+msgid "Support multicast, unicast audio and video streams converted to HTTP accessible links"
+msgstr "支持多播、单播音视频流转换为可通过 HTTP 访问的链接"
+
+msgid "Built-in Web management interface for visual configuration"
+msgstr "内置 Web 管理界面，支持可视化配置"
+
+msgid "Support Docker deployment, systemd service management and OpenWrt system integration"
+msgstr "支持 Docker 部署、systemd 服务管理以及 OpenWrt 系统集成"
+
+msgid "Usage instructions"
+msgstr "使用说明"
+
+msgid "Configure the download proxy (e.g., https://hk.gh-proxy.com/) to speed up downloads"
+msgstr "配置下载代理（例如 https://hk.gh-proxy.com/）以加速下载"
+
+msgid "Click \\\"Download/Update Binary\\\" to download the TVGate executable"
+msgstr "点击“下载/更新二进制”以下载 TVGate 可执行文件"
+
+msgid "Enable the service and apply the settings"
+msgstr "启用服务并应用设置"
+
+msgid "Access the web interface at http://[router-ip]:[streaming-port]/web/ to manage settings"
+msgstr "通过 http://[路由器IP]:[端口]/web/ 访问管理界面进行配置"
+
+msgid "Access IPTV streams at http://[router-ip]:[streaming-port]/channel-url"
+msgstr "通过 http://[路由器IP]:[端口]/频道地址 访问 IPTV 流"
+
+msgid "Monitor service status at http://[router-ip]:[streaming-port]/status"
+msgstr "通过 http://[路由器IP]:[端口]/status 监控服务状态"
+
+msgid "Web Management"
+msgstr "Web 管理"
+
+msgid "Monitoring"
+msgstr "监控"
+# Status page strings
+msgid "Running"
+msgstr "运行中"
+
+msgid "Stopped"
+msgstr "已停止"
+
+msgid "Installed"
+msgstr "已安装"
+
+msgid "Not installed"
+msgstr "未安装"
+
+msgid "Unknown"
+msgstr "未知"
+
+msgid "Collecting data..."
+msgstr "正在获取数据..."
+
+msgid "Detecting..."
+msgstr "正在检测..."
+
+msgid "Service Status"
+msgstr "服务状态"
+
+msgid "Binary Status"
+msgstr "二进制状态"
+
+msgid "Monitor Interface"
+msgstr "监控接口"
+
+msgid "Management Interface"
+msgstr "管理接口"
+
+msgid "Download/Update Binary"
+msgstr "下载/更新二进制"
+
+msgid "Are you sure you want to download/update the TVGate binary?"
+msgstr "确定下载/更新 TVGate 二进制吗？"
+
+msgid "Downloading..."
+msgstr "正在下载..."
+
+msgid "TVGate binary downloaded successfully!"
+msgstr "TVGate 二进制下载成功！"
+
+msgid "Failed to download TVGate binary:"
+msgstr "下载 TVGate 二进制失败："
+
+msgid "Failed to download TVGate binary due to communication error."
+msgstr "由于通信错误，下载 TVGate 二进制失败。"
+# CBI field descriptions
+msgid "Web Path"
+msgstr "Web 路径"
+
+msgid "Monitor Path"
+msgstr "监控路径"
+
+msgid "Port"
+msgstr "端口"
+
+msgid "Username"
+msgstr "用户名"
+
+msgid "Password"
+msgstr "密码"
+
+msgid "Log Enabled"
+msgstr "日志启用"
+
+msgid "Log File"
+msgstr "日志文件"
+
+msgid "Log Max Size (MB)"
+msgstr "日志最大大小(MB)"
+
+msgid "Log Max Backups"
+msgstr "日志备份个数"
+
+msgid "Log Max Age (days)"
+msgstr "日志保留天数"
+
+msgid "Log Compress"
+msgstr "日志压缩"
+
+msgid "Web path prefix, e.g., /web/"
+msgstr "Web 管理前缀路径，例如 /web/"
+
+msgid "Monitor endpoint path, e.g., /status"
+msgstr "状态接口路径，例如 /status"
+
+msgid "Streaming port in server section"
+msgstr "服务监听端口（位于 server 分节）"
+
+msgid "Admin username for Web UI"
+msgstr "用于登录管理页面的用户名"
+
+msgid "Admin password for Web UI"
+msgstr "用于登录管理页面的密码"
+
+msgid "Enable log output"
+msgstr "是否启用日志输出"
+
+msgid "Empty for stdout, otherwise file path"
+msgstr "留空表示标准输出，否则写入指定文件路径"
+
+msgid "Rotate when max size reached (MB)"
+msgstr "达到大小后进行轮转"
+
+msgid "Number of compressed backups to keep"
+msgstr "保留的压缩备份文件数量"
+
+msgid "Retention days for log files"
+msgstr "日志文件保留的天数"
+
+msgid "Compress rotated log files"
+msgstr "是否压缩轮转产生的日志文件"
+
+# View labels
+msgid "TVGate 管理配置"
+msgstr "TVGate 管理配置"
+
+msgid "使用提示"
+msgstr "使用提示"
+
+msgid "首次安装请先下载并启动 TVGate 二进制。"
+msgstr "首次安装请先下载并启动 TVGate 二进制。"
+
+msgid "随后在此页面完善并保存配置。"
+msgstr "随后在此页面完善并保存配置。"
+
+msgid "保存配置后,确认修改已生效。"
+msgstr "保存配置后,确认修改已生效。"
+
+msgid "Web 启用"
+msgstr "Web 启用"
+
+msgid "Web 用户名"
+msgstr "Web 用户名"
+
+msgid "Web 密码"
+msgstr "Web 密码"
+
+msgid "Streaming Port"
+msgstr "Streaming 端口"
+
+msgid "保存"
+msgstr "保存"
+
+# View field descriptions
+msgid "启用 Web 管理接口"
+msgstr "启用 Web 管理接口"
+
+msgid "用于登录管理页面的用户名"
+msgstr "用于登录管理页面的用户名"
+
+msgid "用于登录管理页面的密码"
+msgstr "用于登录管理页面的密码"
+
+msgid "Web 管理前缀路径，例如 /web/"
+msgstr "Web 管理前缀路径，例如 /web/"
+
+msgid "服务监听端口（位于 server 分节）"
+msgstr "服务监听端口（位于 server 分节）"
+
+msgid "状态接口路径，例如 /status"
+msgstr "状态接口路径，例如 /status"
+
+msgid "是否启用日志输出"
+msgstr "是否启用日志输出"
+
+msgid "留空表示标准输出，否则写入指定文件路径"
+msgstr "留空表示标准输出，否则写入指定文件路径"
+
+msgid "达到大小后进行轮转"
+msgstr "达到大小后进行轮转"
+
+msgid "保留的压缩备份文件数量"
+msgstr "保留的压缩备份文件数量"
+
+msgid "日志文件保留的天数"
+msgstr "日志文件保留的天数"
+
+msgid "是否压缩轮转产生的日志文件"
+msgstr "是否压缩轮转产生的日志文件"
