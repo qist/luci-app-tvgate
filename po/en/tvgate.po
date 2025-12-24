@@ -12,8 +12,8 @@ msgstr "TVGate"
 msgid "Configuration"
 msgstr "Configuration"
 
-msgid "Web 配置"
-msgstr "Web Config"
+msgid "TVGate 配置"
+msgstr "TVGate Config"
 
 msgid "Settings"
 msgstr "Settings"

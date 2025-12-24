@@ -57,7 +57,7 @@ function index()
 		call("act_tvgate_config")
 	).leaf = true
 	
-	entry({"admin", "services", "tvgate", "web_config"}, Template and Template("tvgate/web_config") or template("tvgate/web_config"), i18n.translate("Web 配置"), 20).leaf = true
+	entry({"admin", "services", "tvgate", "web_config"}, Template and Template("tvgate/web_config") or template("tvgate/web_config"), i18n.translate("TVGate 配置"), 20).leaf = true
 	
 	entry({"admin", "services", "tvgate", "web"}, call("act_web_config"), nil).leaf = true
 
