@@ -90,7 +90,7 @@
 						btn.innerHTML = '<%=translate("Download/Update Binary")%>';
 					}
 					
-					if (!x.status && data) {
+					if (x.status === 200 && data) {
 						if (data.result) {
 							alert('<%=translate("TVGate binary downloaded successfully!")%>');
 							location.reload();
