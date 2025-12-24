@@ -47,7 +47,7 @@ endef
 include $(TOPDIR)/feeds/luci/luci.mk
 
 # 国际化包定义
-define Package/luci-tvgate-zh-cn
+define Package/luci-i18n-tvgate-zh-cn
   $(call Package/luci-i18n-template)
   TITLE:=LuCI Support for TVGate zh-cn Translation
   DEPENDS:=+luci-app-tvgate
@@ -61,12 +61,12 @@ define Build/Prepare
 		po2lmo $(po) $(PKG_BUILD_DIR)/$(patsubst ./po/zh-cn/%.po,%.zh-cn.lmo,$(po));)
 endef
 
-define Package/luci-tvgate-zh-cn/install
+define Package/luci-i18n-tvgate-zh-cn/install
 	$(INSTALL_DIR) $(1)/usr/lib/lua/luci/i18n
 	$(foreach po,$(wildcard ./po/zh-cn/*.po), \
 		po2lmo $(po) $(1)/usr/lib/lua/luci/i18n/$(patsubst ./po/zh-cn/%.po,%.zh-cn.lmo,$(po));)
 endef
 
-$(eval $(call BuildPackage,luci-tvgate-zh-cn))
+$(eval $(call BuildPackage,luci-i18n-tvgate-zh-cn))
 
 # call BuildPackage - OpenWrt buildroot signature
