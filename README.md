@@ -28,6 +28,10 @@ TVGate is a high-performance local network resource forwarding and proxy tool. I
    opkg install /tmp/luci-app-tvgate_1.0.0_all.ipk
    ```
 
+3. Uninstall package:
+   ```bash
+   opkg remove luci-app-tvgate
+   ```
 ## Configuration
 
 After installation, you can configure TVGate in the LuCI interface:
