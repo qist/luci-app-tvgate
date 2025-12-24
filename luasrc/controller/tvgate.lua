@@ -183,135 +183,35 @@ function act_web_config()
 			return
 		end
 		
-		local content = (fs and fs.readfile(yaml_path)) or ""
-		local out = {}
-		local current_section = nil
-		local web_found_enabled = false
-		local web_found_username = false
-		local web_found_password = false
-		local web_found_path = false
-		local server_found_port = false
-		local monitor_found_path = false
-		local log_found_enabled = false
-		local log_found_file = false
-		local log_found_maxsize = false
-		local log_found_maxbackups = false
-		local log_found_maxage = false
-		local log_found_compress = false
+		-- 使用shell脚本更新YAML配置
+		local cmd = string.format("/usr/bin/tvgate-update-yaml.sh --web-path '%s' --username '%s' --password '%s' --port '%s' --monitor-path '%s'",
+			d.path or "nil",
+			d.username or "nil",
+			d.password or "nil",
+			d.port or "nil",
+			d.monitor_path or "nil"
+		)
 		
-		for line in content:gmatch("[^\r\n]+") do
-			local raw = line
-			local clean = line:gsub("#.*$", "")
-			local s = clean:match("^%s*(%w+):%s*$")
-			
-			if s then
-				if current_section == "web" then
-					if d.enabled and not web_found_enabled then table.insert(out, "  enabled: " .. d.enabled) end
-					if d.username and not web_found_username then table.insert(out, "  username: " .. d.username) end
-					if d.password and not web_found_password then table.insert(out, "  password: " .. d.password) end
-					if d.path and not web_found_path then table.insert(out, "  path: " .. d.path) end
-				elseif current_section == "server" then
-					if d.port and not server_found_port then table.insert(out, "  port: " .. d.port) end
-				elseif current_section == "monitor" then
-					if d.monitor_path and not monitor_found_path then table.insert(out, "  path: " .. d.monitor_path) end
-				elseif current_section == "log" then
-					if d.log_enabled and not log_found_enabled then table.insert(out, "  enabled: " .. d.log_enabled) end
-					if d.log_file and not log_found_file then table.insert(out, "  file: " .. d.log_file) end
-					if d.log_maxsize and not log_found_maxsize then table.insert(out, "  maxsize: " .. d.log_maxsize) end
-					if d.log_maxbackups and not log_found_maxbackups then table.insert(out, "  maxbackups: " .. d.log_maxbackups) end
-					if d.log_maxage and not log_found_maxage then table.insert(out, "  maxage: " .. d.log_maxage) end
-					if d.log_compress and not log_found_compress then table.insert(out, "  compress: " .. d.log_compress) end
-				end
-				current_section = s
-				web_found_enabled, web_found_username, web_found_password, web_found_path = false, false, false, false
-				server_found_port = false
-				monitor_found_path = false
-				log_found_enabled, log_found_file, log_found_maxsize, log_found_maxbackups, log_found_maxage, log_found_compress = false, false, false, false, false, false
-				table.insert(out, raw)
-			else
-				if current_section == "web" then
-					if clean:find("enabled:%s*") then
-						table.insert(out, raw:gsub("enabled:%s*[^#]*", "enabled: " .. (d.enabled or "true")))
-						web_found_enabled = true
-					elseif clean:find("username:%s*") then
-						table.insert(out, raw:gsub("username:%s*[^#]*", "username: " .. (d.username or "admin")))
-						web_found_username = true
-					elseif clean:find("password:%s*") then
-						table.insert(out, raw:gsub("password:%s*[^#]*", "password: " .. (d.password or "admin")))
-						web_found_password = true
-					elseif clean:find("path:%s*") then
-						table.insert(out, raw:gsub("path:%s*[^#]*", "path: " .. (d.path or "/web/")))
-						web_found_path = true
-					else
-						table.insert(out, raw)
-					end
-				elseif current_section == "server" then
-					if clean:find("port:%s*") then
-						table.insert(out, raw:gsub("port:%s*[^#]*", "port: " .. (d.port or "8888")))
-						server_found_port = true
-					else
-						table.insert(out, raw)
-					end
-				elseif current_section == "monitor" then
-					if clean:find("path:%s*") then
-						table.insert(out, raw:gsub("path:%s*[^#]*", "path: " .. (d.monitor_path or "/status")))
-						monitor_found_path = true
-					else
-						table.insert(out, raw)
-					end
-				elseif current_section == "log" then
-					if d.log_enabled and clean:find("enabled:%s*") then
-						table.insert(out, raw:gsub("enabled:%s*[^#]*", "enabled: " .. d.log_enabled))
-						log_found_enabled = true
-					elseif d.log_file and clean:find("file:%s*") then
-						table.insert(out, raw:gsub("file:%s*[^#]*", "file: " .. d.log_file))
-						log_found_file = true
-					elseif d.log_maxsize and clean:find("maxsize:%s*") then
-						table.insert(out, raw:gsub("maxsize:%s*[^#]*", "maxsize: " .. d.log_maxsize))
-						log_found_maxsize = true
-					elseif d.log_maxbackups and clean:find("maxbackups:%s*") then
-						table.insert(out, raw:gsub("maxbackups:%s*[^#]*", "maxbackups: " .. d.log_maxbackups))
-						log_found_maxbackups = true
-					elseif d.log_maxage and clean:find("maxage:%s*") then
-						table.insert(out, raw:gsub("maxage:%s*[^#]*", "maxage: " .. d.log_maxage))
-						log_found_maxage = true
-					elseif d.log_compress and clean:find("compress:%s*") then
-						table.insert(out, raw:gsub("compress:%s*[^#]*", "compress: " .. d.log_compress))
-						log_found_compress = true
-					else
-						table.insert(out, raw)
-					end
-				else
-					table.insert(out, raw)
-				end
-			end
-		end
+		if d.log_enabled then cmd = cmd .. string.format(" --log-enabled '%s'", d.log_enabled) end
+		if d.log_file then cmd = cmd .. string.format(" --log-file '%s'", d.log_file) end
+		if d.log_maxsize then cmd = cmd .. string.format(" --log-maxsize '%s'", d.log_maxsize) end
+		if d.log_maxbackups then cmd = cmd .. string.format(" --log-maxbackups '%s'", d.log_maxbackups) end
+		if d.log_maxage then cmd = cmd .. string.format(" --log-maxage '%s'", d.log_maxage) end
+		if d.log_compress then cmd = cmd .. string.format(" --log-compress '%s'", d.log_compress) end
 		
-		if current_section == "web" then
-			if d.enabled and not web_found_enabled then table.insert(out, "  enabled: " .. d.enabled) end
-			if d.username and not web_found_username then table.insert(out, "  username: " .. d.username) end
-			if d.password and not web_found_password then table.insert(out, "  password: " .. d.password) end
-			if d.path and not web_found_path then table.insert(out, "  path: " .. d.path) end
-		elseif current_section == "server" then
-			if d.port and not server_found_port then table.insert(out, "  port: " .. d.port) end
-		elseif current_section == "monitor" then
-			if d.monitor_path and not monitor_found_path then table.insert(out, "  path: " .. d.monitor_path) end
-		elseif current_section == "log" then
-			if d.log_enabled and not log_found_enabled then table.insert(out, "  enabled: " .. d.log_enabled) end
-			if d.log_file and not log_found_file then table.insert(out, "  file: " .. d.log_file) end
-			if d.log_maxsize and not log_found_maxsize then table.insert(out, "  maxsize: " .. d.log_maxsize) end
-			if d.log_maxbackups and not log_found_maxbackups then table.insert(out, "  maxbackups: " .. d.log_maxbackups) end
-			if d.log_maxage and not log_found_maxage then table.insert(out, "  maxage: " .. d.log_maxage) end
-			if d.log_compress and not log_found_compress then table.insert(out, "  compress: " .. d.log_compress) end
-		end
-
-		fs.writefile(yaml_path, table.concat(out, "\n"))
-
-		local sys = require "luci.sys"
-		sys.call("/etc/init.d/tvgate restart >/dev/null 2>&1")
-
+		-- 执行shell脚本更新配置
+		local result = sys.exec(cmd)
+		
+		-- 重启服务使配置生效
+		sys.exec("/etc/init.d/tvgate reload >/dev/null 2>&1 &")
+		
+		-- 返回成功响应
 		http.prepare_content("application/json")
-		http.write_json({ result = true })
+		http.write({ 
+			success = true,
+			message = "Configuration updated successfully",
+			result = result
+		})
 		return
 	end
 
