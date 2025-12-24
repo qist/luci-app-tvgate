@@ -8,11 +8,6 @@ mkdir -p /etc/tvgate
 proxy=$(uci get tvgate.@tvgate[0].proxy 2>/dev/null)
 download_url=$(uci get tvgate.@tvgate[0].download_url 2>/dev/null)
 
-# Set defaults if not found
-if [ -z "$proxy" ] || [ "$proxy" = "none" ]; then
-	proxy="https://hk.gh-proxy.com"
-fi
-
 # Detect system architecture
 ARCH=$(uname -m)
 case $ARCH in
@@ -70,11 +65,15 @@ if [ -n "$proxy" ] && [ "$proxy" != "none" ]; then
 	# Remove trailing slash from proxy
 	proxy=$(echo "$proxy" | sed 's:/*$::')
 	
-	# Construct full URL with proxy - correct format
-	full_url="$proxy/$download_url"
+	# For GitHub proxy, we need to format the URL differently
+	# Proxy should be prepended to the GitHub URL: proxy/github.com/...
+	# Extract the GitHub URL and format it properly for the proxy
+	github_url=$(echo "$download_url" | sed 's|https://||')
+	full_url="$proxy/https://$github_url"
 	
 	echo "Using proxy: $proxy"
 else
+	# No proxy specified, use direct URL
 	full_url="$download_url"
 fi
 
