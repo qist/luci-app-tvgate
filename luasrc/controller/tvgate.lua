@@ -1,6 +1,7 @@
 
 module("luci.controller.tvgate", package.seeall)
-local i18n = require "luci.i18n"
+local ok_i18n, i18n_mod = pcall(require, "luci.i18n")
+local translate = ok_i18n and i18n_mod.translate or function(s) return s end
 local ok_t, tmpl = pcall(require, "luci.template")
 local Template = ok_t and tmpl.Template or (function() local ok_v, view = pcall(require, "luci.view"); if ok_v then return view.Template end end)()
 local ok_fs, fs_mod = pcall(require, "nixio.fs")
@@ -14,14 +15,14 @@ function index()
 	entry(
 		{"admin", "services", "tvgate"},
 		alias("admin", "services", "tvgate", "config"),
-		i18n.translate("TVGate"),
+		translate("TVGate"),
 		30
 	).dependent = true
 
 	entry(
 		{"admin", "services", "tvgate", "config"},
 		cbi("tvgate"),
-		i18n.translate("Configuration"),
+		translate("Configuration"),
 		10
 	).leaf = true
 
@@ -45,7 +46,7 @@ function index()
 		call("act_tvgate_config")
 	).leaf = true
 	
-	entry({"admin", "services", "tvgate", "web_config"}, Template and Template("tvgate/web_config") or template("tvgate/web_config"), i18n.translate("Web 配置"), 20).leaf = true
+	entry({"admin", "services", "tvgate", "web_config"}, Template and Template("tvgate/web_config") or template("tvgate/web_config"), translate("Web 配置"), 20).leaf = true
 	
 	entry({"admin", "services", "tvgate", "web"}, call("act_web_config"), nil).leaf = true
 end
