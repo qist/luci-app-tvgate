@@ -54,7 +54,7 @@ function index()
 
 	entry(
 		{"admin", "services", "tvgate", "tvgate_config"},
-		call("act_web_config")
+		call("act_tvgate_config")
 	).leaf = true
 
 	-- 使用 template 方式定义 web_config 页面路由
