@@ -54,7 +54,7 @@ function index()
 
 	entry(
 		{"admin", "services", "tvgate", "tvgate_config"},
-		call("act_tvgate_config")
+		call("act_web_config")
 	).leaf = true
 
 	-- 使用 template 方式定义 web_config 页面路由
@@ -389,7 +389,13 @@ function act_tvgate_config()
 			monitor_path = "/status",
 			port = "8888",
 			username = "admin",
-			password = "admin"
+			password = "admin",
+			log_enabled = false,
+			log_file = "",
+			log_maxsize = "10",
+			log_maxbackups = "10",
+			log_maxage = "28",
+			log_compress = false
 		})
 		return
 	end
@@ -402,7 +408,13 @@ function act_tvgate_config()
 			monitor_path = "/status",
 			port = "8888",
 			username = "admin",
-			password = "admin"
+			password = "admin",
+			log_enabled = false,
+			log_file = "",
+			log_maxsize = "10",
+			log_maxbackups = "10",
+			log_maxage = "28",
+			log_compress = false
 		})
 		return
 	end
@@ -477,6 +489,12 @@ function act_tvgate_config()
 		end
 	end
 
+	local function to_bool(s)
+		return (s == "1" or s == "true" or s == "yes" or s == "on")
+	end
+	local log_enabled_bool = to_bool(log_enabled)
+	local log_compress_bool = to_bool(log_compress)
+
 	luci.http.prepare_content("application/json")
 	luci.http.write_json({
 		web_path = web_path,
@@ -484,11 +502,11 @@ function act_tvgate_config()
 		port = port,
 		username = username,
 		password = password,
-		log_enabled = log_enabled,
+		log_enabled = log_enabled_bool,
 		log_file = log_file,
 		log_maxsize = log_maxsize,
 		log_maxbackups = log_maxbackups,
 		log_maxage = log_maxage,
-		log_compress = log_compress
+		log_compress = log_compress_bool
 	})
 end
