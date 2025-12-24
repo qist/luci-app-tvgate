@@ -3,6 +3,7 @@ include $(TOPDIR)/rules.mk
 PKG_NAME:=luci-app-tvgate
 PKG_VERSION:=1.0.0
 PKG_RELEASE:=1
+LUCI_LANG:=zh-cn
 
 PKG_MAINTAINER:=<yourname> <your@email.com>
 
