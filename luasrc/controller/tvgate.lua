@@ -69,59 +69,97 @@ end
 function act_web_config()
 	local i18n = require "luci.i18n"
 	local http = require "luci.http"
-	local yaml_path = "/etc/tvgate/config.yaml"
+	local sys  = require "luci.sys"
+	local uci  = require "luci.model.uci".cursor()
+	
 	local method = http.getenv("REQUEST_METHOD")
+	local yaml_path = "/etc/tvgate/config.yaml"
 
+	-- 如果配置文件不存在，创建默认配置
+	if not fs.access(yaml_path) then
+		sys.call("mkdir -p /etc/tvgate >/dev/null 2>&1")
+		local default_config = [[server:
+  #监听端口
+  port: 8888
+# 监控配置
+monitor:
+  path: "/status" # 状态信息
+
+# 配置文件编辑接口
+web:
+  enabled: true
+  username: admin
+  password: admin
+  path: /web/ # 自定义路径
+]]
+		fs.writefile(yaml_path, default_config)
+	end
+
+	-- ================= GET =================
 	if method == "GET" then
-		local cfg = {
-			enabled = "true",
-			username = "admin",
-			password = "admin",
-			path = "/web/",
-			monitor_path = "/status",
-			port = "8888",
-			log_enabled = "true",
-			log_file = "",
-			log_maxsize = "10",
-			log_maxbackups = "10",
-			log_maxage = "28",
-			log_compress = "false"
-		}
+		-- 读取YAML配置文件
+		local yaml_content = fs.readfile(yaml_path)
+		if not yaml_content then
+			http.status(500, "Cannot read config.yaml")
+			return
+		end
 
-		if fs and fs.access(yaml_path) then
-			local content = fs.readfile(yaml_path)
-			if content then
-				local section
-				for line in content:gmatch("[^\r\n]+") do
-					local clean = line:gsub("#.*$", "")
-					local s = clean:match("^%s*(%w+):%s*$")
-					if s then
-						section = s
-					else
-						local k, v = clean:match("^%s*([%w_]+)%s*:%s*\"?([^\"\n]+)\"?")
-						if k and v then
-							if section == "web" then
-								cfg[k] = v
-							elseif section == "server" and k == "port" then
-								cfg.port = v
-							elseif section == "monitor" and k == "path" then
-								cfg.monitor_path = v
-							elseif section == "log" then
-								if k == "enabled" then
-									cfg.log_enabled = v
-								elseif k == "file" then
-									cfg.log_file = v
-								elseif k == "maxsize" then
-									cfg.log_maxsize = v
-								elseif k == "maxbackups" then
-									cfg.log_maxbackups = v
-								elseif k == "maxage" then
-									cfg.log_maxage = v
-								elseif k == "compress" then
-									cfg.log_compress = v
-								end
-							end
-						end
+		-- 解析YAML获取当前配置
+		local port = "8888"
+		local path = "/web/"
+		local username = "admin"
+		local password = "admin"
+		local monitor_path = "/status"
+		local enabled = "true"
+		local log_enabled = "true"
+		local log_file = ""
+		local log_maxsize = "10"
+		local log_maxbackups = "10"
+		local log_maxage = "28"
+		local log_compress = "false"
+		
+		local current_section = nil
+		for line in yaml_content:gmatch("[^\r\n]+") do
+			local clean = line:gsub("#.*$", ""):gsub("^%s*", "")
+			local s = clean:match("^(%w+):%s*$")
+			if s then
+				current_section = s
+			else
+				if current_section == "web" then
+					local key, value = clean:match("^([%w_]+)%s*:%s*[\"']?([^\"']*)[\"']?")
+					if key == "path" then
+						path = value
+					elseif key == "username" then
+						username = value
+					elseif key == "password" then
+						password = value
+					elseif key == "enabled" then
+						enabled = value
+					end
+				elseif current_section == "server" then
+					local key, value = clean:match("^([%w_]+)%s*:%s*[\"']?([^\"']*)[\"']?")
+					if key == "port" then
+						port = value
+					end
+				elseif current_section == "monitor" then
+					local key, value = clean:match("^([%w_]+)%s*:%s*[\"']?([^\"']*)[\"']?")
+					if key == "path" then
+						monitor_path = value
+					end
+				elseif current_section == "log" then
+					local key, value = clean:match("^([%w_]+)%s*:%s*[\"']?([^\"']*)[\"']?")
+					if key == "enabled" then
+						log_enabled = value
+					elseif key == "file" then
+						log_file = value
+					elseif key == "maxsize" then
+						log_maxsize = value
+					elseif key == "maxbackups" then
+						log_maxbackups = value
+					elseif key == "maxage" then
+						log_maxage = value
+					elseif key == "compress" then
+						log_compress = value
 					end
 				end
 			end
@@ -183,34 +221,209 @@ function act_web_config()
 			return
 		end
 		
-		-- 使用shell脚本更新YAML配置
-		local cmd = string.format("/usr/bin/tvgate-update-yaml.sh --web-path '%s' --username '%s' --password '%s' --port '%s' --monitor-path '%s'",
-			d.path or "nil",
-			d.username or "nil",
-			d.password or "nil",
-			d.port or "nil",
-			d.monitor_path or "nil"
-		)
-		
-		if d.log_enabled then cmd = cmd .. string.format(" --log-enabled '%s'", d.log_enabled) end
-		if d.log_file then cmd = cmd .. string.format(" --log-file '%s'", d.log_file) end
-		if d.log_maxsize then cmd = cmd .. string.format(" --log-maxsize '%s'", d.log_maxsize) end
-		if d.log_maxbackups then cmd = cmd .. string.format(" --log-maxbackups '%s'", d.log_maxbackups) end
-		if d.log_maxage then cmd = cmd .. string.format(" --log-maxage '%s'", d.log_maxage) end
-		if d.log_compress then cmd = cmd .. string.format(" --log-compress '%s'", d.log_compress) end
-		
-		-- 执行shell脚本更新配置
-		local result = sys.exec(cmd)
-		
+		-- 构建新的YAML配置内容
+		local new_config = {}
+		local added_sections = {}
+
+		-- 读取现有配置作为基础
+		local existing_content = fs.readfile(yaml_path) or ""
+		local lines = {}
+		for line in existing_content:gmatch("[^\r\n]+") do
+			table.insert(lines, line)
+		end
+
+		-- 先标记已有的section
+		for _, line in ipairs(lines) do
+			local clean = line:gsub("#.*$", "")
+			local section = clean:match("^%s*(%w+):%s*$")
+			if section then
+				added_sections[section] = true
+			end
+		end
+
+		-- 构建新的配置内容
+		local output_lines = {}
+
+		-- 处理已有行，更新相关部分
+		local in_web_section = false
+		local in_server_section = false
+		local in_monitor_section = false
+		local in_log_section = false
+		local web_updated = false
+		local server_updated = false
+		local monitor_updated = false
+		local log_updated = false
+
+		for _, line in ipairs(lines) do
+			local clean = line:gsub("#.*$", "")
+			local section = clean:match("^%s*(%w+):%s*$")
+			
+			if section then
+				in_web_section = (section == "web")
+				in_server_section = (section == "server")
+				in_monitor_section = (section == "monitor")
+				in_log_section = (section == "log")
+				table.insert(output_lines, line)
+			elseif in_web_section then
+				local key = clean:match("^%s*([%w_]+)%s*:.*$")
+				if key == "path" then
+					table.insert(output_lines, string.format("  path: %s", d.path))
+					web_updated = true
+				elseif key == "username" then
+					table.insert(output_lines, string.format("  username: %s", d.username))
+					web_updated = true
+				elseif key == "password" then
+					table.insert(output_lines, string.format("  password: %s", d.password))
+					web_updated = true
+				elseif key == "enabled" then
+					table.insert(output_lines, string.format("  enabled: %s", d.enabled))
+					web_updated = true
+				else
+					table.insert(output_lines, line)
+				end
+			elseif in_server_section then
+				local key = clean:match("^%s*([%w_]+)%s*:.*$")
+				if key == "port" then
+					table.insert(output_lines, string.format("  port: %s", d.port))
+					server_updated = true
+				else
+					table.insert(output_lines, line)
+				end
+			elseif in_monitor_section then
+				local key = clean:match("^%s*([%w_]+)%s*:.*$")
+				if key == "path" then
+					table.insert(output_lines, string.format("  path: %s", d.monitor_path))
+					monitor_updated = true
+				else
+					table.insert(output_lines, line)
+				end
+			elseif in_log_section then
+				local updated = false
+				if d.log_enabled ~= nil then
+					local key = clean:match("^%s*([%w_]+)%s*:.*$")
+					if key == "enabled" then
+						table.insert(output_lines, string.format("  enabled: %s", d.log_enabled))
+						updated = true
+						log_updated = true
+					end
+				end
+				if d.log_file ~= nil then
+					local key = clean:match("^%s*([%w_]+)%s*:.*$")
+					if key == "file" then
+						table.insert(output_lines, string.format("  file: %s", d.log_file))
+						updated = true
+						log_updated = true
+					end
+				end
+				if d.log_maxsize ~= nil then
+					local key = clean:match("^%s*([%w_]+)%s*:.*$")
+					if key == "maxsize" then
+						table.insert(output_lines, string.format("  maxsize: %s", d.log_maxsize))
+						updated = true
+						log_updated = true
+					end
+				end
+				if d.log_maxbackups ~= nil then
+					local key = clean:match("^%s*([%w_]+)%s*:.*$")
+					if key == "maxbackups" then
+						table.insert(output_lines, string.format("  maxbackups: %s", d.log_maxbackups))
+						updated = true
+						log_updated = true
+					end
+				end
+				if d.log_maxage ~= nil then
+					local key = clean:match("^%s*([%w_]+)%s*:.*$")
+					if key == "maxage" then
+						table.insert(output_lines, string.format("  maxage: %s", d.log_maxage))
+						updated = true
+						log_updated = true
+					end
+				end
+				if d.log_compress ~= nil then
+					local key = clean:match("^%s*([%w_]+)%s*:.*$")
+					if key == "compress" then
+						table.insert(output_lines, string.format("  compress: %s", d.log_compress))
+						updated = true
+						log_updated = true
+					end
+				end
+				if not updated then
+					table.insert(output_lines, line)
+				end
+			else
+				table.insert(output_lines, line)
+			end
+		end
+
+		-- 如果没有找到对应的section，则添加
+		if not web_updated then
+			if not added_sections.web then
+				table.insert(output_lines, "web:")
+				added_sections.web = true
+			end
+			table.insert(output_lines, string.format("  path: %s", d.path))
+			table.insert(output_lines, string.format("  username: %s", d.username))
+			table.insert(output_lines, string.format("  password: %s", d.password))
+			table.insert(output_lines, string.format("  enabled: %s", d.enabled))
+		end
+
+		if not server_updated then
+			if not added_sections.server then
+				table.insert(output_lines, "server:")
+				added_sections.server = true
+			end
+			table.insert(output_lines, string.format("  port: %s", d.port))
+		end
+
+		if not monitor_updated then
+			if not added_sections.monitor then
+				table.insert(output_lines, "monitor:")
+				added_sections.monitor = true
+			end
+			table.insert(output_lines, string.format("  path: %s", d.monitor_path))
+		end
+
+		if (d.log_enabled ~= nil or d.log_file ~= nil or d.log_maxsize ~= nil or 
+			d.log_maxbackups ~= nil or d.log_maxage ~= nil or d.log_compress ~= nil) and not log_updated then
+			if not added_sections.log then
+				table.insert(output_lines, "log:")
+				added_sections.log = true
+			end
+			if d.log_enabled ~= nil then
+				table.insert(output_lines, string.format("  enabled: %s", d.log_enabled))
+			end
+			if d.log_file ~= nil then
+				table.insert(output_lines, string.format("  file: %s", d.log_file))
+			end
+			if d.log_maxsize ~= nil then
+				table.insert(output_lines, string.format("  maxsize: %s", d.log_maxsize))
+			end
+			if d.log_maxbackups ~= nil then
+				table.insert(output_lines, string.format("  maxbackups: %s", d.log_maxbackups))
+			end
+			if d.log_maxage ~= nil then
+				table.insert(output_lines, string.format("  maxage: %s", d.log_maxage))
+			end
+			if d.log_compress ~= nil then
+				table.insert(output_lines, string.format("  compress: %s", d.log_compress))
+			end
+		end
+
+		-- 写入新配置
+		local success = fs.writefile(yaml_path, table.concat(output_lines, "\n"))
+		if not success then
+			http.status(500, "Failed to write config file")
+			return
+		end
+
 		-- 重启服务使配置生效
-		sys.exec("/etc/init.d/tvgate reload >/dev/null 2>&1 &")
+		sys.call("/etc/init.d/tvgate reload >/dev/null 2>&1 &")
 		
 		-- 返回成功响应
 		http.prepare_content("application/json")
 		http.write({ 
 			success = true,
-			message = "Configuration updated successfully",
-			result = result
+			message = "Configuration updated successfully"
 		})
 		return
 	end
