@@ -59,5 +59,6 @@ Once the service is running:
 ## Supported Architectures
 
 - x86_64
+- i686
 - aarch64 (ARM64)
 - armv7l (ARMv7)

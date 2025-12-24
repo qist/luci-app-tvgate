@@ -344,6 +344,7 @@ function act_detect_arch()
 
 	local map = {
 		x86_64  = "amd64",
+		i686    = "386",
 		aarch64 = "arm64",
 		armv7l  = "armv7",
 		mips    = "mips",

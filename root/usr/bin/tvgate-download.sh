@@ -20,6 +20,10 @@ case $ARCH in
 		DEFAULT_URL='https://github.com/qist/tvgate/releases/latest/download/TVGate-linux-amd64.zip'
 		BIN_NAME='TVGate-linux-amd64'
 		;;
+	i686)
+		DEFAULT_URL='https://github.com/qist/tvgate/releases/latest/download/TVGate-linux-386.zip'
+		BIN_NAME='TVGate-linux-386'
+		;;
 	aarch64)
 		DEFAULT_URL='https://github.com/qist/tvgate/releases/latest/download/TVGate-linux-arm64.zip'
 		BIN_NAME='TVGate-linux-arm64'
