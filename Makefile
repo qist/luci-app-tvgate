@@ -48,5 +48,16 @@ endef
 
 include $(TOPDIR)/feeds/luci/luci.mk
 
+define Package/luci-i18n-tvgate-zh-cn
+  $(call Package/luci-i18n-template,zh-cn)
+endef
+
+define Package/luci-i18n-tvgate-zh-cn/install
+	$(INSTALL_DIR) $(1)/usr/lib/lua/luci/i18n
+	$(STAGING_DIR_HOST)/bin/po2lmo $(PKG_BUILD_DIR)/po/zh-cn/tvgate.po $(1)/usr/lib/lua/luci/i18n/tvgate.zh-cn.lmo
+endef
+
+$(eval $(call BuildPackage,luci-i18n-tvgate-zh-cn))
+
 
 # call BuildPackage - OpenWrt buildroot signature
