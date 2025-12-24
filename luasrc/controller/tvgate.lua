@@ -206,14 +206,14 @@ function act_web_config()
 			
 			if s then
 				if current_section == "web" then
-					if not web_found_enabled then table.insert(out, "  enabled: " .. d.enabled) end
-					if not web_found_username then table.insert(out, "  username: " .. d.username) end
-					if not web_found_password then table.insert(out, "  password: " .. d.password) end
-					if not web_found_path then table.insert(out, "  path: " .. d.path) end
+					if d.enabled and not web_found_enabled then table.insert(out, "  enabled: " .. d.enabled) end
+					if d.username and not web_found_username then table.insert(out, "  username: " .. d.username) end
+					if d.password and not web_found_password then table.insert(out, "  password: " .. d.password) end
+					if d.path and not web_found_path then table.insert(out, "  path: " .. d.path) end
 				elseif current_section == "server" then
-					if not server_found_port then table.insert(out, "  port: " .. d.port) end
+					if d.port and not server_found_port then table.insert(out, "  port: " .. d.port) end
 				elseif current_section == "monitor" then
-					if not monitor_found_path then table.insert(out, "  path: " .. d.monitor_path) end
+					if d.monitor_path and not monitor_found_path then table.insert(out, "  path: " .. d.monitor_path) end
 				elseif current_section == "log" then
 					if d.log_enabled and not log_found_enabled then table.insert(out, "  enabled: " .. d.log_enabled) end
 					if d.log_file and not log_found_file then table.insert(out, "  file: " .. d.log_file) end
@@ -231,30 +231,30 @@ function act_web_config()
 			else
 				if current_section == "web" then
 					if clean:find("enabled:%s*") then
-						table.insert(out, raw:gsub("enabled:%s*[^#]*", "enabled: " .. d.enabled))
+						table.insert(out, raw:gsub("enabled:%s*[^#]*", "enabled: " .. (d.enabled or "true")))
 						web_found_enabled = true
 					elseif clean:find("username:%s*") then
-						table.insert(out, raw:gsub("username:%s*[^#]*", "username: " .. d.username))
+						table.insert(out, raw:gsub("username:%s*[^#]*", "username: " .. (d.username or "admin")))
 						web_found_username = true
 					elseif clean:find("password:%s*") then
-						table.insert(out, raw:gsub("password:%s*[^#]*", "password: " .. d.password))
+						table.insert(out, raw:gsub("password:%s*[^#]*", "password: " .. (d.password or "admin")))
 						web_found_password = true
 					elseif clean:find("path:%s*") then
-						table.insert(out, raw:gsub("path:%s*[^#]*", "path: " .. d.path))
+						table.insert(out, raw:gsub("path:%s*[^#]*", "path: " .. (d.path or "/web/")))
 						web_found_path = true
 					else
 						table.insert(out, raw)
 					end
 				elseif current_section == "server" then
 					if clean:find("port:%s*") then
-						table.insert(out, raw:gsub("port:%s*[^#]*", "port: " .. d.port))
+						table.insert(out, raw:gsub("port:%s*[^#]*", "port: " .. (d.port or "8888")))
 						server_found_port = true
 					else
 						table.insert(out, raw)
 					end
 				elseif current_section == "monitor" then
 					if clean:find("path:%s*") then
-						table.insert(out, raw:gsub("path:%s*[^#]*", "path: " .. d.monitor_path))
+						table.insert(out, raw:gsub("path:%s*[^#]*", "path: " .. (d.monitor_path or "/status")))
 						monitor_found_path = true
 					else
 						table.insert(out, raw)
@@ -288,14 +288,14 @@ function act_web_config()
 		end
 		
 		if current_section == "web" then
-			if not web_found_enabled then table.insert(out, "  enabled: " .. d.enabled) end
-			if not web_found_username then table.insert(out, "  username: " .. d.username) end
-			if not web_found_password then table.insert(out, "  password: " .. d.password) end
-			if not web_found_path then table.insert(out, "  path: " .. d.path) end
+			if d.enabled and not web_found_enabled then table.insert(out, "  enabled: " .. d.enabled) end
+			if d.username and not web_found_username then table.insert(out, "  username: " .. d.username) end
+			if d.password and not web_found_password then table.insert(out, "  password: " .. d.password) end
+			if d.path and not web_found_path then table.insert(out, "  path: " .. d.path) end
 		elseif current_section == "server" then
-			if not server_found_port then table.insert(out, "  port: " .. d.port) end
+			if d.port and not server_found_port then table.insert(out, "  port: " .. d.port) end
 		elseif current_section == "monitor" then
-			if not monitor_found_path then table.insert(out, "  path: " .. d.monitor_path) end
+			if d.monitor_path and not monitor_found_path then table.insert(out, "  path: " .. d.monitor_path) end
 		elseif current_section == "log" then
 			if d.log_enabled and not log_found_enabled then table.insert(out, "  enabled: " .. d.log_enabled) end
 			if d.log_file and not log_found_file then table.insert(out, "  file: " .. d.log_file) end
@@ -365,7 +365,7 @@ function act_status()
 	
 	-- 如果pid文件方式失败，使用ps命令作为备选方案
 	if not running then
-		running = (sys.call("ps | grep -v grep | grep -q '[/]/TVGate'") == 0)
+		running = (sys.call("ps | grep -v grep | grep -q 'TVGate'") == 0)
 	end
 
 	local status = {
