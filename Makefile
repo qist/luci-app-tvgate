@@ -54,12 +54,23 @@ define Package/luci-i18n-tvgate-zh-cn
   PKGARCH:=all
 endef
 
+define Package/luci-i18n-tvgate-en
+  $(call Package/luci-i18n-template)
+  TITLE:=LuCI Support for TVGate en Translation
+  DEPENDS:=+luci-app-tvgate
+  PKGARCH:=all
+endef
+
 # 准备阶段处理po文件到lmo文件的转换
 define Build/Prepare
 	mkdir -p $(PKG_BUILD_DIR)/po/zh-cn
+	mkdir -p $(PKG_BUILD_DIR)/po/en
 	$(CP) ./po/zh-cn/* $(PKG_BUILD_DIR)/po/zh-cn/
+	$(CP) ./po/en/* $(PKG_BUILD_DIR)/po/en/
 	$(foreach po,$(wildcard ./po/zh-cn/*.po), \
 		po2lmo $(po) $(PKG_BUILD_DIR)/$(patsubst ./po/zh-cn/%.po,%.zh-cn.lmo,$(po));)
+	$(foreach po,$(wildcard ./po/en/*.po), \
+		po2lmo $(po) $(PKG_BUILD_DIR)/$(patsubst ./po/en/%.po,%.en.lmo,$(po));)
 endef
 
 define Package/luci-i18n-tvgate-zh-cn/install
@@ -68,6 +79,13 @@ define Package/luci-i18n-tvgate-zh-cn/install
 		po2lmo $(po) $(1)/usr/lib/lua/luci/i18n/$(patsubst ./po/zh-cn/%.po,%.zh-cn.lmo,$(po));)
 endef
 
+define Package/luci-i18n-tvgate-en/install
+	$(INSTALL_DIR) $(1)/usr/lib/lua/luci/i18n
+	$(foreach po,$(wildcard ./po/en/*.po), \
+		po2lmo $(po) $(1)/usr/lib/lua/luci/i18n/$(patsubst ./po/en/%.po,%.en.lmo,$(po));)
+endef
+
 $(eval $(call BuildPackage,luci-i18n-tvgate-zh-cn))
+$(eval $(call BuildPackage,luci-i18n-tvgate-en))
 
 # call BuildPackage - OpenWrt buildroot signature
