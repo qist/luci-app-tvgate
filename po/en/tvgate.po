@@ -148,7 +148,7 @@ msgstr "Failed to download TVGate binary:"
 msgid "Failed to download TVGate binary due to communication error."
 msgstr "Failed to download TVGate binary due to communication error."
 # CBI field descriptions
-msgid "Web Path"
+msgid "Web 路径"
 msgstr "Web Path"
 
 msgid "Monitor Path"
