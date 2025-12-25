@@ -101,7 +101,8 @@ if [ $CURL_STATUS -eq 0 ]; then
 	# Cleanup
 	rm -f /tmp/tvgate.zip
 	rm -rf /tmp/tvgate*
-
+    rm -r /tmp/TVGate.service
+	rm -r /tmp/README.md 
 	echo "TVGate downloaded and installed successfully"
 	exit 0
 else
