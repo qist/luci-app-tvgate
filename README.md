@@ -36,7 +36,7 @@ TVGate is a high-performance local network resource forwarding and proxy tool. I
    opkg remove luci-i18n-tvgate-en
    opkg remove luci-i18n-tvgate-zh-cn
    ```
-4. openwrt 25 Install the generated ipk package:
+4. openwrt 25 Install the generated apk package:
  ```bash
 apk update
 apk add curl ca-certificates unzip luci-compat luci luci-base
