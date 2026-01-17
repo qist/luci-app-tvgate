@@ -248,7 +248,7 @@ function act_web_config()
 		local result = sys.exec(cmd)
 		
 		-- 重启服务使配置生效
-		sys.exec("/etc/init.d/tvgate reload >/dev/null 2>&1 &")
+		-- sys.exec("/etc/init.d/tvgate reload >/dev/null 2>&1 &")
 		
 		-- 返回成功响应
 		http.prepare_content("application/json")
@@ -289,7 +289,7 @@ function act_status()
     end
 
     -- ===== 进程检测（唯一可信来源）=====
-    local running = (sys.call("ps | grep '[T]VGate' >/dev/null") == 0)
+    local running = (sys.call("pidof /usr/bin/tvgate/TVGate >/dev/null") == 0)
 
     local status = {
         running = running,
