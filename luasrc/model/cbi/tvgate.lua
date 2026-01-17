@@ -64,7 +64,7 @@ btn.template = "tvgate/status"
 
 m.on_after_commit = function(self)
     -- 添加日志，验证 on_after_commit 是否被触发
-    sys.call("logger -t tvgate 'on_after_commit triggered'")
+    -- sys.call("logger -t tvgate 'on_after_commit triggered'")
     
     -- 修复服务重启命令，兼容OpenWrt和ImmortalWrt
     local restart_cmd = "/etc/init.d/tvgate restart >/dev/null 2>&1"
