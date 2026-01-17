@@ -268,64 +268,41 @@ end
 -- status
 -- =====================
 function act_status()
-	local sys  = require "luci.sys"
-	local uci  = require "luci.model.uci".cursor()
+    local sys  = require "luci.sys"
+    local uci  = require "luci.model.uci".cursor()
 
-	-- 从 YAML 配置文件中读取端口信息
-	local port = "8888" -- 默认端口
-	local yaml_config_path = "/etc/tvgate/config.yaml"
-	
-	if fs and fs.access(yaml_config_path) then
-		local f = io.open(yaml_config_path, "r")
-		if f then
-			local content = f:read("*all")
-			f:close()
-			
-			local current_section = nil
-			for line in content:gmatch("[^\r\n]+") do
-				local clean = line:gsub("#.*$", "")
-				local s = clean:match("^%s*(%w+):%s*$")
-				if s then
-					current_section = s
-				elseif current_section == "server" then
-					local p = clean:match("^%s*port:%s*(%d+)")
-					if p then
-						port = p
-						break
-					end
-				end
-			end
-		end
-	end
+    -- 使用文件顶部已初始化的 fs（nixio.fs / luci.fs 兼容）
+    local _fs = fs
 
-	-- 检测服务运行状态，兼容OpenWrt和ImmortalWrt
-	local running = false
-	if fs and fs.access("/var/run/tvgate.pid") then
-		-- 尝试使用pid文件检测
-		local pid = sys.exec("cat /var/run/tvgate.pid"):match("%d+")
-		if pid and pid ~= "" then
-			running = (sys.call("kill -0 " .. pid .. " 2>/dev/null") == 0)
-		end
-	end
-	
-	-- 如果pid文件方式失败，使用ps命令作为备选方案
-	if not running then
-		running = (sys.call("ps | grep -v grep | grep -q 'TVGate'") == 0)
-	end
+    -- ===== 读取端口（稳妥版）=====
+    local port = "8888"
+    local yaml = "/etc/tvgate/config.yaml"
 
-	local status = {
-		running = running,
-		enabled = (
-			sys.call("iptables -L | grep -q tvgate") == 0 or
-			uci:get("tvgate", "tvgate", "enabled") == "1"
-		),
-		binary_exists = (fs and fs.access("/usr/bin/tvgate/TVGate")) or false,
-		port = port
-	}
+    if _fs and _fs.access(yaml) then
+        for line in io.lines(yaml) do
+            local p = line:match("^%s*port:%s*(%d+)")
+            if p then
+                port = p
+                break
+            end
+        end
+    end
 
-	luci.http.prepare_content("application/json")
-	luci.http.write_json(status)
+    -- ===== 进程检测（唯一可信来源）=====
+    local running = (sys.call("ps | grep '[T]VGate' >/dev/null") == 0)
+
+    local status = {
+        running = running,
+        enabled = (uci:get("tvgate", "tvgate", "enabled") == "1"),
+        binary_exists = (_fs and _fs.access("/usr/bin/tvgate/TVGate")) or false,
+        port = port
+    }
+
+    luci.http.prepare_content("application/json")
+    luci.http.write_json(status)
 end
+
+
 
 -- =====================
 -- download binary
