@@ -1,7 +1,9 @@
 #!/bin/sh /etc/rc.common
 
-USE_PROCD=1
 START=99
+STOP=15
+
+USE_PROCD=1
 
 BIN_PATH="/usr/bin/tvgate/TVGate"
 CONFIG_PATH="/etc/tvgate/config.yaml"
@@ -25,8 +27,7 @@ start_service() {
     procd_open_instance
     procd_set_param command "$BIN_PATH" "-config=$CONFIG_PATH"
 
-    # 防止崩溃风暴：5 秒内最多 5 次
-    procd_set_param respawn 5 5
+    procd_set_param respawn
 
     # 明确告诉 procd：这是前台程序
     procd_set_param stdout 1
@@ -36,7 +37,10 @@ start_service() {
 }
 
 stop_service() {
-    :
+    # 正确停止 TVGate 进程
+    for pid in $(pidof "$BIN_PATH"); do
+        [ -e "/proc/$pid/stat" ] && kill "$pid"
+    done
 }
 
 reload_service() {
