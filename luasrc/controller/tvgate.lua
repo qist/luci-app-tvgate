@@ -248,7 +248,7 @@ function act_web_config()
 		local result = sys.exec(cmd)
 		
 		-- 重启服务使配置生效
-		-- sys.exec("/etc/init.d/tvgate reload >/dev/null 2>&1 &")
+		sys.exec("/etc/init.d/tvgate reload >/dev/null 2>&1 &")
 		
 		-- 返回成功响应
 		http.prepare_content("application/json")
