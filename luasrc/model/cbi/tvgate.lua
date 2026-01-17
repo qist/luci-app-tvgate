@@ -20,10 +20,27 @@ s.anonymous = true
 
 -- 创建配置文件（如果不存在）
 local tvgate_config_dir = "/etc/config/tvgate"
-if not fs or not fs.access(tvgate_config_dir) then
-    -- 设置默认值
-    uci:set("tvgate", "tvgate", "enabled", "0")
-    uci:commit("tvgate")
+local config_exists = false
+
+-- 尝试使用nixio.fs检查文件
+local ok_nixio, nixio_fs = pcall(require, "nixio.fs")
+if ok_nixio and nixio_fs.access(tvgate_config_dir) then
+	config_exists = true
+end
+
+-- 尝试使用luci.fs检查文件
+if not config_exists then
+	local ok_luci, luci_fs = pcall(require, "luci.fs")
+	if ok_luci and luci_fs.access(tvgate_config_dir) then
+		config_exists = true
+	end
+end
+
+-- 只有在配置文件不存在时才创建
+if not config_exists then
+	-- 设置默认值
+	uci:set("tvgate", "tvgate", "enabled", "0")
+	uci:commit("tvgate")
 end
 
 s:option(Flag, "enabled", i18n.translate("Enable"))
