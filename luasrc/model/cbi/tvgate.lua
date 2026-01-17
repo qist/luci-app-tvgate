@@ -20,19 +20,17 @@ s.anonymous = true
 
 -- 创建配置文件（如果不存在）
 local tvgate_config_dir = "/etc/config/tvgate"
-local config_exists = false
+local config_exists = true -- 默认认为配置文件存在，避免误触发
 
 -- 尝试使用nixio.fs检查文件
 local ok_nixio, nixio_fs = pcall(require, "nixio.fs")
-if ok_nixio and nixio_fs.access(tvgate_config_dir) then
-	config_exists = true
-end
-
--- 尝试使用luci.fs检查文件
-if not config_exists then
+if ok_nixio then
+	config_exists = nixio_fs.access(tvgate_config_dir)
+else
+	-- 尝试使用luci.fs检查文件
 	local ok_luci, luci_fs = pcall(require, "luci.fs")
-	if ok_luci and luci_fs.access(tvgate_config_dir) then
-		config_exists = true
+	if ok_luci then
+		config_exists = luci_fs.access(tvgate_config_dir)
 	end
 end
 
@@ -65,6 +63,9 @@ btn = st:option(DummyValue, "_download", i18n.translate("Download / Update Binar
 btn.template = "tvgate/status"
 
 m.on_after_commit = function(self)
+    -- 添加日志，验证 on_after_commit 是否被触发
+    sys.call("logger -t tvgate 'on_after_commit triggered'")
+    
     -- 修复服务重启命令，兼容OpenWrt和ImmortalWrt
     local restart_cmd = "/etc/init.d/tvgate restart >/dev/null 2>&1"
     -- 检查是否有systemctl命令（通常在ImmortalWrt中可用）

@@ -13,19 +13,17 @@ function index()
 	
 	-- 检查并创建UCI配置文件（如果不存在）
 	local tvgate_config_path = "/etc/config/tvgate"
-	local config_exists = false
+	local config_exists = true -- 默认认为配置文件存在，避免误触发
 
 	-- 尝试使用nixio.fs检查文件
 	local ok_nixio, nixio_fs = pcall(require, "nixio.fs")
-	if ok_nixio and nixio_fs.access(tvgate_config_path) then
-		config_exists = true
-	end
-
-	-- 尝试使用luci.fs检查文件
-	if not config_exists then
+	if ok_nixio then
+		config_exists = nixio_fs.access(tvgate_config_path)
+	else
+		-- 尝试使用luci.fs检查文件
 		local ok_luci, luci_fs = pcall(require, "luci.fs")
-		if ok_luci and luci_fs.access(tvgate_config_path) then
-			config_exists = true
+		if ok_luci then
+			config_exists = luci_fs.access(tvgate_config_path)
 		end
 	end
 
