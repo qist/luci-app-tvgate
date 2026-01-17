@@ -1,30 +1,36 @@
-# name: Build
+name: Build
 
-# on: 
-#   workflow_dispatch:
+on:
+  push:
+    tags:
+      - "*"
+  workflow_dispatch:
 
-# jobs:
-#   build:
-#     name: Build ${{ matrix.arch }}
-#     runs-on: ubuntu-latest
-#     strategy:
-#       fail-fast: false
-#       matrix:
-#         arch:
-#           - x86_64
+permissions:
+  contents: write
 
-#     steps:
-#       - name: Checkout repository
-#         uses: actions/checkout@v4
+jobs:
+  build:
+    name: Build ${{ matrix.arch }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        arch:
+          - x86_64
 
-#       - name: Build package
-#         uses: openwrt/gh-action-sdk@main
-#         with:
-#           architecture: ${{ matrix.arch }}
-#           package_name: luci-app-tvgate
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Build package
+        uses: openwrt/gh-action-sdk@main
+        with:
+          architecture: ${{ matrix.arch }}
+          package_name: luci-app-tvgate
           
-#       - name: Upload artifacts
-#         uses: actions/upload-artifact@v4
-#         with:
-#           name: ${{ matrix.arch }}
-#           path: bin/packages/${{ matrix.arch }}/base/*.ipk
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.arch }}
+          path: bin/packages/${{ matrix.arch }}/base/*.ipk
