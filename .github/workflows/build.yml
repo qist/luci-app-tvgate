@@ -11,26 +11,96 @@ permissions:
 
 jobs:
   build:
-    name: Build ${{ matrix.arch }}
+    name: Build ${{ matrix.arch }} - OpenWrt ${{ matrix.version }}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
         arch:
           - x86_64
+        version:
+          - 22.03.5
+          - 25.12.0-rc1
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Build package
-        uses: openwrt/gh-action-sdk@main
-        with:
-          architecture: ${{ matrix.arch }}
-          package_name: luci-app-tvgate
-          
+      - name: Install dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y build-essential git wget xz-utils zstd
+
+      - name: Download and extract OpenWrt SDK
+        run: |
+          if [[ "${{ matrix.version }}" == "22.03.5" ]]; then
+            SDK_URL=https://downloads.openwrt.org/releases/22.03.5/targets/x86/64/openwrt-sdk-22.03.5-x86-64_gcc-11.2.0_musl.Linux-x86_64.tar.xz
+            wget $SDK_URL
+            tar -xvf openwrt-sdk-22.03.5-x86-64_gcc-11.2.0_musl.Linux-x86_64.tar.xz -C $HOME
+          else
+            SDK_URL=https://archive.openwrt.org/releases/25.12.0-rc1/targets/x86/64/openwrt-sdk-25.12.0-rc1-x86-64_gcc-14.3.0_musl.Linux-x86_64.tar.zst
+            wget $SDK_URL
+            zstd -d openwrt-sdk-25.12.0-rc1-x86-64_gcc-14.3.0_musl.Linux-x86_64.tar.zst -c | tar -xvf - -C $HOME
+          fi
+          SDK_DIR=$(find $HOME -maxdepth 1 -type d -name "openwrt-sdk*")
+          echo "SDK_DIR=$SDK_DIR" >> $GITHUB_ENV
+
+      - name: Clone luci-app-tvgate
+        run: |
+          git clone https://github.com/qist/luci-app-tvgate $SDK_DIR/feeds/luci/applications/luci-app-tvgate
+          cd $SDK_DIR/feeds/luci/applications/luci-app-tvgate
+          git pull
+
+      - name: Read PKG_VERSION from Makefile
+        run: |
+          PKG_VERSION=$(grep "^PKG_VERSION:=" $SDK_DIR/feeds/luci/applications/luci-app-tvgate/Makefile | cut -d= -f2 | tr -d ' ')
+          echo "PKG_VERSION=$PKG_VERSION" >> $GITHUB_ENV
+          echo "Detected PKG_VERSION=$PKG_VERSION"
+
+      - name: Update feeds
+        run: |
+          cd $SDK_DIR
+          ./scripts/feeds update -a
+          ./scripts/feeds install -a
+
+      - name: Build luci-app-tvgate
+        run: |
+          cd $SDK_DIR
+          make package/luci-app-tvgate/compile V=s
+
+      - name: Collect artifact files
+        id: collect_files
+        run: |
+          ARTIFACT_DIR="$SDK_DIR/bin/packages/x86_64/luci"
+          FILES=()
+          if [[ "${{ matrix.version }}" == "22.03.5" ]]; then
+            FILES+=($ARTIFACT_DIR/luci-app-tvgate*.ipk $ARTIFACT_DIR/luci-i18n-tvgate*.ipk)
+          else
+            FILES+=($ARTIFACT_DIR/luci-app-tvgate*.apk $ARTIFACT_DIR/luci-i18n-tvgate*.apk)
+          fi
+
+          # 过滤不存在的文件
+          EXISTING_FILES=()
+          for f in "${FILES[@]}"; do
+            if [[ -f "$f" ]]; then
+              EXISTING_FILES+=("$f")
+            fi
+          done
+
+          if [ ${#EXISTING_FILES[@]} -eq 0 ]; then
+            echo "No artifact files found!"
+          else
+            echo "Artifact files to upload:"
+            for f in "${EXISTING_FILES[@]}"; do
+              echo " - $f"
+            done
+          fi
+
+          # 输出给后续 step
+          echo "artifact_files=${EXISTING_FILES[*]}" >> $GITHUB_OUTPUT
+
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.arch }}
-          path: bin/packages/${{ matrix.arch }}/base/*.ipk
+          name: ${{ matrix.arch }}-${{ matrix.version }}-v${{ env.PKG_VERSION }}
+          path: ${{ steps.collect_files.outputs.artifact_files }}
