@@ -1,4 +1,4 @@
-name: Build
+name: Build TVGate
 
 on:
   push:
@@ -28,29 +28,27 @@ jobs:
 
       - name: Install dependencies
         run: |
-         sudo apt-get update
-         sudo apt-get install -y \
-           build-essential \
-           clang \
-           flex \
-           bison \
-           g++ \
-           gawk \
-           gcc-multilib \
-           gettext \
-           git \
-           libncurses-dev \
-           libssl-dev \
-           python3 \
-           python3-setuptools \
-           rsync \
-           unzip \
-           wget \
-           file \
-           xz-utils \
-           zstd
+          sudo apt-get update
+          sudo apt-get install -y \
+            build-essential clang flex bison g++ gawk gcc-multilib \
+            gettext git libncurses-dev libssl-dev python3 python3-setuptools \
+            rsync unzip wget file xz-utils zstd
 
+      # ------------------ 缓存 SDK + build_dir + downloads ------------------
+      - name: Restore SDK cache
+        uses: actions/cache@v3
+        with:
+          path: |
+            $HOME/openwrt-sdk-*/staging_dir
+            $HOME/openwrt-sdk-*/build_dir
+            $HOME/openwrt-sdk-*/downloads
+          key: ${{ runner.os }}-openwrt-sdk-${{ matrix.version }}-${{ hashFiles('**/feeds.conf.default') }}
+          restore-keys: |
+            ${{ runner.os }}-openwrt-sdk-${{ matrix.version }}-
+
+      # ------------------ 下载并解压 SDK（仅缓存未命中时执行） ------------------
       - name: Download and extract OpenWrt SDK
+        if: steps.cache.outputs.cache-hit != 'true'
         run: |
           if [[ "${{ matrix.version }}" == "22.03.5" ]]; then
             SDK_URL=https://downloads.openwrt.org/releases/22.03.5/targets/x86/64/openwrt-sdk-22.03.5-x86-64_gcc-11.2.0_musl.Linux-x86_64.tar.xz
@@ -64,36 +62,42 @@ jobs:
           SDK_DIR=$(find $HOME -maxdepth 1 -type d -name "openwrt-sdk*")
           echo "SDK_DIR=$SDK_DIR" >> $GITHUB_ENV
 
-      - name: Update feeds
+      # ------------------ 生成 defconfig 并更新 feeds ------------------
+      - name: Generate defconfig and update feeds
         run: |
           cd $SDK_DIR
+          make defconfig
           ./scripts/feeds update -a
           ./scripts/feeds install -a
 
+      # ------------------ 克隆 luci-app-tvgate ------------------
       - name: Clone luci-app-tvgate
         run: |
-          git clone https://github.com/qist/luci-app-tvgate $SDK_DIR/feeds/luci/applications/luci-app-tvgate
+          git clone https://github.com/qist/luci-app-tvgate $SDK_DIR/feeds/luci/applications/luci-app-tvgate || true
           cd $SDK_DIR/feeds/luci/applications/luci-app-tvgate
           git pull
 
+      # ------------------ 安装 luci-app-tvgate feed ------------------
+      - name: Install luci-app-tvgate feed
+        run: |
+          cd $SDK_DIR
+          ./scripts/feeds update luci
+          ./scripts/feeds install luci-app-tvgate
+
+      # ------------------ 读取版本 ------------------
       - name: Read PKG_VERSION from Makefile
         run: |
           PKG_VERSION=$(grep "^PKG_VERSION:=" $SDK_DIR/feeds/luci/applications/luci-app-tvgate/Makefile | cut -d= -f2 | tr -d ' ')
           echo "PKG_VERSION=$PKG_VERSION" >> $GITHUB_ENV
           echo "Detected PKG_VERSION=$PKG_VERSION"
 
-      - name: add feeds luci-app-tvgate
-        run: |
-          cd $SDK_DIR
-          ./scripts/feeds update luci
-          ./scripts/feeds install luci-app-tvgate
-          make defconfig
-
+      # ------------------ 编译 luci-app-tvgate ------------------
       - name: Build luci-app-tvgate
         run: |
           cd $SDK_DIR
-          make package/luci-app-tvgate/compile V=s
+          make package/feeds/luci/luci-app-tvgate/compile V=s
 
+      # ------------------ 收集生成的 ipk/apk ------------------
       - name: Collect artifact files
         id: collect_files
         run: |
@@ -105,7 +109,6 @@ jobs:
             FILES+=($ARTIFACT_DIR/luci-app-tvgate*.apk $ARTIFACT_DIR/luci-i18n-tvgate*.apk)
           fi
 
-          # 过滤不存在的文件
           EXISTING_FILES=()
           for f in "${FILES[@]}"; do
             if [[ -f "$f" ]]; then
@@ -122,9 +125,9 @@ jobs:
             done
           fi
 
-          # 输出给后续 step
           echo "artifact_files=${EXISTING_FILES[*]}" >> $GITHUB_OUTPUT
 
+      # ------------------ 上传 artifacts ------------------
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
