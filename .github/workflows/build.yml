@@ -20,7 +20,7 @@ jobs:
           - x86_64
         version:
           - 22.03.5
-          - 25.12.0-rc1
+          - 25.12.0-rc2
 
     steps:
       - name: Checkout repository
@@ -57,9 +57,9 @@ jobs:
             wget $SDK_URL
             tar -xvf openwrt-sdk-22.03.5-x86-64_gcc-11.2.0_musl.Linux-x86_64.tar.xz -C $HOME
           else
-            SDK_URL=https://archive.openwrt.org/releases/25.12.0-rc1/targets/x86/64/openwrt-sdk-25.12.0-rc1-x86-64_gcc-14.3.0_musl.Linux-x86_64.tar.zst
+            SDK_URL=https://archive.openwrt.org/releases/25.12.0-rc2/targets/x86/64/openwrt-sdk-25.12.0-rc2-x86-64_gcc-14.3.0_musl.Linux-x86_64.tar.zst
             wget $SDK_URL
-            zstd -d openwrt-sdk-25.12.0-rc1-x86-64_gcc-14.3.0_musl.Linux-x86_64.tar.zst -c | tar -xvf - -C $HOME
+            zstd -d openwrt-sdk-25.12.0-rc2-x86-64_gcc-14.3.0_musl.Linux-x86_64.tar.zst -c | tar -xvf - -C $HOME
           fi
           SDK_DIR=$(find $HOME -maxdepth 1 -type d -name "openwrt-sdk*")
           echo "SDK_DIR=$SDK_DIR" >> $GITHUB_ENV
