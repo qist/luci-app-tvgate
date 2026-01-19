@@ -307,6 +307,15 @@ function act_status()
     -- ===== 进程检测（唯一可信来源）=====
     local running = (sys.call("pidof /usr/bin/tvgate/TVGate >/dev/null") == 0)
 
+	-- 如果pid失败，使用ps命令作为备选方案
+	if not running then
+		running = (sys.call("ps 2>/dev/null| grep -v grep | grep -q '/usr/bin/tvgate/TVGate'") == 0)
+	end
+
+	if not running then
+	    running = (sys.call("ps -ef 2>/dev/null| grep -v grep | grep -q '/usr/bin/tvgate/TVGate'") == 0)
+	end
+
     local status = {
         running = running,
         enabled = (uci:get("tvgate", "tvgate", "enabled") == "1"),
