@@ -174,7 +174,7 @@ function loadWebConfig() {
 }
 
 function saveWebConfig() {
-  XHR.post('<%=url("admin/services/tvgate/web")%>', {
+  XHR.get('<%=url("admin/services/tvgate/web")%>', {
     enabled: document.getElementById('web-enabled').checked ? 'true' : 'false',
     username: document.getElementById('web-username').value,
     password: document.getElementById('web-password').value,
@@ -186,7 +186,8 @@ function saveWebConfig() {
     log_maxsize: document.getElementById('log-maxsize').value,
     log_maxbackups: document.getElementById('log-maxbackups').value,
     log_maxage: document.getElementById('log-maxage').value,
-    log_compress: document.getElementById('log-compress').checked ? 'true' : 'false'
+    log_compress: document.getElementById('log-compress').checked ? 'true' : 'false',
+    _method: 'POST'
   }, function(x, data) {
     alert(data && data.success ? '<%:保存成功！%>' : '<%:保存失败！%>');
   });
