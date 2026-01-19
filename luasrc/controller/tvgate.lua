@@ -329,6 +329,11 @@ function act_download()
 	local rc = sys.call("/usr/bin/tvgate-download.sh >/tmp/tvgate-download.log 2>&1")
 	local ok = (rc == 0)
 
+	-- 下载成功后重启服务
+	if ok then
+		sys.exec("/etc/init.d/tvgate reload >/dev/null 2>&1 &")
+	end
+
 	local log = "Log file not found"
 	if fs and fs.access("/tmp/tvgate-download.log") then
 		log = sys.exec("cat /tmp/tvgate-download.log") or log
