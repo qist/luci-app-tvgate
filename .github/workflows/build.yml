@@ -64,7 +64,7 @@ jobs:
           ./scripts/feeds install -a
           ./scripts/feeds update luci
           ./scripts/feeds install luci-app-tvgate
-
+          make defconfig
       - name: Build luci-app-tvgate
         run: |
           cd $SDK_DIR
