@@ -95,8 +95,12 @@ function act_web_config()
 	local http = require "luci.http"
 	local sys  = require "luci.sys"
 	
-	-- 获取请求方法
+	-- 获取请求方法，支持_method参数模拟POST
 	local method = http.getenv("REQUEST_METHOD") or "GET"
+	local override_method = http.formvalue("_method")
+	if override_method then
+		method = override_method
+	end
 	local yaml_path = "/etc/tvgate/config.yaml"
 
 	-- ================= GET =================
