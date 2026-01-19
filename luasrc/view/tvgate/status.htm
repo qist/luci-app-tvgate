@@ -6,18 +6,18 @@
 			if (tb) {
 				if (info && info.running !== undefined) {
 					if (info.running) {
-						tb.innerHTML = '<em><b style=color:green>' + _('Running') + '</b></em>';
+						tb.innerHTML = '<em><b style=color:green><%=translate("Running")%></b></em>';
 					} else {
-						tb.innerHTML = '<em><b style=color:red>' + _('Stopped') + '</b></em>';
+						tb.innerHTML = '<em><b style=color:red><%=translate("Stopped")%></b></em>';
 					}
 					
 					// Update binary status
 					var bs = document.getElementById('binary-status');
 					if (bs) {
 						if (info.binary_exists) {
-							bs.innerHTML = '<em><b style=color:green>' + _('Installed') + '</b></em>';
+							bs.innerHTML = '<em><b style=color:green><%=translate("Installed")%></b></em>';
 						} else {
-							bs.innerHTML = '<em><b style=color:red>' + _('Not installed') + '</b></em>';
+							bs.innerHTML = '<em><b style=color:red><%=translate("Not installed")%></b></em>';
 						}
 					}
 					
@@ -51,9 +51,9 @@
 						}
 					);
 				} else {
-					tb.innerHTML = '<em><b style=color:red>' + _('Unknown') + '</b></em>';
+					tb.innerHTML = '<em><b style=color:red><%=translate("Unknown")%></b></em>';
 					var bs = document.getElementById('binary-status');
-					if (bs) bs.innerHTML = '<em><b style=color:red>' + _('Unknown') + '</b></em>';
+					if (bs) bs.innerHTML = '<em><b style=color:red><%=translate("Unknown")%></b></em>';
 				}
 			}
 		}
@@ -70,9 +70,7 @@
 					document.getElementById('detected-arch-info').innerHTML = '<em><%=translate("Error detecting architecture")%></em>';
 				}
 			}
-		).catch(function(e) {
-			document.getElementById('detected-arch-info').innerHTML = '<em><%=translate("Error detecting architecture")%></em>';
-		});
+		);
 	}
 	
 	function downloadBinary() {
@@ -102,13 +100,7 @@
 						alert('<%=translate("Failed to download TVGate binary due to communication error.")%>');
 					}
 				}
-			).catch(function(e) {
-				if (btn) {
-					btn.disabled = false;
-					btn.innerHTML = '<%=translate("Download/Update Binary")%>';
-				}
-				alert('<%=translate("Failed to download TVGate binary due to communication error.")%>');
-			});
+			);
 		}
 	}
 	

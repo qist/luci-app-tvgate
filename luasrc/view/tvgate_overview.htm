@@ -148,11 +148,7 @@ local listen_port = port
 								alert('<%=translate("Failed to download TVGate binary due to communication error.")%>');
 							}
 						}
-					).catch(function(e) {
-						btn.disabled = false;
-						btn.value = '<%=translate("Download/Update Binary")%>';
-						alert('<%=translate("Failed to download TVGate binary due to communication error.")%>');
-					});
+					);
 				}
 			}
 			//]]>
@@ -176,9 +172,6 @@ local listen_port = port
 				// Fallback to default
 				window.open('http://' + window.location.hostname + ':' + port + '/web/', '_blank');
 			}
-		}).catch(function(e) {
-			// Fallback to default on error
-			window.open('http://' + window.location.hostname + ':' + port + '/web/', '_blank');
 		});
 	}
 	
@@ -193,10 +186,10 @@ local listen_port = port
 				var monitorUrl = 'http://' + window.location.hostname + ':' + port + monitorPath;
 				document.getElementById('web-url').innerHTML = '<a href="' + webUrl + '" target="_blank">' + webUrl + '</a>';
 				document.getElementById('monitor-url').innerHTML = '<a href="' + monitorUrl + '" target="_blank">' + monitorUrl + '</a>';
+			} else {
+				document.getElementById('web-url').innerHTML = '-';
+				document.getElementById('monitor-url').innerHTML = '-';
 			}
-		}).catch(function(e) {
-			document.getElementById('web-url').innerHTML = '-';
-			document.getElementById('monitor-url').innerHTML = '-';
 		});
 	});
 //]]>
