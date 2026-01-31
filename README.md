@@ -25,6 +25,7 @@ TVGate is a high-performance local network resource forwarding and proxy tool. I
    ```bash
    opkg update
    opkg install curl ca-certificates unzip luci-compat luci luci-base
+   opkg install libustream-openssl  ca-bundle
    opkg install /tmp/luci-app-tvgate_1.0.2_all.ipk
    opkg install /tmp/luci-i18n-tvgate-zh-cn_1.0.2-1_all.ipk
    opkg install /tmp/luci-i18n-tvgate-en_1.0.2-1_all.ipk
