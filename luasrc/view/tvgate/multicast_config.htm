@@ -1,0 +1,175 @@
+<%+header%>
+
+<h2><%:组播 / FCC 配置%></h2>
+
+<form id="multicast-config-form" class="cbi-section">
+  <div class="cbi-value">
+    <label class="cbi-value-title"><%:组播监听接口%></label>
+    <div class="cbi-value-field">
+      <div id="multicast-ifaces-container" class="multicast-ifaces-container"></div>
+      <input type="button" class="btn cbi-button cbi-button-add" value="<%:添加接口%>" onclick="addMulticastIface('')" />
+    </div>
+    <div class="cbi-value-description"><%:用于接收组播流量的网络接口列表，留空表示使用默认接口%></div>
+  </div>
+
+  <div class="cbi-value">
+    <label class="cbi-value-title"><%:多播重新加入间隔%></label>
+    <div class="cbi-value-field">
+      <input type="text" id="mcast-rejoin-interval" />
+    </div>
+    <div class="cbi-value-description"><%:多播重新加入间隔时间，例如 10s。设置为 0s 表示禁用%></div>
+  </div>
+
+  <div class="cbi-value">
+    <label class="cbi-value-title"><%:FCC 类型%></label>
+    <div class="cbi-value-field">
+      <select id="fcc-type">
+        <option value="telecom"><%:电信/中兴/烽火%></option>
+        <option value="huawei"><%:华为%></option>
+      </select>
+    </div>
+    <div class="cbi-value-description"><%:选择 FCC 协议类型%></div>
+  </div>
+
+  <div class="cbi-value">
+    <label class="cbi-value-title"><%:FCC 缓存大小%></label>
+    <div class="cbi-value-field">
+      <input type="number" id="fcc-cache-size" />
+    </div>
+    <div class="cbi-value-description"><%:FCC 缓存的数据包数量%></div>
+  </div>
+
+  <div class="cbi-value">
+    <label class="cbi-value-title"><%:FCC 监听端口范围%></label>
+    <div class="cbi-value-field">
+      <input type="number" id="fcc-listen-port-min" style="width: 140px;" /> -
+      <input type="number" id="fcc-listen-port-max" style="width: 140px;" />
+    </div>
+    <div class="cbi-value-description"><%:FCC 监听端口范围（最小值 - 最大值）%></div>
+  </div>
+
+  <div class="cbi-value">
+    <label class="cbi-value-title"><%:通用上游接口%></label>
+    <div class="cbi-value-field">
+      <input type="text" id="upstream-interface" />
+    </div>
+    <div class="cbi-value-description"><%:通用上游接口，用于多播和非 FCC 连接（可选）%></div>
+  </div>
+
+  <div class="cbi-value">
+    <label class="cbi-value-title"><%:FCC 专用上游接口%></label>
+    <div class="cbi-value-field">
+      <input type="text" id="upstream-interface-fcc" />
+    </div>
+    <div class="cbi-value-description"><%:FCC 专用上游接口，优先级高于通用接口。留空则使用通用接口%></div>
+  </div>
+
+  <div class="cbi-value">
+    <label class="cbi-value-title"></label>
+    <div class="cbi-value-field">
+      <input type="button" class="btn cbi-button cbi-button-apply" value="<%:保存%>" onclick="saveMulticastConfig()" />
+    </div>
+  </div>
+</form>
+
+<style>
+.multicast-ifaces-container {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.multicast-iface-row {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.multicast-iface-row input[type="text"] {
+  width: 240px;
+}
+
+.cbi-value-field input[type="text"] {
+  width: 300px;
+}
+
+.cbi-value-field input[type="number"] {
+  width: 300px;
+}
+</style>
+
+<script type="text/javascript">
+//<![CDATA[
+function addMulticastIface(value) {
+  var container = document.getElementById('multicast-ifaces-container');
+  var row = document.createElement('div');
+  row.className = 'multicast-iface-row';
+
+  var input = document.createElement('input');
+  input.type = 'text';
+  input.value = value || '';
+
+  var btn = document.createElement('input');
+  btn.type = 'button';
+  btn.className = 'btn cbi-button cbi-button-remove';
+  btn.value = '<%:删除%>';
+  btn.onclick = function() {
+    container.removeChild(row);
+  };
+
+  row.appendChild(input);
+  row.appendChild(btn);
+  container.appendChild(row);
+}
+
+function loadMulticastConfig() {
+  XHR.get('<%=url("admin/services/tvgate/multicast")%>', null, function(x, data) {
+    var container = document.getElementById('multicast-ifaces-container');
+    while (container.firstChild) container.removeChild(container.firstChild);
+
+    if (data && data.multicast_ifaces && data.multicast_ifaces.length) {
+      for (var i = 0; i < data.multicast_ifaces.length; i++) addMulticastIface(data.multicast_ifaces[i]);
+    }
+
+    document.getElementById('mcast-rejoin-interval').value = (data && data.mcast_rejoin_interval) || '0s';
+    document.getElementById('fcc-type').value = (data && data.fcc_type) || 'huawei';
+    document.getElementById('fcc-cache-size').value = (data && data.fcc_cache_size) || '16386';
+    document.getElementById('fcc-listen-port-min').value = (data && data.fcc_listen_port_min) || '40000';
+    document.getElementById('fcc-listen-port-max').value = (data && data.fcc_listen_port_max) || '40100';
+    document.getElementById('upstream-interface').value = (data && data.upstream_interface) || '';
+    document.getElementById('upstream-interface-fcc').value = (data && data.upstream_interface_fcc) || '';
+  });
+}
+
+function saveMulticastConfig() {
+  var container = document.getElementById('multicast-ifaces-container');
+  var inputs = container.getElementsByTagName('input');
+  var ifaces = [];
+  for (var i = 0; i < inputs.length; i++) {
+    if (inputs[i].type === 'text') {
+      var v = (inputs[i].value || '').trim();
+      if (v) ifaces.push(v);
+    }
+  }
+
+  XHR.get('<%=url("admin/services/tvgate/multicast")%>', {
+    multicast_ifaces: ifaces.join('\n'),
+    mcast_rejoin_interval: document.getElementById('mcast-rejoin-interval').value,
+    fcc_type: document.getElementById('fcc-type').value,
+    fcc_cache_size: document.getElementById('fcc-cache-size').value,
+    fcc_listen_port_min: document.getElementById('fcc-listen-port-min').value,
+    fcc_listen_port_max: document.getElementById('fcc-listen-port-max').value,
+    upstream_interface: document.getElementById('upstream-interface').value,
+    upstream_interface_fcc: document.getElementById('upstream-interface-fcc').value,
+    _method: 'POST'
+  }, function(x, data) {
+    alert(data && data.success ? '<%:保存成功！%>' : '<%:保存失败！%>');
+  });
+}
+
+window.onload = loadMulticastConfig;
+//]]>
+</script>
+
+<%+footer%>

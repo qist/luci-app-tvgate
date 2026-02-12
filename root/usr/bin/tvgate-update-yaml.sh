@@ -47,6 +47,46 @@ while [ $# -gt 0 ]; do
             LOG_COMPRESS="$2"
             shift 2
             ;;
+        --multicast-ifaces)
+            MULTICAST_IFACES="$2"
+            HAS_MULTICAST_IFACES=1
+            shift 2
+            ;;
+        --mcast-rejoin-interval)
+            MCAST_REJOIN_INTERVAL="$2"
+            HAS_MCAST_REJOIN_INTERVAL=1
+            shift 2
+            ;;
+        --fcc-type)
+            FCC_TYPE="$2"
+            HAS_FCC_TYPE=1
+            shift 2
+            ;;
+        --fcc-cache-size)
+            FCC_CACHE_SIZE="$2"
+            HAS_FCC_CACHE_SIZE=1
+            shift 2
+            ;;
+        --fcc-listen-port-min)
+            FCC_LISTEN_PORT_MIN="$2"
+            HAS_FCC_LISTEN_PORT_MIN=1
+            shift 2
+            ;;
+        --fcc-listen-port-max)
+            FCC_LISTEN_PORT_MAX="$2"
+            HAS_FCC_LISTEN_PORT_MAX=1
+            shift 2
+            ;;
+        --upstream-interface)
+            UPSTREAM_INTERFACE="$2"
+            HAS_UPSTREAM_INTERFACE=1
+            shift 2
+            ;;
+        --upstream-interface-fcc)
+            UPSTREAM_INTERFACE_FCC="$2"
+            HAS_UPSTREAM_INTERFACE_FCC=1
+            shift 2
+            ;;
         *)
             echo "Unknown option: $1"
             exit 1
@@ -93,6 +133,30 @@ fi
 if [ -n "$LOG_COMPRESS" ]; then
     LOG_COMPRESS=$(clean_path "$LOG_COMPRESS")
 fi
+if [ -n "$MULTICAST_IFACES" ]; then
+    MULTICAST_IFACES=$(clean_path "$MULTICAST_IFACES")
+fi
+if [ -n "$MCAST_REJOIN_INTERVAL" ]; then
+    MCAST_REJOIN_INTERVAL=$(clean_path "$MCAST_REJOIN_INTERVAL")
+fi
+if [ -n "$FCC_TYPE" ]; then
+    FCC_TYPE=$(clean_path "$FCC_TYPE")
+fi
+if [ -n "$FCC_CACHE_SIZE" ]; then
+    FCC_CACHE_SIZE=$(clean_path "$FCC_CACHE_SIZE")
+fi
+if [ -n "$FCC_LISTEN_PORT_MIN" ]; then
+    FCC_LISTEN_PORT_MIN=$(clean_path "$FCC_LISTEN_PORT_MIN")
+fi
+if [ -n "$FCC_LISTEN_PORT_MAX" ]; then
+    FCC_LISTEN_PORT_MAX=$(clean_path "$FCC_LISTEN_PORT_MAX")
+fi
+if [ -n "$UPSTREAM_INTERFACE" ]; then
+    UPSTREAM_INTERFACE=$(clean_path "$UPSTREAM_INTERFACE")
+fi
+if [ -n "$UPSTREAM_INTERFACE_FCC" ]; then
+    UPSTREAM_INTERFACE_FCC=$(clean_path "$UPSTREAM_INTERFACE_FCC")
+fi
 
 CONFIG_FILE="/etc/tvgate/config.yaml"
 
@@ -110,6 +174,81 @@ normalize_bool() {
 }
 if [ -n "$LOG_ENABLED" ]; then LOG_ENABLED="$(normalize_bool "$LOG_ENABLED")"; fi
 if [ -n "$LOG_COMPRESS" ]; then LOG_COMPRESS="$(normalize_bool "$LOG_COMPRESS")"; fi
+
+NEED_MULTICAST_UPDATE=0
+if [ "${HAS_MULTICAST_IFACES:-0}" = "1" ] || \
+   [ "${HAS_MCAST_REJOIN_INTERVAL:-0}" = "1" ] || \
+   [ "${HAS_FCC_TYPE:-0}" = "1" ] || \
+   [ "${HAS_FCC_CACHE_SIZE:-0}" = "1" ] || \
+   [ "${HAS_FCC_LISTEN_PORT_MIN:-0}" = "1" ] || \
+   [ "${HAS_FCC_LISTEN_PORT_MAX:-0}" = "1" ] || \
+   [ "${HAS_UPSTREAM_INTERFACE:-0}" = "1" ] || \
+   [ "${HAS_UPSTREAM_INTERFACE_FCC:-0}" = "1" ]; then
+    NEED_MULTICAST_UPDATE=1
+fi
+
+write_multicast_section() {
+    echo "multicast:"
+
+    ifaces_csv="${MULTICAST_IFACES:-}"
+    if [ -z "$ifaces_csv" ]; then
+        echo "  multicast_ifaces: []"
+    else
+        echo "  multicast_ifaces:"
+        old_ifs="$IFS"
+        IFS=','
+        set -- $ifaces_csv
+        IFS="$old_ifs"
+        for iface in "$@"; do
+            iface="$(echo "$iface" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')"
+            [ -n "$iface" ] && echo "    - $iface"
+        done
+    fi
+
+    echo "  mcast_rejoin_interval: ${MCAST_REJOIN_INTERVAL:-0s}"
+    echo "  fcc_type: ${FCC_TYPE:-huawei}"
+    echo "  fcc_cache_size: ${FCC_CACHE_SIZE:-16386}"
+    echo "  fcc_listen_port_min: ${FCC_LISTEN_PORT_MIN:-40000}"
+    echo "  fcc_listen_port_max: ${FCC_LISTEN_PORT_MAX:-40100}"
+
+    [ -n "${UPSTREAM_INTERFACE:-}" ] && echo "  upstream_interface: ${UPSTREAM_INTERFACE}"
+    [ -n "${UPSTREAM_INTERFACE_FCC:-}" ] && echo "  upstream_interface_fcc: ${UPSTREAM_INTERFACE_FCC}"
+}
+
+update_multicast_section() {
+    infile="$1"
+    secfile="$2"
+    awk -v secfile="$secfile" '
+function printsec(    l) {
+    while ((getline l < secfile) > 0) print l
+    close(secfile)
+}
+BEGIN { in_sec=0; done=0 }
+{
+    if (!in_sec && $0 ~ /^[[:space:]]*multicast:[[:space:]]*$/) {
+        printsec()
+        done=1
+        in_sec=1
+        next
+    }
+    if (in_sec) {
+        if ($0 ~ /^[A-Za-z0-9_]+:[[:space:]]*$/) {
+            in_sec=0
+            print $0
+            next
+        }
+        next
+    }
+    print $0
+}
+END {
+    if (!done) {
+        print ""
+        printsec()
+    }
+}
+' "$infile" > "${infile}.new" && mv "${infile}.new" "$infile"
+}
 
 # 读取原文件内容并替换指定值
 if [ -f "$CONFIG_FILE" ]; then
@@ -258,9 +397,7 @@ EOF
 fi
 
 # 如果需要默认配置，或web/monitor部分不存在，添加它们
-if [ "$NEED_DEFAULT_CONFIG" = "1" ]; then
-    mv "$TEMP_FILE" "$CONFIG_FILE"
-else
+if [ "$NEED_DEFAULT_CONFIG" != "1" ]; then
     # 检查是否已存在web和monitor部分
     WEB_SECTION_EXISTS=$(grep -c "^[[:space:]]*web:" "$TEMP_FILE")
     MONITOR_SECTION_EXISTS=$(grep -c "^[[:space:]]*monitor:" "$TEMP_FILE")
@@ -313,8 +450,15 @@ else
             [ -n "$LOG_COMPRESS" ] && echo "  compress: ${LOG_COMPRESS}"
         } > "${TEMP_FILE}.new" && mv "${TEMP_FILE}.new" "$TEMP_FILE"
     fi
-    
-    mv "$TEMP_FILE" "$CONFIG_FILE"
 fi
+
+if [ "$NEED_MULTICAST_UPDATE" = "1" ]; then
+    MULTICAST_SECTION_FILE="$(mktemp)"
+    write_multicast_section > "$MULTICAST_SECTION_FILE"
+    update_multicast_section "$TEMP_FILE" "$MULTICAST_SECTION_FILE"
+    rm -f "$MULTICAST_SECTION_FILE"
+fi
+
+mv "$TEMP_FILE" "$CONFIG_FILE"
 
 echo "YAML configuration updated successfully"

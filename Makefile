@@ -1,12 +1,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=luci-app-tvgate
-PKG_VERSION:=1.0.2
+PKG_VERSION:=2.0.0
 PKG_RELEASE:=1
 PKG_BUILD_DEPENDS:=po2lmo/host
 
-PKG_MAINTAINER:=<yourname> <your@email.com>
-
+PKG_MAINTAINER:=qist juestnow@gmail.com
+PKG_LICENSE:=MIT
 LUCI_TITLE:=LuCI Support for TVGate
 LUCI_PKGARCH:=all
 # LUCI_DEPENDS:=+curl +ca-certificates +unzip +luci-base

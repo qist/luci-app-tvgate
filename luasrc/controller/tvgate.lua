@@ -76,15 +76,199 @@ function index()
 	else
 		entry({"admin", "services", "tvgate", "web_config"}, call("display_web_config"), i18n.translate("TVGate 配置"), 20).leaf = true
 	end
+
+	-- multicast 配置页面
+	entry({"admin", "services", "tvgate", "multicast_config"}, template("tvgate/multicast_config"), i18n.translate("Multicast 配置"), 21).leaf = true
 	
 	-- 单独定义 API 接口路由
 	entry({"admin", "services", "tvgate", "web"}, call("act_web_config"), nil).leaf = true
+	entry({"admin", "services", "tvgate", "multicast"}, call("act_multicast_config"), nil).leaf = true
 
 end
 
 function display_web_config()
 	local t = require "luci.template"
 	t.render("tvgate/web_config")
+end
+
+-- =====================
+-- multicast config API
+-- =====================
+function act_multicast_config()
+	local http = require "luci.http"
+	local sys  = require "luci.sys"
+
+	local method = http.getenv("REQUEST_METHOD") or "GET"
+	local override_method = http.formvalue("_method")
+	if override_method then
+		method = override_method
+	end
+
+	local yaml_path = "/etc/tvgate/config.yaml"
+
+	if method == "GET" then
+		local multicast_ifaces = {}
+		local mcast_rejoin_interval = "0s"
+		local fcc_type = "huawei"
+		local fcc_cache_size = "16386"
+		local fcc_listen_port_min = "40000"
+		local fcc_listen_port_max = "40100"
+		local upstream_interface = ""
+		local upstream_interface_fcc = ""
+
+		local yaml_content = nil
+		if fs and fs.access(yaml_path) then
+			yaml_content = fs.readfile(yaml_path)
+		end
+
+		if yaml_content then
+		local found_multicast = false
+		local current_section = nil
+		local in_multicast_ifaces = false
+		for line in yaml_content:gmatch("[^\r\n]+") do
+			local clean = line:gsub("#.*$", ""):gsub("^%s*", "")
+			local s = clean:match("^(%w+):%s*$")
+			if s then
+				current_section = s
+				if current_section == "multicast" then
+					found_multicast = true
+				end
+				in_multicast_ifaces = false
+			else
+				if current_section == "multicast" then
+					if clean:match("^multicast_ifaces:%s*$") then
+						in_multicast_ifaces = true
+					elseif in_multicast_ifaces then
+						local item = clean:match("^%-%s*(.+)$")
+						if item then
+							item = item:gsub("^[\"']?", ""):gsub("[\"']?$", ""):gsub("^%s+", ""):gsub("%s+$", "")
+							if item ~= "" then
+								table.insert(multicast_ifaces, item)
+							end
+						else
+							in_multicast_ifaces = false
+							local key, value = clean:match("^([%w_]+)%s*:%s*[\"']?([^\"']*)[\"']?")
+							if key and value then
+								if key == "mcast_rejoin_interval" then
+									mcast_rejoin_interval = value
+								elseif key == "fcc_type" then
+									fcc_type = value
+								elseif key == "fcc_cache_size" then
+									fcc_cache_size = value
+								elseif key == "fcc_listen_port_min" then
+									fcc_listen_port_min = value
+								elseif key == "fcc_listen_port_max" then
+									fcc_listen_port_max = value
+								elseif key == "upstream_interface" then
+									upstream_interface = value
+								elseif key == "upstream_interface_fcc" then
+									upstream_interface_fcc = value
+								end
+							end
+						end
+					else
+						local key, value = clean:match("^([%w_]+)%s*:%s*[\"']?([^\"']*)[\"']?")
+						if key and value then
+							if key == "mcast_rejoin_interval" then
+								mcast_rejoin_interval = value
+							elseif key == "fcc_type" then
+								fcc_type = value
+							elseif key == "fcc_cache_size" then
+								fcc_cache_size = value
+							elseif key == "fcc_listen_port_min" then
+								fcc_listen_port_min = value
+							elseif key == "fcc_listen_port_max" then
+								fcc_listen_port_max = value
+							elseif key == "upstream_interface" then
+								upstream_interface = value
+							elseif key == "upstream_interface_fcc" then
+								upstream_interface_fcc = value
+							end
+						end
+					end
+				end
+			end
+		end
+
+		if not found_multicast and fs and fs.access(yaml_path) then
+			local function shell_escape(s)
+				if s == nil then return "nil" end
+				return "'" .. tostring(s):gsub("'", "'\"'\"'") .. "'"
+			end
+			local cmd = "/usr/bin/tvgate-update-yaml.sh"
+				.. " --multicast-ifaces " .. shell_escape("")
+				.. " --mcast-rejoin-interval " .. shell_escape(mcast_rejoin_interval)
+				.. " --fcc-type " .. shell_escape(fcc_type)
+				.. " --fcc-cache-size " .. shell_escape(fcc_cache_size)
+				.. " --fcc-listen-port-min " .. shell_escape(fcc_listen_port_min)
+				.. " --fcc-listen-port-max " .. shell_escape(fcc_listen_port_max)
+				.. " --upstream-interface " .. shell_escape(upstream_interface)
+				.. " --upstream-interface-fcc " .. shell_escape(upstream_interface_fcc)
+			sys.exec(cmd)
+		end
+		end
+
+		http.prepare_content("application/json")
+		http.write_json({
+			multicast_ifaces = multicast_ifaces,
+			mcast_rejoin_interval = mcast_rejoin_interval,
+			fcc_type = fcc_type,
+			fcc_cache_size = fcc_cache_size,
+			fcc_listen_port_min = fcc_listen_port_min,
+			fcc_listen_port_max = fcc_listen_port_max,
+			upstream_interface = upstream_interface,
+			upstream_interface_fcc = upstream_interface_fcc
+		})
+		return
+	end
+
+	if method == "POST" then
+		local raw_ifaces = http.formvalue("multicast_ifaces") or ""
+		local mcast_rejoin_interval = http.formvalue("mcast_rejoin_interval") or "0s"
+		local fcc_type = http.formvalue("fcc_type") or "huawei"
+		local fcc_cache_size = http.formvalue("fcc_cache_size") or "16386"
+		local fcc_listen_port_min = http.formvalue("fcc_listen_port_min") or "40000"
+		local fcc_listen_port_max = http.formvalue("fcc_listen_port_max") or "40100"
+		local upstream_interface = http.formvalue("upstream_interface") or ""
+		local upstream_interface_fcc = http.formvalue("upstream_interface_fcc") or ""
+
+		local ifaces = {}
+		for token in raw_ifaces:gmatch("[^\r\n,%s]+") do
+			local t = token:gsub("^%s+", ""):gsub("%s+$", "")
+			if t ~= "" then
+				table.insert(ifaces, t)
+			end
+		end
+		local ifaces_csv = table.concat(ifaces, ",")
+
+		local function shell_escape(s)
+			if s == nil then return "nil" end
+			return "'" .. tostring(s):gsub("'", "'\"'\"'") .. "'"
+		end
+
+		local cmd = "/usr/bin/tvgate-update-yaml.sh"
+			.. " --multicast-ifaces " .. shell_escape(ifaces_csv)
+			.. " --mcast-rejoin-interval " .. shell_escape(mcast_rejoin_interval)
+			.. " --fcc-type " .. shell_escape(fcc_type)
+			.. " --fcc-cache-size " .. shell_escape(fcc_cache_size)
+			.. " --fcc-listen-port-min " .. shell_escape(fcc_listen_port_min)
+			.. " --fcc-listen-port-max " .. shell_escape(fcc_listen_port_max)
+			.. " --upstream-interface " .. shell_escape(upstream_interface)
+			.. " --upstream-interface-fcc " .. shell_escape(upstream_interface_fcc)
+
+		local result = sys.exec(cmd)
+		sys.exec("/etc/init.d/tvgate reload >/dev/null 2>&1 &")
+
+		http.prepare_content("application/json")
+		http.write_json({
+			success = true,
+			message = "Configuration updated successfully",
+			result = result or "ok"
+		})
+		return
+	end
+
+	http.status(405, "Method Not Allowed")
 end
 
 -- =====================
