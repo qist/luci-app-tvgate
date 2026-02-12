@@ -134,7 +134,7 @@ function loadMulticastConfig() {
 
     document.getElementById('mcast-rejoin-interval').value = (data && data.mcast_rejoin_interval) || '0s';
     document.getElementById('fcc-type').value = (data && data.fcc_type) || 'huawei';
-    document.getElementById('fcc-cache-size').value = (data && data.fcc_cache_size) || '16386';
+    document.getElementById('fcc-cache-size').value = (data && data.fcc_cache_size) || '16384';
     document.getElementById('fcc-listen-port-min').value = (data && data.fcc_listen_port_min) || '40000';
     document.getElementById('fcc-listen-port-max').value = (data && data.fcc_listen_port_max) || '40100';
     document.getElementById('upstream-interface').value = (data && data.upstream_interface) || '';
