@@ -207,7 +207,7 @@ write_multicast_section() {
 
     echo "  mcast_rejoin_interval: ${MCAST_REJOIN_INTERVAL:-0s}"
     echo "  fcc_type: ${FCC_TYPE:-huawei}"
-    echo "  fcc_cache_size: ${FCC_CACHE_SIZE:-16386}"
+    echo "  fcc_cache_size: ${FCC_CACHE_SIZE:-16384}"
     echo "  fcc_listen_port_min: ${FCC_LISTEN_PORT_MIN:-40000}"
     echo "  fcc_listen_port_max: ${FCC_LISTEN_PORT_MAX:-40100}"
 

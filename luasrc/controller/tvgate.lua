@@ -110,7 +110,7 @@ function act_multicast_config()
 		local multicast_ifaces = {}
 		local mcast_rejoin_interval = "0s"
 		local fcc_type = "huawei"
-		local fcc_cache_size = "16386"
+		local fcc_cache_size = "16384"
 		local fcc_listen_port_min = "40000"
 		local fcc_listen_port_max = "40100"
 		local upstream_interface = ""
@@ -226,7 +226,7 @@ function act_multicast_config()
 		local raw_ifaces = http.formvalue("multicast_ifaces") or ""
 		local mcast_rejoin_interval = http.formvalue("mcast_rejoin_interval") or "0s"
 		local fcc_type = http.formvalue("fcc_type") or "huawei"
-		local fcc_cache_size = http.formvalue("fcc_cache_size") or "16386"
+		local fcc_cache_size = http.formvalue("fcc_cache_size") or "16384"
 		local fcc_listen_port_min = http.formvalue("fcc_listen_port_min") or "40000"
 		local fcc_listen_port_max = http.formvalue("fcc_listen_port_max") or "40100"
 		local upstream_interface = http.formvalue("upstream_interface") or ""
