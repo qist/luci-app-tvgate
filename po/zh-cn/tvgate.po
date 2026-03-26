@@ -281,3 +281,69 @@ msgstr "日志文件保留的天数"
 
 msgid "是否压缩轮转产生的日志文件"
 msgstr "是否压缩轮转产生的日志文件"
+
+msgid "Multicast 配置"
+msgstr "组播配置"
+
+msgid "组播 / FCC 配置"
+msgstr "组播 / FCC 配置"
+
+msgid "组播监听接口"
+msgstr "组播监听接口"
+
+msgid "添加接口"
+msgstr "添加接口"
+
+msgid "用于接收组播流量的网络接口列表，留空表示使用默认接口"
+msgstr "用于接收组播流量的网络接口列表，留空表示使用默认接口"
+
+msgid "多播重新加入间隔"
+msgstr "多播重新加入间隔"
+
+msgid "多播重新加入间隔时间，例如 10s。设置为 0s 表示禁用"
+msgstr "多播重新加入间隔时间，例如 10s。设置为 0s 表示禁用"
+
+msgid "FCC 类型"
+msgstr "FCC 类型"
+
+msgid "电信/中兴/烽火"
+msgstr "电信/中兴/烽火"
+
+msgid "华为"
+msgstr "华为"
+
+msgid "选择 FCC 协议类型"
+msgstr "选择 FCC 协议类型"
+
+msgid "FCC 缓存大小"
+msgstr "FCC 缓存大小"
+
+msgid "FCC 缓存的数据包数量"
+msgstr "FCC 缓存的数据包数量"
+
+msgid "FCC 监听端口范围"
+msgstr "FCC 监听端口范围"
+
+msgid "FCC 监听端口范围（最小值 - 最大值）"
+msgstr "FCC 监听端口范围（最小值 - 最大值）"
+
+msgid "通用上游接口"
+msgstr "通用上游接口"
+
+msgid "通用上游接口，用于多播和非 FCC 连接（可选）"
+msgstr "通用上游接口，用于多播和非 FCC 连接（可选）"
+
+msgid "FCC 专用上游接口"
+msgstr "FCC 专用上游接口"
+
+msgid "FCC 专用上游接口，优先级高于通用接口。留空则使用通用接口"
+msgstr "FCC 专用上游接口，优先级高于通用接口。留空则使用通用接口"
+
+msgid "删除"
+msgstr "删除"
+
+msgid "保存成功！"
+msgstr "保存成功！"
+
+msgid "保存失败！"
+msgstr "保存失败！"

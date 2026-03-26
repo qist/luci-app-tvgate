@@ -302,3 +302,69 @@ msgstr "Days to keep log files"
 
 msgid "是否压缩轮转产生的日志文件"
 msgstr "Compress rotated log files"
+
+msgid "Multicast 配置"
+msgstr "Multicast Config"
+
+msgid "组播 / FCC 配置"
+msgstr "Multicast / FCC Config"
+
+msgid "组播监听接口"
+msgstr "Multicast Listen Interfaces"
+
+msgid "添加接口"
+msgstr "Add Interface"
+
+msgid "用于接收组播流量的网络接口列表，留空表示使用默认接口"
+msgstr "Network interfaces used to receive multicast traffic. Leave empty to use the default interface."
+
+msgid "多播重新加入间隔"
+msgstr "Multicast Rejoin Interval"
+
+msgid "多播重新加入间隔时间，例如 10s。设置为 0s 表示禁用"
+msgstr "Multicast rejoin interval, for example 10s. Set to 0s to disable."
+
+msgid "FCC 类型"
+msgstr "FCC Type"
+
+msgid "电信/中兴/烽火"
+msgstr "Telecom / ZTE / FiberHome"
+
+msgid "华为"
+msgstr "Huawei"
+
+msgid "选择 FCC 协议类型"
+msgstr "Select the FCC protocol type"
+
+msgid "FCC 缓存大小"
+msgstr "FCC Cache Size"
+
+msgid "FCC 缓存的数据包数量"
+msgstr "Number of packets in the FCC cache"
+
+msgid "FCC 监听端口范围"
+msgstr "FCC Listen Port Range"
+
+msgid "FCC 监听端口范围（最小值 - 最大值）"
+msgstr "FCC listen port range (min - max)"
+
+msgid "通用上游接口"
+msgstr "Generic Upstream Interface"
+
+msgid "通用上游接口，用于多播和非 FCC 连接（可选）"
+msgstr "Generic upstream interface for multicast and non-FCC connections (optional)"
+
+msgid "FCC 专用上游接口"
+msgstr "FCC Dedicated Upstream Interface"
+
+msgid "FCC 专用上游接口，优先级高于通用接口。留空则使用通用接口"
+msgstr "Dedicated upstream interface for FCC. Higher priority than the generic interface. Leave empty to use the generic interface."
+
+msgid "删除"
+msgstr "Delete"
+
+msgid "保存成功！"
+msgstr "Saved successfully!"
+
+msgid "保存失败！"
+msgstr "Save failed!"
