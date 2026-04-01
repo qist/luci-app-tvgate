@@ -1,15 +1,24 @@
+#
+# Copyright (C) 2023-2024 qist
+#
+# This is free software, licensed under the MIT License.
+#
+
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=luci-app-tvgate
-PKG_VERSION:=2.0.0
+PKG_VERSION:=2.1.0
 PKG_RELEASE:=1
-PKG_BUILD_DEPENDS:=po2lmo/host
 
-PKG_MAINTAINER:=qist juestnow@gmail.com
+PKG_MAINTAINER:=qist <juestnow@gmail.com>
 PKG_LICENSE:=MIT
+
 LUCI_TITLE:=LuCI Support for TVGate
+LUCI_DESCRIPTION:=LuCI interface for TVGate service management. \
+	Provides web interface for TVGate configuration, download management, \
+	and YAML update automation with internationalization support.
+LUCI_DEPENDS:=+curl +ca-certificates +unzip +luci-base
 LUCI_PKGARCH:=all
-# LUCI_DEPENDS:=+curl +ca-certificates +unzip +luci-base
 
 define Package/$(PKG_NAME)/conffiles
 /etc/config/tvgate
@@ -35,57 +44,27 @@ fi
 exit 0
 endef
 
+define Package/$(PKG_NAME)/prerm
+#!/bin/sh
+if [ -z "$${IPKG_INSTROOT}" ]; then
+	/etc/init.d/tvgate stop >/dev/null 2>&1
+	/etc/init.d/tvgate disable >/dev/null 2>&1
+fi
+exit 0
+endef
+
 define Package/$(PKG_NAME)/postrm
 #!/bin/sh
 if [ -z "$${IPKG_INSTROOT}" ]; then
 	rm -rf /tmp/luci-indexcache
 	rm -rf /tmp/luci-modulecache
+	rm -f /usr/bin/tvgate-download.sh
+	rm -f /usr/bin/tvgate-update-yaml.sh
+	rm -f /etc/init.d/tvgate
 fi
 exit 0
 endef
 
 include $(TOPDIR)/feeds/luci/luci.mk
-
-# 国际化包定义
-define Package/luci-i18n-tvgate-zh-cn
-  $(call Package/luci-i18n-template)
-  TITLE:=LuCI Support for TVGate zh-cn Translation
-  DEPENDS:=+luci-app-tvgate
-  PKGARCH:=all
-endef
-
-define Package/luci-i18n-tvgate-en
-  $(call Package/luci-i18n-template)
-  TITLE:=LuCI Support for TVGate en Translation
-  DEPENDS:=+luci-app-tvgate
-  PKGARCH:=all
-endef
-
-# 准备阶段处理po文件到lmo文件的转换
-define Build/Prepare
-	mkdir -p $(PKG_BUILD_DIR)/po/zh-cn
-	mkdir -p $(PKG_BUILD_DIR)/po/en
-	$(CP) ./po/zh-cn/* $(PKG_BUILD_DIR)/po/zh-cn/
-	$(CP) ./po/en/* $(PKG_BUILD_DIR)/po/en/
-	$(foreach po,$(wildcard ./po/zh-cn/*.po), \
-		po2lmo $(po) $(PKG_BUILD_DIR)/$(patsubst ./po/zh-cn/%.po,%.zh-cn.lmo,$(po));)
-	$(foreach po,$(wildcard ./po/en/*.po), \
-		po2lmo $(po) $(PKG_BUILD_DIR)/$(patsubst ./po/en/%.po,%.en.lmo,$(po));)
-endef
-
-define Package/luci-i18n-tvgate-zh-cn/install
-	$(INSTALL_DIR) $(1)/usr/lib/lua/luci/i18n
-	$(foreach po,$(wildcard ./po/zh-cn/*.po), \
-		po2lmo $(po) $(1)/usr/lib/lua/luci/i18n/$(patsubst ./po/zh-cn/%.po,%.zh-cn.lmo,$(po));)
-endef
-
-define Package/luci-i18n-tvgate-en/install
-	$(INSTALL_DIR) $(1)/usr/lib/lua/luci/i18n
-	$(foreach po,$(wildcard ./po/en/*.po), \
-		po2lmo $(po) $(1)/usr/lib/lua/luci/i18n/$(patsubst ./po/en/%.po,%.en.lmo,$(po));)
-endef
-
-$(eval $(call BuildPackage,luci-i18n-tvgate-zh-cn))
-$(eval $(call BuildPackage,luci-i18n-tvgate-en))
 
 # call BuildPackage - OpenWrt buildroot signature
