@@ -67,24 +67,18 @@ jobs:
           SDK_DIR=$(find $HOME -maxdepth 1 -type d -name "openwrt-sdk*")
           echo "SDK_DIR=$SDK_DIR" >> $GITHUB_ENV
 
-      # ------------------ 生成 defconfig 并更新 feeds ------------------
-      - name: Generate defconfig and update feeds
+      # ------------------ 生成 defconfig ------------------
+      - name: Generate defconfig
         run: |
           cd $SDK_DIR
           make defconfig
-          ./scripts/feeds update -a
-          ./scripts/feeds install -a
 
-      # ------------------ 克隆 luci-app-tvgate ------------------
-      - name: Clone luci-app-tvgate
+      # ------------------ 克隆并安装 luci-app-tvgate ------------------
+      - name: Clone and install luci-app-tvgate
         run: |
           git clone https://github.com/qist/luci-app-tvgate $SDK_DIR/feeds/luci/applications/luci-app-tvgate || true
           cd $SDK_DIR/feeds/luci/applications/luci-app-tvgate
           git pull
-
-      # ------------------ 安装 luci-app-tvgate feed ------------------
-      - name: Install luci-app-tvgate feed
-        run: |
           cd $SDK_DIR
           ./scripts/feeds update luci
           ./scripts/feeds install luci-app-tvgate
