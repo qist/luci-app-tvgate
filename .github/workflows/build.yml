@@ -38,17 +38,17 @@ jobs:
           python3 python3-pyelftools python3-setuptools qemu-utils rsync scons squashfs-tools subversion \
           swig texinfo uglifyjs upx-ucl unzip vim wget xmlto xxd zlib1g-dev
 
-      # ------------------ 缓存 SDK + build_dir + downloads ------------------
+      # ------------------ 缓存 SDK + downloads ------------------
       - name: Restore SDK cache
+        id: cache
         uses: actions/cache@v3
         with:
           path: |
             $HOME/openwrt-sdk-*/staging_dir
-            $HOME/openwrt-sdk-*/build_dir
             $HOME/openwrt-sdk-*/downloads
-          key: ${{ runner.os }}-openwrt-sdk-${{ matrix.version }}-${{ hashFiles('**/feeds.conf.default') }}
+          key: ${{ runner.os }}-openwrt-sdk-v2-${{ matrix.version }}-${{ hashFiles('**/feeds.conf.default') }}
           restore-keys: |
-            ${{ runner.os }}-openwrt-sdk-${{ matrix.version }}-
+            ${{ runner.os }}-openwrt-sdk-v2-${{ matrix.version }}-
 
       # ------------------ 下载并解压 SDK（仅缓存未命中时执行） ------------------
       - name: Download and extract OpenWrt SDK
@@ -64,8 +64,19 @@ jobs:
             wget $SDK_URL
             tar -I zstd -xf openwrt-sdk-25.12.0-rc2-x86-64_gcc-14.3.0_musl.Linux-x86_64.tar.zst
           fi
+
+      # ------------------ 设置 SDK_DIR 环境变量 ------------------
+      - name: Set SDK_DIR
+        run: |
           SDK_DIR=$(find $HOME -maxdepth 1 -type d -name "openwrt-sdk*")
           echo "SDK_DIR=$SDK_DIR" >> $GITHUB_ENV
+          echo "SDK_DIR=$SDK_DIR"
+
+      # ------------------ 清理旧的 build_dir ------------------
+      - name: Clean build_dir
+        run: |
+          rm -rf $SDK_DIR/build_dir
+          mkdir -p $SDK_DIR/build_dir
 
       # ------------------ 生成 defconfig ------------------
       - name: Generate defconfig
@@ -73,20 +84,22 @@ jobs:
           cd $SDK_DIR
           make defconfig
 
-      # ------------------ 克隆并安装 luci-app-tvgate ------------------
-      - name: Clone and install luci-app-tvgate
+      # ------------------ 克隆 luci-app-tvgate 并注册 luci feed ------------------
+      - name: Clone luci-app-tvgate and update luci feed
         run: |
-          git clone https://github.com/qist/luci-app-tvgate $SDK_DIR/feeds/luci/applications/luci-app-tvgate || true
-          cd $SDK_DIR/feeds/luci/applications/luci-app-tvgate
-          git pull
           cd $SDK_DIR
+          # 更新 luci feed（不更新 packages feed，避免哈希不匹配）
           ./scripts/feeds update luci
-          ./scripts/feeds install luci-app-tvgate
+          ./scripts/feeds install luci-base
+          # 克隆 tvgate 到 package 目录
+          git clone https://github.com/qist/luci-app-tvgate package/luci-app-tvgate || true
+          cd package/luci-app-tvgate && git pull
+          ls -la $SDK_DIR/package/luci-app-tvgate/Makefile
 
       # ------------------ 读取版本 ------------------
       - name: Read PKG_VERSION from Makefile
         run: |
-          PKG_VERSION=$(grep "^PKG_VERSION:=" $SDK_DIR/feeds/luci/applications/luci-app-tvgate/Makefile | cut -d= -f2 | tr -d ' ')
+          PKG_VERSION=$(grep "^PKG_VERSION:=" $SDK_DIR/package/luci-app-tvgate/Makefile | cut -d= -f2 | tr -d ' ')
           echo "PKG_VERSION=$PKG_VERSION" >> $GITHUB_ENV
           echo "Detected PKG_VERSION=$PKG_VERSION"
 
@@ -96,7 +109,7 @@ jobs:
           FORCE_UNSAFE_CONFIGURE: 1
         run: |
           cd $SDK_DIR
-          make package/feeds/luci/luci-app-tvgate/compile V=s
+          make package/luci-app-tvgate/compile V=s
 
       # ------------------ 收集生成的 ipk/apk ------------------
       - name: Collect artifact files
