@@ -20,6 +20,8 @@ LUCI_DESCRIPTION:=LuCI interface for TVGate service management. \
 LUCI_DEPENDS:=+curl +ca-certificates +unzip +luci-base
 LUCI_PKGARCH:=all
 
+LUCI_LANG.en=English (English)
+
 define Package/$(PKG_NAME)/conffiles
 /etc/config/tvgate
 endef
