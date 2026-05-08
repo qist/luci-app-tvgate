@@ -17,7 +17,7 @@ LUCI_TITLE:=LuCI Support for TVGate
 LUCI_DESCRIPTION:=LuCI interface for TVGate service management. \
 	Provides web interface for TVGate configuration, download management, \
 	and YAML update automation with internationalization support.
-LUCI_DEPENDS:=curl ca-certificates unzip luci-compat luci luci-base
+# LUCI_DEPENDS:=curl ca-certificates unzip luci-compat luci luci-base
 LUCI_PKGARCH:=all
 
 # LUCI_LANG.en=English (English)
@@ -37,9 +37,6 @@ endef
 define Package/$(PKG_NAME)/postinst
 #!/bin/sh
 if [ -z "$${IPKG_INSTROOT}" ]; then
-	for dep in curl ca-certificates unzip luci-compat luci luci-base; do
-		opkg status "$$dep" 2>/dev/null | grep -q "Status: install ok installed" || opkg install "$$dep"
-	done
 	chmod +x /usr/bin/tvgate-download.sh >/dev/null 2>&1
 	chmod +x /usr/bin/tvgate-update-yaml.sh >/dev/null 2>&1
 	chmod +x /etc/init.d/tvgate >/dev/null 2>&1
