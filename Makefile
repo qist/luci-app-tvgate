@@ -17,6 +17,7 @@ LUCI_TITLE:=LuCI Support for TVGate
 LUCI_DESCRIPTION:=LuCI interface for TVGate service management. \
 	Provides web interface for TVGate configuration, download management, \
 	and YAML update automation with internationalization support.
+	
 # LUCI_DEPENDS:=curl ca-certificates unzip luci-compat luci luci-base
 LUCI_PKGARCH:=all
 
