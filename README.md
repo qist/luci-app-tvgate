@@ -73,7 +73,18 @@ Once the service is running:
 
 ## Supported Architectures
 
-- x86_64
-- i686
-- aarch64 (ARM64)
-- armv7l (ARMv7)
+- x86_64 (amd64)
+- i686/i386/i486/i586 (386)
+- aarch64/arm64 (ARM64)
+- armv7l/armv7 (ARMv7)
+- armv6l/armv6 (ARMv6)
+- armv5l/armv5 (ARMv5)
+- loongarch64/loong64 (LoongArch)
+- mips64el (MIPS64 Little Endian)
+- mips64 (MIPS64)
+- mipsel/mipsle (MIPS Little Endian)
+- mips (MIPS)
+- ppc64le (PowerPC 64 Little Endian)
+- ppc64 (PowerPC 64)
+- riscv64 (RISC-V 64)
+- s390x (IBM System z)
