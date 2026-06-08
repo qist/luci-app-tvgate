@@ -9,35 +9,72 @@ proxy=$(uci get tvgate.@tvgate[0].proxy 2>/dev/null)
 download_url=$(uci get tvgate.@tvgate[0].download_url 2>/dev/null)
 
 # Detect system architecture
+# Binary naming convention matches tvgate Makefile
 ARCH=$(uname -m)
 case $ARCH in
 	x86_64)
-		DEFAULT_URL='https://github.com/qist/tvgate/releases/latest/download/TVGate-linux-amd64.zip'
-		BIN_NAME='TVGate-linux-amd64'
+		DEFAULT_URL='https://github.com/qist/tvgate/releases/latest/download/TVGate-linux-64.zip'
+		BIN_NAME='TVGate-linux-64'
 		;;
-	i686)
-		DEFAULT_URL='https://github.com/qist/tvgate/releases/latest/download/TVGate-linux-386.zip'
-		BIN_NAME='TVGate-linux-386'
+	i686|i386|i486|i586)
+		DEFAULT_URL='https://github.com/qist/tvgate/releases/latest/download/TVGate-linux-32.zip'
+		BIN_NAME='TVGate-linux-32'
 		;;
-	aarch64)
-		DEFAULT_URL='https://github.com/qist/tvgate/releases/latest/download/TVGate-linux-arm64.zip'
-		BIN_NAME='TVGate-linux-arm64'
+	aarch64|arm64)
+		DEFAULT_URL='https://github.com/qist/tvgate/releases/latest/download/TVGate-linux-arm64-v8a.zip'
+		BIN_NAME='TVGate-linux-arm64-v8a'
 		;;
-	armv7l)
-		DEFAULT_URL='https://github.com/qist/tvgate/releases/latest/download/TVGate-linux-armv7.zip'
-		BIN_NAME='TVGate-linux-armv7'
+	armv7*|armv7l)
+		DEFAULT_URL='https://github.com/qist/tvgate/releases/latest/download/TVGate-linux-arm32-v7a.zip'
+		BIN_NAME='TVGate-linux-arm32-v7a'
+		;;
+	armv6*)
+		DEFAULT_URL='https://github.com/qist/tvgate/releases/latest/download/TVGate-linux-arm32-v6.zip'
+		BIN_NAME='TVGate-linux-arm32-v6'
+		;;
+	armv5*|arm*)
+		DEFAULT_URL='https://github.com/qist/tvgate/releases/latest/download/TVGate-linux-arm32-v5.zip'
+		BIN_NAME='TVGate-linux-arm32-v5'
+		;;
+	loongarch64|loong64)
+		DEFAULT_URL='https://github.com/qist/tvgate/releases/latest/download/TVGate-linux-loong64.zip'
+		BIN_NAME='TVGate-linux-loong64'
+		;;
+	mips64el)
+		DEFAULT_URL='https://github.com/qist/tvgate/releases/latest/download/TVGate-linux-mips64le.zip'
+		BIN_NAME='TVGate-linux-mips64le'
+		;;
+	mips64)
+		DEFAULT_URL='https://github.com/qist/tvgate/releases/latest/download/TVGate-linux-mips64.zip'
+		BIN_NAME='TVGate-linux-mips64'
+		;;
+	mipsel|mipsle)
+		DEFAULT_URL='https://github.com/qist/tvgate/releases/latest/download/TVGate-linux-mips32le.zip'
+		BIN_NAME='TVGate-linux-mips32le'
 		;;
 	mips)
-		DEFAULT_URL='https://github.com/qist/tvgate/releases/latest/download/TVGate-linux-mips.zip'
-		BIN_NAME='TVGate-linux-mips'
+		DEFAULT_URL='https://github.com/qist/tvgate/releases/latest/download/TVGate-linux-mips32.zip'
+		BIN_NAME='TVGate-linux-mips32'
 		;;
-	mipsle)
-		DEFAULT_URL='https://github.com/qist/tvgate/releases/latest/download/TVGate-linux-mipsle.zip'
-		BIN_NAME='TVGate-linux-mipsle'
+	ppc64le)
+		DEFAULT_URL='https://github.com/qist/tvgate/releases/latest/download/TVGate-linux-ppc64le.zip'
+		BIN_NAME='TVGate-linux-ppc64le'
+		;;
+	ppc64)
+		DEFAULT_URL='https://github.com/qist/tvgate/releases/latest/download/TVGate-linux-ppc64.zip'
+		BIN_NAME='TVGate-linux-ppc64'
+		;;
+	riscv64)
+		DEFAULT_URL='https://github.com/qist/tvgate/releases/latest/download/TVGate-linux-riscv64.zip'
+		BIN_NAME='TVGate-linux-riscv64'
+		;;
+	s390x)
+		DEFAULT_URL='https://github.com/qist/tvgate/releases/latest/download/TVGate-linux-s390x.zip'
+		BIN_NAME='TVGate-linux-s390x'
 		;;
 	*)
-		DEFAULT_URL='https://github.com/qist/tvgate/releases/latest/download/TVGate-linux-amd64.zip'
-		BIN_NAME='TVGate-linux-amd64'
+		DEFAULT_URL='https://github.com/qist/tvgate/releases/latest/download/TVGate-linux-64.zip'
+		BIN_NAME='TVGate-linux-64'
 		;;
 esac
 

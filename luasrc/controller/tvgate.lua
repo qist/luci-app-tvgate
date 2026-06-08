@@ -540,17 +540,35 @@ function act_detect_arch()
 	local sys = require "luci.sys"
 	local arch = sys.exec("uname -m"):gsub("%s+", "")
 
+	-- 架构映射表，命名规范与 tvgate Makefile 一致
 	local map = {
-		x86_64  = "amd64",
-		i686    = "386",
-		aarch64 = "arm64",
-		armv7l  = "armv7",
-		mips    = "mips",
-		mipsel  = "mipsle",
-		mipsle  = "mipsle"
+		x86_64      = "64",
+		i686        = "32",
+		i386        = "32",
+		i486        = "32",
+		i586        = "32",
+		aarch64     = "arm64-v8a",
+		arm64       = "arm64-v8a",
+		armv7l      = "arm32-v7a",
+		armv7       = "arm32-v7a",
+		armv6l      = "arm32-v6",
+		armv6       = "arm32-v6",
+		armv5l      = "arm32-v5",
+		armv5       = "arm32-v5",
+		loongarch64 = "loong64",
+		loong64     = "loong64",
+		mips64el    = "mips64le",
+		mips64      = "mips64",
+		mipsel      = "mips32le",
+		mipsle      = "mips32le",
+		mips        = "mips32",
+		ppc64le     = "ppc64le",
+		ppc64       = "ppc64",
+		riscv64     = "riscv64",
+		s390x       = "s390x"
 	}
 
-	local detected = map[arch] or "amd64"
+	local detected = map[arch] or "64"
 
 	luci.http.prepare_content("application/json")
 	luci.http.write_json({
