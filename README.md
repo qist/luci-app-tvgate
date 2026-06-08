@@ -28,7 +28,7 @@ TVGate is a high-performance local network resource forwarding and proxy tool. I
    opkg update
    opkg install curl ca-certificates unzip luci-compat luci luci-base
    opkg install libustream-openssl  ca-bundle
-   opkg install  luci-app-tvgate_2.1.0_all.ipk
+   opkg install  luci-app-tvgate_2.1.1_all.ipk
    opkg install luci-i18n-tvgate-zh-cn_git-26.126.27721-5978e59_all.ipk
    ```
 
@@ -41,7 +41,7 @@ TVGate is a high-performance local network resource forwarding and proxy tool. I
  ```bash
 apk update
 apk add curl ca-certificates unzip luci-compat luci luci-base
-apk add --allow-untrusted luci-app-tvgate-2.1.0-r1.apk
+apk add --allow-untrusted luci-app-tvgate-2.1.1-r1.apk
 apk add --allow-untrusted luci-i18n-tvgate-zh-cn-26.126.27721~5978e59.apk
 ```
 5. openwrt 25 Uninstall package:
