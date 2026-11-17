@@ -33,7 +33,7 @@ concurrency:
 jobs:
   build:
     name: ${{ matrix.name }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04   # 固定环境，避免 ubuntu-latest 迁移到 26.04 后工具链漂移
     timeout-minutes: 90
     strategy:
       fail-fast: false
@@ -134,6 +134,15 @@ jobs:
           test -f feeds/luci/luci.mk
           ./scripts/feeds install luci-base
 
+          # csstidy / luasrcdiet 是 luci.mk 里用于压缩 CSS / Lua 的 host 工具，
+          # 它们的源码由 GitHub 归档动态生成，hash 与 feed 里 pinned 的值已经对不上
+          # （实测：Hash mismatch csstidy-2.1.2.tar.zst），会让整个 build 失败。
+          # 这里去掉这两个 host 依赖，并在编译时关闭压缩：产物功能不变，只是不压缩。
+          if grep -q 'LUCI_CSSTIDY:csstidy/host' feeds/luci/luci.mk; then
+            echo "patching luci.mk: drop csstidy/luasrcdiet host deps (upstream hash mismatch)"
+            sed -i 's# LUCI_CSSTIDY:csstidy/host##; s# LUCI_SRCDIET:luasrcdiet/host##' feeds/luci/luci.mk
+          fi
+
       # ------------------ 把当前 tag 的源码放进 SDK ------------------
       - name: Add luci-app-tvgate to SDK
         run: |
@@ -154,6 +163,7 @@ jobs:
         env:
           FORCE_UNSAFE_CONFIGURE: 1
         run: |
+          set -o pipefail
           cd "$SDK_DIR"
           # 必须删掉旧 tmp：否则 .config-package.in 还是 feeds 安装前的缓存，包不会被识别
           rm -rf tmp
@@ -161,7 +171,18 @@ jobs:
           echo "CONFIG_PACKAGE_luci-app-tvgate=m" >> .config
           make defconfig
           grep -q '^CONFIG_PACKAGE_luci-app-tvgate=m' .config
-          make package/luci-app-tvgate/compile V=s
+          # 关闭 Lua/CSS/JS 压缩：对应 host 工具依赖已在上一步移除
+          make package/luci-app-tvgate/compile V=s \
+            LUCI_MINIFY_LUA=0 LUCI_MINIFY_CSS=0 LUCI_MINIFY_JS=0 \
+            2>&1 | tee "$GITHUB_WORKSPACE/build-${{ matrix.version }}.log"
+
+      - name: Upload build log on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-log-${{ matrix.version }}
+          path: build-${{ matrix.version }}.log
+          if-no-files-found: ignore
 
       # ------------------ 收集产物（ipk 或 apk，统一放 dist/ 并加版本前缀） ------------------
       - name: Collect packages
@@ -195,7 +216,7 @@ jobs:
     name: Publish release assets
     needs: build
     if: startsWith(github.ref, 'refs/tags/')
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: Download all artifacts
         uses: actions/download-artifact@v4
