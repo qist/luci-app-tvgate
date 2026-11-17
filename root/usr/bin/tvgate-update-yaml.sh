@@ -99,9 +99,15 @@ clean_path() {
     echo "$1" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//'
 }
 
+# 输出可直接写入 YAML 的双引号字符串（转义反斜杠与双引号）
+# 口令可能包含 # : @ % * - + = 等字符，裸写会被当成注释/非法标量
+yaml_quote() {
+    printf '"%s"' "$(printf '%s' "$1" | sed -e 's/\\/\\\\/g' -e 's/"/\\"/g')"
+}
+
 # 清理所有路径值
 if [ -n "$WEB_PATH" ]; then
-    WEB_PATH=$(clean_path "$WEB_PATH")
+    WEB_PATH=$(yaml_quote "$(clean_path "$WEB_PATH")")
 fi
 if [ -n "$MONITOR_PATH" ]; then
     MONITOR_PATH=$(clean_path "$MONITOR_PATH")
@@ -113,10 +119,10 @@ if [ -n "$PORT" ]; then
     PORT=$(clean_path "$PORT")
 fi
 if [ -n "$USERNAME" ]; then
-    USERNAME=$(clean_path "$USERNAME")
+    USERNAME=$(yaml_quote "$(clean_path "$USERNAME")")
 fi
 if [ -n "$PASSWORD" ]; then
-    PASSWORD=$(clean_path "$PASSWORD")
+    PASSWORD=$(yaml_quote "$(clean_path "$PASSWORD")")
 fi
 if [ -n "$LOG_ENABLED" ]; then
     LOG_ENABLED=$(clean_path "$LOG_ENABLED")

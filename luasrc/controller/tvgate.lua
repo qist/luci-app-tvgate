@@ -7,6 +7,22 @@ local ok_fs, fs_mod = pcall(require, "nixio.fs")
 if not ok_fs then ok_fs, fs_mod = pcall(require, "luci.fs") end
 local fs = fs_mod
 
+-- 去掉行内注释，但忽略引号内的 #（随机口令可能包含 #，直接 gsub("#.*$") 会把口令截断）
+local function strip_yaml_comment(line)
+	local in_single, in_double = false, false
+	for i = 1, #line do
+		local c = line:sub(i, i)
+		if c == "'" and not in_double then
+			in_single = not in_single
+		elseif c == '"' and not in_single then
+			in_double = not in_double
+		elseif c == "#" and not in_single and not in_double then
+			return line:sub(1, i - 1)
+		end
+	end
+	return line
+end
+
 function index()
 	local i18n = require "luci.i18n"
 	local uci = require "luci.model.uci".cursor()
@@ -126,7 +142,7 @@ function act_multicast_config()
 		local current_section = nil
 		local in_multicast_ifaces = false
 		for line in yaml_content:gmatch("[^\r\n]+") do
-			local clean = line:gsub("#.*$", ""):gsub("^%s*", "")
+			local clean = strip_yaml_comment(line):gsub("^%s*", "")
 			local s = clean:match("^(%w+):%s*$")
 			if s then
 				current_section = s
@@ -317,7 +333,7 @@ function act_web_config()
 		
 		local current_section = nil
 		for line in yaml_content:gmatch("[^\r\n]+") do
-			local clean = line:gsub("#.*$", ""):gsub("^%s*", "")
+			local clean = strip_yaml_comment(line):gsub("^%s*", "")
 			local s = clean:match("^(%w+):%s*$")
 			if s then
 				current_section = s
@@ -648,7 +664,7 @@ function act_tvgate_config()
 	local current_section = nil
 	for i, full_line in ipairs(lines) do
 		-- 去除注释并清理行首空格
-		local line = full_line:gsub("#.*$", ""):gsub("^%s*", "")
+		local line = strip_yaml_comment(full_line):gsub("^%s*", "")
 		
 		-- 检查是否有冒号，且不在引号内
 		if line ~= "" then
