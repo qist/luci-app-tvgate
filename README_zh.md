@@ -18,39 +18,66 @@ TVGate 是一款高性能的本地网络资源转发与代理工具。它可以�
 
 ## 安装
 
-1. 编译软件包：
-   ```bash
-   make package/luci-app-tvgate/compile V=s
-   ```
+### 方式一：直接下载安装包（推荐）
 
-2. 安装生成的 ipk 包：
-   ```bash
-   opkg update
-   opkg install curl ca-certificates unzip luci-compat luci luci-base
-   opkg install libustream-openssl ca-bundle
-   opkg install  luci-app-tvgate_2.1.1_all.ipk
-   opkg install luci-i18n-tvgate-zh-cn_git-26.126.27721-5978e59_all.ipk
-   ```
+安装包由 CI 在推送 tag 时自动构建，发布在 Releases：
 
-3. 卸载软件包：
-   ```bash
-   opkg remove luci-app-tvgate
-   opkg remove luci-i18n-tvgate-zh-cn
-   ```
+<https://github.com/qist/luci-app-tvgate/releases/latest>
 
-4. OpenWrt 25 安装 apk 包：
-   ```bash
-   apk update
-   apk add curl ca-certificates unzip luci-compat luci luci-base
-   apk add --allow-untrusted luci-app-tvgate-2.1.1-r1.apk
-   apk add --allow-untrusted luci-i18n-tvgate-zh-cn-26.126.27721~5978e59.apk
-   ```
+| 系统 | 包格式 | 附件 |
+|---|---|---|
+| OpenWrt 22.03 / 23.05 | opkg（`.ipk`） | `openwrt-22.03.5-luci-app-tvgate_<版本>_all.ipk` |
+| OpenWrt 25.12+ | apk-tools（`.apk`） | `openwrt-25.12.0-rc2-luci-app-tvgate-<版本>-r1.apk` |
+| 语言包（可选） | 同系统 | `openwrt-*-luci-i18n-tvgate-zh-cn-*`、`openwrt-*-luci-i18n-tvgate-en-*` |
+| 校验和 | - | `sha256sums.txt` |
 
-5. OpenWrt 25 卸载软件包：
-   ```bash
-   apk del luci-app-tvgate
-   apk del luci-i18n-tvgate-zh-cn
-   ```
+> 包与架构无关（`all` / `noarch`），x86_64 只是构建环境，任意架构路由器都能装。
+
+**opkg（OpenWrt 22.03 / 23.05）**
+
+```bash
+cd /tmp
+opkg update
+opkg install curl ca-certificates unzip luci-compat luci luci-base
+opkg install libustream-openssl ca-bundle
+opkg install ./openwrt-22.03.5-luci-app-tvgate_*_all.ipk
+opkg install ./openwrt-22.03.5-luci-i18n-tvgate-zh-cn_*_all.ipk   # 可选：中文语言包
+```
+
+**apk-tools（OpenWrt 25.12+）**
+
+```bash
+cd /tmp
+apk update
+apk add curl ca-certificates unzip luci-compat luci luci-base
+apk add --allow-untrusted ./openwrt-25.12.0-rc2-luci-app-tvgate-*.apk
+apk add --allow-untrusted ./openwrt-25.12.0-rc2-luci-i18n-tvgate-zh-cn-*.apk   # 可选
+```
+
+**校验与卸载**
+
+```bash
+sha256sum -c sha256sums.txt          # 校验下载文件（可选）
+
+opkg remove luci-app-tvgate luci-i18n-tvgate-zh-cn   # opkg 卸载
+apk del luci-app-tvgate luci-i18n-tvgate-zh-cn       # apk 卸载
+```
+
+### 方式二：从源码 / SDK 编译
+
+```bash
+# 把本仓库放到 OpenWrt 源码或 SDK 的 package/ 下；
+# SDK 不自带 feeds，必须先更新 luci feed 并安装 luci-base（提供 luci.mk 与 po2lmo）
+./scripts/feeds update luci
+./scripts/feeds install luci-base
+
+# 选中包再编译（不选中时 compile 不会产出任何包）
+echo "CONFIG_PACKAGE_luci-app-tvgate=m" >> .config
+make defconfig
+make package/luci-app-tvgate/compile V=s
+```
+
+产物：`bin/packages/<架构>/base/luci-app-tvgate_<版本>_all.ipk`（OpenWrt 25.12+ 为 `.apk`）。
 
 ## 配置
 

@@ -18,37 +18,67 @@ TVGate is a high-performance local network resource forwarding and proxy tool. I
 
 ## Installation
 
-1. Compile the package:
-   ```bash
-   make package/luci-app-tvgate/compile V=s
-   ```
+### Option 1: download the prebuilt package (recommended)
 
-2. Install the generated ipk package:
-   ```bash
-   opkg update
-   opkg install curl ca-certificates unzip luci-compat luci luci-base
-   opkg install libustream-openssl  ca-bundle
-   opkg install  luci-app-tvgate_2.1.1_all.ipk
-   opkg install luci-i18n-tvgate-zh-cn_git-26.126.27721-5978e59_all.ipk
-   ```
+Packages are built by CI on every tag push and published to Releases:
 
-3. Uninstall package:
-   ```bash
-   opkg remove luci-app-tvgate
-   opkg remove luci-i18n-tvgate-zh-cn
-   ```
-4. openwrt 25 Install the generated apk package:
- ```bash
+<https://github.com/qist/luci-app-tvgate/releases/latest>
+
+| System | Format | Asset |
+|---|---|---|
+| OpenWrt 22.03 / 23.05 | opkg (`.ipk`) | `openwrt-22.03.5-luci-app-tvgate_<version>_all.ipk` |
+| OpenWrt 25.12+ | apk-tools (`.apk`) | `openwrt-25.12.0-rc2-luci-app-tvgate-<version>-r1.apk` |
+| i18n (optional) | same | `openwrt-*-luci-i18n-tvgate-zh-cn-*`, `openwrt-*-luci-i18n-tvgate-en-*` |
+| Checksums | - | `sha256sums.txt` |
+
+> Packages are architecture-independent (`all` / `noarch`); x86_64 is only the build target.
+
+**opkg (OpenWrt 22.03 / 23.05)**
+
+```bash
+cd /tmp
+opkg update
+opkg install curl ca-certificates unzip luci-compat luci luci-base
+opkg install libustream-openssl ca-bundle
+opkg install ./openwrt-22.03.5-luci-app-tvgate_*_all.ipk
+opkg install ./openwrt-22.03.5-luci-i18n-tvgate-zh-cn_*_all.ipk   # optional
+```
+
+**apk-tools (OpenWrt 25.12+)**
+
+```bash
+cd /tmp
 apk update
 apk add curl ca-certificates unzip luci-compat luci luci-base
-apk add --allow-untrusted luci-app-tvgate-2.1.1-r1.apk
-apk add --allow-untrusted luci-i18n-tvgate-zh-cn-26.126.27721~5978e59.apk
+apk add --allow-untrusted ./openwrt-25.12.0-rc2-luci-app-tvgate-*.apk
+apk add --allow-untrusted ./openwrt-25.12.0-rc2-luci-i18n-tvgate-zh-cn-*.apk   # optional
 ```
-5. openwrt 25 Uninstall package:
- ```bash
-apk del luci-app-tvgate
-apk del luci-i18n-tvgate-zh-cn
+
+**Verify / uninstall**
+
+```bash
+sha256sum -c sha256sums.txt          # verify downloads (optional)
+
+opkg remove luci-app-tvgate luci-i18n-tvgate-zh-cn   # opkg
+apk del luci-app-tvgate luci-i18n-tvgate-zh-cn       # apk
 ```
+
+### Option 2: build from source / SDK
+
+```bash
+# Put this repo under package/ of an OpenWrt tree or SDK.
+# The SDK ships no feeds, so luci.mk / po2lmo must be installed first:
+./scripts/feeds update luci
+./scripts/feeds install luci-base
+
+# Select the package before compiling (otherwise compile produces nothing)
+echo "CONFIG_PACKAGE_luci-app-tvgate=m" >> .config
+make defconfig
+make package/luci-app-tvgate/compile V=s
+```
+
+Output: `bin/packages/<arch>/base/luci-app-tvgate_<version>_all.ipk` (`.apk` on OpenWrt 25.12+).
+
 ## Configuration
 
 After installation, you can configure TVGate in the LuCI interface:

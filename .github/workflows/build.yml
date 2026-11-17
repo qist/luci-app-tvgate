@@ -236,6 +236,7 @@ jobs:
         with:
           tag_name: ${{ github.ref_name }}
           name: ${{ github.ref_name }}
-          generate_release_notes: true
+          # 安装说明固定放在 .github/release-body.md，后续每个 tag 自动带上
+          body_path: .github/release-body.md
           files: dist/*
           fail_on_unmatched_files: true
